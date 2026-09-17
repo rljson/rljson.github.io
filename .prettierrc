@@ -7,7 +7,5 @@
   "bracketSameLine": true,
   "htmlWhitespaceSensitivity": "strict",
   "singleAttributePerLine": true,
-  "printWidth": 80,
-  "plugins": ["prettier-plugin-astro"],
-  "overrides": [{ "files": "*.astro", "options": { "parser": "astro" } }]
+  "printWidth": 80
 }

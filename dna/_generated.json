@@ -1,0 +1,61 @@
+{
+  "version": 1,
+  "layers": [
+    {
+      "name": "base",
+      "package": "helix",
+      "ecosystem": null,
+      "resolvedVersion": "1.7.1",
+      "via": null,
+      "hash": "0x6883da335b415f9d"
+    },
+    {
+      "name": "dna-vscode",
+      "package": "@ggdna/dna-vscode",
+      "ecosystem": "node",
+      "resolvedVersion": "0.2.0",
+      "via": null,
+      "hash": "0xa88376a88c6618fa"
+    },
+    {
+      "name": "self",
+      "package": null,
+      "ecosystem": null,
+      "resolvedVersion": null,
+      "via": null,
+      "hash": "0x00000000811c9dc5"
+    }
+  ],
+  "claude": {
+    "claudeMdInclude": null,
+    "claudeMdFromDna": false
+  },
+  "baseVersion": "1.7.1",
+  "baseHash": "0x6883da335b415f9d",
+  "instances": [
+    {
+      "path": ".claude/skills/vscode/SKILL.md",
+      "hash": "0xa331cf3abdbd1c7b"
+    },
+    {
+      "path": ".prettierignore",
+      "hash": "0xca9871c5856573ee"
+    },
+    {
+      "path": ".prettierrc",
+      "hash": "0xf2be2549d1b502ae"
+    },
+    {
+      "path": ".vscode/extensions.json",
+      "hash": "0x42dbd078830bdf05"
+    },
+    {
+      "path": ".vscode/settings.json",
+      "hash": "0x32f5972239aa0a78"
+    },
+    {
+      "path": "doc/guides/vscode-guide.md",
+      "hash": "0x6776b27c7cbedb98"
+    }
+  ]
+}

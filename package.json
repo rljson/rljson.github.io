@@ -1,7 +1,7 @@
 {
   "name": "rljson.github.io",
   "type": "module",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
@@ -9,7 +9,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "lint": "astro check",
-    "test": "pnpm run lint",
+    "test": "vitest run && pnpm run lint",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
   },
@@ -20,11 +20,14 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@ggdna/dna-scripts": "^0.2.1",
     "@ggdna/dna-vscode": "^0.2.0",
     "@tssuite/helix-js": "^0.3.0",
+    "@types/node": "^22.20.3",
     "prettier": "^3.9.6",
     "prettier-plugin-astro": "^1.0.0",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "vitest": "^5.0.1"
   },
   "private": true
 }

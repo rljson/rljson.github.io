@@ -39,12 +39,6 @@
     var(--electric-violet) 0%,
     var(--bright-blue) 100%
   );
-  --red-to-pink-to-purple-horizontal-gradient: linear-gradient(
-    90deg,
-    var(--orange-red) 0%,
-    var(--vivid-pink) 50%,
-    var(--electric-violet) 100%
-  );
 
   --inter-font:
     'Inter', ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont,
@@ -213,20 +207,12 @@ h6,
 /* .......................................................................... */
 /* Chrome: header, sidebars, links */
 
-.header {
+/* Starlight uses the class `header` on the page header, on a wrapper inside
+ * it and on code block captions, so the element has to be named as well. */
+header.header {
   border-bottom: 1px solid var(--sl-color-hairline-shade);
   backdrop-filter: blur(12px);
   background: color-mix(in srgb, var(--page-background) 85%, transparent);
-}
-
-/* angular.dev marks the top of the page with its brand gradient. */
-.header::after {
-  content: '';
-  position: absolute;
-  inset: auto 0 -1px 0;
-  height: 2px;
-  background: var(--red-to-pink-to-purple-horizontal-gradient);
-  opacity: 0.9;
 }
 
 .sidebar-pane {
@@ -312,15 +298,15 @@ h6,
 /* .......................................................................... */
 /* Buttons and hero */
 
-.action.primary {
+.sl-link-button.primary {
   background: var(--pink-to-purple-horizontal-gradient);
   border: none;
   color: white;
   border-radius: 0.5rem;
 }
 
-.action.minimal,
-.action.secondary {
+.sl-link-button.minimal,
+.sl-link-button.secondary {
   border-radius: 0.5rem;
 }
 

@@ -1,26 +1,64 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import { defineConfig } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
   site: 'https://rljson.github.io',
   integrations: [
     starlight({
-      title: 'My Docs',
+      title: 'Rljson',
+      description:
+        'A JSON-based, relational, normalized and deeply hashed exchange ' +
+        'format for the efficient synchronization of large datasets.',
+      logo: {
+        src: './src/assets/logo/rljson-logo.webp',
+        alt: 'Rljson',
+      },
+      favicon: '/favicon.png',
+      head: [
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'apple-touch-icon',
+            href: '/apple-touch-icon.png',
+            sizes: '180x180',
+          },
+        },
+      ],
       social: [
         {
           icon: 'github',
           label: 'GitHub',
-          href: 'https://github.com/withastro/starlight',
+          href: 'https://github.com/rljson',
         },
       ],
+      editLink: {
+        baseUrl: 'https://github.com/rljson/rljson.github.io/edit/main/',
+      },
       sidebar: [
         {
-          label: 'Guides',
+          label: 'Start here',
           items: [
-            // Each item here is one entry in the navigation menu.
-            { label: 'Example Guide', slug: 'guides/example' },
+            { label: 'What is Rljson?', slug: 'guides/what-is-rljson' },
+            { label: 'Getting started', slug: 'guides/getting-started' },
+            { label: 'Principles', slug: 'guides/principles' },
+          ],
+        },
+        {
+          label: 'Format',
+          items: [
+            { label: 'Tables, rows and hashes', slug: 'guides/tables' },
+            { label: 'Data types', slug: 'guides/data-types' },
+            { label: 'Schema and validation', slug: 'guides/schema' },
+          ],
+        },
+        {
+          label: 'Protocols',
+          items: [
+            { label: 'Edit protocol', slug: 'guides/edit-protocol' },
+            { label: 'Routing', slug: 'guides/routing' },
+            { label: 'Sync protocol', slug: 'guides/sync-protocol' },
           ],
         },
         {

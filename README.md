@@ -1,49 +1,39 @@
-# Starlight Starter Kit: Basics
+<!--
+@license
+Copyright (c) 2025 Rljson
 
-[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
+Use of this source code is governed by terms that can be
+found in the LICENSE file in the root of this package.
+-->
 
-```
-pnpm create astro@latest -- --template starlight
-```
+# rljson.github.io
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+The documentation website of Rljson, built with
+[Astro](https://astro.build) and [Starlight](https://starlight.astro.build)
+and published at [rljson.github.io](https://rljson.github.io).
 
-## 🚀 Project Structure
+## Content
 
-Inside of your Astro + Starlight project, you'll see the following folders and files:
+| Path                          | Purpose                                    |
+| ----------------------------- | ------------------------------------------ |
+| `src/content/docs/index.mdx`  | Landing page                               |
+| `src/content/docs/guides/`    | Start here, Format and Protocols guides    |
+| `src/content/docs/reference/` | Ecosystem and type reference               |
+| `src/assets/logo/`            | Rljson logos, taken from `@rljson/icons`   |
+| `src/assets/figures/`         | Architecture figures, from `@rljson/icons` |
+| `public/`                     | Favicon and touch icon                     |
+| `astro.config.mjs`            | Site title, logo, social links and sidebar |
 
-```
-.
-├── public/
-├── src/
-│   ├── assets/
-│   ├── content/
-│   │   └── docs/
-│   └── content.config.ts
-├── astro.config.mjs
-├── package.json
-└── tsconfig.json
-```
+Images come from [`@rljson/icons`](https://github.com/rljson/icons). Update
+them there and copy the result over, rather than editing the copies here.
 
-Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
+## Commands
 
-Images can be added to `src/assets/` and embedded in Markdown with a relative link.
-
-Static assets, like favicons, can be placed in the `public/` directory.
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
-
-| Command                | Action                                           |
-| :--------------------- | :----------------------------------------------- |
-| `pnpm install`         | Installs dependencies                            |
-| `pnpm dev`             | Starts local dev server at `localhost:4321`      |
-| `pnpm build`           | Build your production site to `./dist/`          |
-| `pnpm preview`         | Preview your build locally, before deploying     |
-| `pnpm astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `pnpm astro -- --help` | Get help using the Astro CLI                     |
-
-## 👀 Want to learn more?
-
-Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).
+| Command        | Action                                   |
+| -------------- | ---------------------------------------- |
+| `pnpm install` | Install the dependencies                 |
+| `pnpm dev`     | Start the dev server at `localhost:4321` |
+| `pnpm build`   | Run the tests and build to `./dist/`     |
+| `pnpm preview` | Preview the build locally                |
+| `pnpm test`    | Run the tests and `astro check`          |
+| `pnpm format`  | Format the sources with Prettier         |

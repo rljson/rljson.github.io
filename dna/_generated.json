@@ -123,7 +123,7 @@
     },
     {
       "path": "scripts/setup-github-repo.js",
-      "hash": "0xff571fadb664af32"
+      "hash": "0x5907588070a580ca"
     },
     {
       "path": "scripts/wait-for-pr.js",

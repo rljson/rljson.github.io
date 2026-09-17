@@ -1,0 +1,108 @@
+---
+title: Data types
+description: Components, SliceIds, Layers, Cakes, Buffets and Trees — the six content types of Rljson.
+---
+
+import CakeLayered from '../../../assets/figures/cake-layered.svg';
+import CakeSliced from '../../../assets/figures/cake-sliced.svg';
+import Slice from '../../../assets/figures/slice.svg';
+
+Rljson defines six content types. A table declares which one it holds through
+its `_type` field.
+
+## Components
+
+The fundamental data unit. A `ComponentsTable` contains key-value rows whose
+auto-generated `_hash` serves as the primary key.
+
+```typescript
+import { ComponentsTable } from '@rljson/rljson';
+
+const ingredients: ComponentsTable = {
+  _type: 'components',
+  _data: [
+    { id: 'flour', amountUnit: 'g', _hash: 'A5d...' },
+    { id: 'sugar', amountUnit: 'g', _hash: 'B7f...' },
+  ],
+  _hash: 't5o...',
+};
+```
+
+## SliceIds
+
+<Slice
+  width={90}
+  role="img"
+  aria-label="A single slice"
+/>
+
+Large layers keep their slice IDs separate from their data. That way a client
+can fetch the IDs first and pull the details only for what it actually needs.
+
+```typescript
+import { SliceIds, SliceIdsTable } from '@rljson/rljson';
+
+const slices: SliceIdsTable = {
+  _type: 'sliceIds',
+  _data: [{ add: ['slice0', 'slice1'], remove: [], _hash: 'wyY...' }],
+  _hash: 'cnG...',
+};
+```
+
+A derived set modifies an existing one through `base`, `add` and `remove`,
+so related sets share most of their storage.
+
+## Layers
+
+<CakeSliced
+  width={150}
+  role="img"
+  aria-label="A layer sliced into pieces"
+/>
+
+A layer assigns components to slices. It references a `componentsTable` and a
+`sliceIdsTable`, then maps each slice ID to a component hash in its `add`
+block.
+
+```typescript
+import { Layer, LayersTable } from '@rljson/rljson';
+```
+
+## Cakes
+
+<CakeLayered
+  width={170}
+  role="img"
+  aria-label="A cake: layers stacked over the same slices"
+/>
+
+A `Cake` is a stack of layers that share the same slice IDs. Each layer
+assigns different component values to those shared slices — one cake, many
+views of the same set of things.
+
+```typescript
+import { Cake, CakesTable } from '@rljson/rljson';
+```
+
+## Buffets
+
+A `Buffet` is a heterogeneous collection of related items: references to rows
+in any other table — cakes, layers, components and so on.
+
+```typescript
+import { Buffet, BuffetsTable } from '@rljson/rljson';
+```
+
+## Trees
+
+Hierarchical structures with content-addressed nodes. A `Tree` node has an
+optional `id` (unique among its siblings), an `isParent` flag, a `meta` field
+of type `Json | null`, and a `children` array of child hashes — or `null` for
+a leaf.
+
+```typescript
+import { Tree, TreesTable, treeFromObject } from '@rljson/rljson';
+
+// Convert a plain object into hashed tree nodes
+const nodes = treeFromObject({ src: { 'index.ts': 'console.log("hello")' } });
+```

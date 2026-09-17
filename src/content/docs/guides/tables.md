@@ -1,0 +1,79 @@
+---
+title: Tables, rows and hashes
+description: How an Rljson file is structured — tables, rows, columns, hashes and references.
+---
+
+## Tables
+
+An Rljson file is a collection of tables. The table name is the key and the
+table data is the value:
+
+```json
+{
+  "table0": {},
+  "table1": {},
+  "table2": {}
+}
+```
+
+Each table follows the `RljsonTable` interface, which defines a `_data`
+property containing the rows, and a `_type` naming the content type.
+
+## Rows and columns
+
+A row is a plain JSON object. Its keys are the columns:
+
+```json
+{
+  "ingredients": {
+    "_type": "components",
+    "_data": [
+      { "id": "flour", "amountUnit": "g" },
+      { "id": "sugar", "amountUnit": "g" }
+    ]
+  }
+}
+```
+
+Column values may be of type `string`, `number`, `boolean`, `json` or
+`jsonArray`.
+
+## Hashes
+
+Every row and every table carries a `_hash`, computed from its content by
+[`@rljson/hash`](https://github.com/rljson/hash). The hash is the primary key.
+
+Two consequences follow:
+
+- Identical content always produces an identical hash, so duplicates collapse
+  on their own.
+- Any change produces a different hash, so change detection needs no
+  bookkeeping.
+
+## References
+
+Tables are linked by referencing a row's hash. A reference column is named
+after the target table with a `Ref` suffix:
+
+```json
+{
+  "recipes": {
+    "_type": "components",
+    "_data": [{ "ingredientsRef": "A5d..." }]
+  }
+}
+```
+
+Because the target is addressed by content hash rather than by a generated
+id, references stay valid across machines without coordination.
+
+## Removing duplicates
+
+`removeDuplicates` deduplicates rows by `_hash` across all tables of an
+Rljson object:
+
+```typescript
+import { removeDuplicates } from '@rljson/rljson';
+
+const deduped = removeDuplicates(myRljsonData);
+```

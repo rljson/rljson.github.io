@@ -23,7 +23,7 @@
       "ecosystem": null,
       "resolvedVersion": null,
       "via": null,
-      "hash": "0x00000000811c9dc5"
+      "hash": "0xa003fa6fb842d850"
     }
   ],
   "claude": {
@@ -39,19 +39,19 @@
     },
     {
       "path": ".prettierignore",
-      "hash": "0xca9871c5856573ee"
+      "hash": "0x5214536973c2c681"
     },
     {
       "path": ".prettierrc",
-      "hash": "0xf2be2549d1b502ae"
+      "hash": "0xfa45e43326f76a9c"
     },
     {
       "path": ".vscode/extensions.json",
-      "hash": "0x42dbd078830bdf05"
+      "hash": "0xd959a5a139ab53b1"
     },
     {
       "path": ".vscode/settings.json",
-      "hash": "0x32f5972239aa0a78"
+      "hash": "0x841985bfc7dd76ca"
     },
     {
       "path": "doc/guides/vscode-guide.md",

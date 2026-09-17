@@ -1,6 +1,5 @@
 {
   "recommendations": [
-    "astro-build.astro-vscode",
     "bierner.markdown-mermaid",
     "brunnerh.insert-unicode",
     "clemenspeters.format-json",
@@ -13,6 +12,7 @@
     "yzhang.markdown-all-in-one",
     "ryanluker.vscode-coverage-gutters",
     "jock.svg",
-    "luanpotter.dart-import"
+    "luanpotter.dart-import",
+    "astro-build.astro-vscode"
   ]
 }

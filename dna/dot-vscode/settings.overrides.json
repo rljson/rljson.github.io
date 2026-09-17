@@ -1,0 +1,14 @@
+{
+  // prettier-vscode only formats the file types it claims. Astro and MDX are
+  // not among them by default, so they are added explicitly.
+  "prettier.documentSelectors+": ["**/*.{astro,mdx}"],
+
+  // The Astro extension registers its own formatter for .astro files. Point
+  // it at prettier-vscode instead, so .astro goes through the workspace
+  // prettier and prettier-plugin-astro declared in .prettierrc — the same
+  // formatting the "format" script applies.
+  "[astro]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[mdx]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" }
+}

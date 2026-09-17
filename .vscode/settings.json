@@ -39,7 +39,8 @@
     "**/*.{yaml,yml}",
     "**/*.{json,jsonc,json5}",
     "**/*.md",
-    "**/*.{html,css,scss}"
+    "**/*.{html,css,scss}",
+    "**/*.{astro,mdx}"
   ],
 
   // Prevent the Red Hat YAML extension from claiming the YAML formatter.
@@ -155,6 +156,20 @@
   // #############
 
   "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[mdx]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+
+  // #############
+  // Astro
+  // #############
+  // The Astro extension registers its own formatter for .astro files. Point it
+  // at prettier-vscode instead, so .astro goes through the workspace prettier
+  // and prettier-plugin-astro declared in .prettierrc — the same formatting the
+  // "format" script applies.
+  "[astro]": {
     "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "markdownlint.run": "onSave",

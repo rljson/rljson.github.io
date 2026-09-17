@@ -16,7 +16,33 @@ export default defineConfig({
         alt: 'Rljson',
       },
       favicon: '/favicon.png',
+      customCss: ['./src/styles/angular.css'],
       head: [
+        {
+          tag: 'link',
+          attrs: { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
+        },
+        {
+          tag: 'link',
+          attrs: {
+            rel: 'preconnect',
+            href: 'https://fonts.gstatic.com',
+            crossorigin: true,
+          },
+        },
+        {
+          // The three faces angular.dev uses: Inter for text, Inter Tight for
+          // headings, DM Mono for code.
+          tag: 'link',
+          attrs: {
+            rel: 'stylesheet',
+            href:
+              'https://fonts.googleapis.com/css2?' +
+              'family=Inter+Tight:wght@500;600&' +
+              'family=Inter:wght@400;500;600&' +
+              'family=DM+Mono:ital@0;1&display=swap',
+          },
+        },
         {
           tag: 'link',
           attrs: {

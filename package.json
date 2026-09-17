@@ -15,11 +15,12 @@
   },
   "dependencies": {
     "@astrojs/starlight": "^0.42.1",
-    "astro": "^7.2.10",
-    "sharp": "^0.35.3"
+    "astro": "^7.3.2",
+    "sharp": "^0.35.4"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@ggdna/dna-vscode": "^0.2.0",
     "@tssuite/helix-js": "^0.3.0",
     "prettier": "^3.9.6",
     "prettier-plugin-astro": "^1.0.0",

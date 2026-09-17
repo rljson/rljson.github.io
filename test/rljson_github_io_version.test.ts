@@ -12,9 +12,9 @@ import { rljsonGithubIoVersion } from '../src/rljson_github_io_version';
 
 describe('rljson_github_io_version.ts', () => {
   it('matches the version in package.json', () => {
-    const manifest = JSON.parse(
-      readFileSync('package.json', 'utf8'),
-    ) as { version?: string };
+    const manifest = JSON.parse(readFileSync('package.json', 'utf8')) as {
+      version?: string;
+    };
     expect(manifest.version).toBeTruthy();
 
     const declaration = 'export const rljsonGithubIoVersion = ';

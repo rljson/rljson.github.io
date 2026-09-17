@@ -20,6 +20,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@ggdna/dna-scripts": "^0.2.1",
     "@ggdna/dna-vscode": "^0.2.0",
     "@tssuite/helix-js": "^0.3.0",
     "prettier": "^3.9.6",

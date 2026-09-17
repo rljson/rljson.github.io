@@ -21,6 +21,9 @@ importers:
       '@astrojs/check':
         specifier: ^0.9.10
         version: 0.9.10(prettier-plugin-astro@1.0.0(@emnapi/core@1.11.1)(@emnapi/runtime@1.11.3)(prettier@3.9.6))(prettier@3.9.6)(typescript@6.0.3)
+      '@ggdna/dna-scripts':
+        specifier: ^0.2.1
+        version: 0.2.1
       '@ggdna/dna-vscode':
         specifier: ^0.2.0
         version: 0.2.0
@@ -453,6 +456,10 @@ packages:
 
   '@expressive-code/plugin-text-markers@0.44.2':
     resolution: {integrity: sha512-SNI7EgUSiADqbqUzzMbj1ZeC/r2pa5eg3KyFOGAd3a7EsIA4qzjXQLp+ODWQtHVDKFCdGs4J3ovSJUqvKIK96g==}
+
+  '@ggdna/dna-scripts@0.2.1':
+    resolution: {integrity: sha512-JA9pZkyYGAlzZT6RMW9H46SFm5CQo+GRm9mqaUy9crqrW9bV1iy1JYYPvydShNF01Ju1gm2N61Fo0+GBpTBVvA==}
+    engines: {node: '>=22'}
 
   '@ggdna/dna-vscode@0.2.0':
     resolution: {integrity: sha512-dfxz310fhP7k7SNc/IbYh2R5Dg0En7FGmAlnm4jrr4CKLYROfe0e3LXzbrsx+G6YO8BgJ7p49esuYzjziKtsqg==}
@@ -2476,6 +2483,8 @@ snapshots:
   '@expressive-code/plugin-text-markers@0.44.2':
     dependencies:
       '@expressive-code/core': 0.44.2
+
+  '@ggdna/dna-scripts@0.2.1': {}
 
   '@ggdna/dna-vscode@0.2.0': {}
 

@@ -14,18 +14,56 @@ and published at [rljson.github.io](https://rljson.github.io).
 
 ## Content
 
-| Path                          | Purpose                                    |
-| ----------------------------- | ------------------------------------------ |
-| `src/content/docs/index.mdx`  | Landing page                               |
-| `src/content/docs/guides/`    | Start here, Format and Protocols guides    |
-| `src/content/docs/reference/` | Ecosystem and type reference               |
-| `src/assets/logo/`            | Rljson logos, taken from `@rljson/icons`   |
-| `src/assets/figures/`         | Architecture figures, from `@rljson/icons` |
-| `public/`                     | Favicon and touch icon                     |
-| `astro.config.mjs`            | Site title, logo, social links and sidebar |
+| Path                           | Purpose                                    |
+| ------------------------------ | ------------------------------------------ |
+| `src/content/docs/index.mdx`   | Landing page                               |
+| `src/content/docs/guides/`     | Start here, Format and Protocols guides    |
+| `src/content/docs/reference/`  | Ecosystem and type reference               |
+| `src/assets/logo/`             | Rljson logos, taken from `@rljson/icons`   |
+| `src/assets/figures/`          | Architecture figures, from `@rljson/icons` |
+| `src/components/Snippet.astro` | Shows a region of a tested file            |
+| `src/snippets/`                | Extracts a region from a file              |
+| `test/content/docs/`           | The tested code of each page               |
+| `test/goldens/`                | The outputs the pages show                 |
+| `public/`                      | Favicon and touch icon                     |
+| `astro.config.mjs`             | Site title, logo, social links and sidebar |
 
 Images come from [`@rljson/icons`](https://github.com/rljson/icons). Update
 them there and copy the result over, rather than editing the copies here.
+
+## Code snippets
+
+Every TypeScript snippet on a page comes from a test. So it compiles and runs
+against the pinned `@rljson/*` versions.
+
+- Write the code of `src/content/docs/<page>.mdx` into
+  `test/content/docs/<page>.spec.ts`
+- Mark each snippet with `// #region <name>` and `// #endregion <name>`
+- Give each snippet its own import line at the top of the file, marked with
+  the same name
+- Put the checks the reader should see into the region, all others after it
+- Write larger results with `toMatchFileSnapshot` to
+  `test/goldens/<page>/<name>.json`
+- Show a snippet with `<Snippet file="…" region="<name>" />`
+- Show an output with `<Snippet file="test/goldens/…" title="Output" />`
+
+```mdx
+import Snippet from '../../../components/Snippet.astro';
+
+<Snippet
+  file="test/content/docs/guides/routing.spec.ts"
+  region="route"
+/>
+```
+
+Keep shell commands and JSON that only sketches the format inline.
+
+A missing region fails `astro build`. A type error in a spec fails
+`astro check`. Update the outputs after a change:
+
+```bash
+pnpm exec vitest run -u
+```
 
 ## Commands
 

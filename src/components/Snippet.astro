@@ -1,0 +1,36 @@
+---
+// Renders a region of a tested file with Starlight's <Code> component.
+import { Code } from '@astrojs/starlight/components';
+import type { ComponentProps } from 'astro/types';
+
+import { extractRegion } from '../snippets/extract-region';
+
+// Vite reads these files at build time and tracks them: the dev server
+// updates the page as soon as a test changes.
+const files = import.meta.glob<string>(
+  ['/test/content/**/*.spec.ts', '/test/goldens/**/*'],
+  { query: '?raw', import: 'default', eager: true },
+);
+
+type Props = Omit<ComponentProps<typeof Code>, 'code'> & {
+  /** Path from the repo root, e.g. `test/content/docs/guides/x.spec.ts` */
+  file: string;
+  /** Name of the region to show. Omit it to show the whole file. */
+  region?: string;
+};
+
+const { file, region, lang = file.split('.').pop(), ...props } = Astro.props;
+
+const source = files[`/${file}`];
+if (source === undefined) {
+  throw new Error(`Snippet: "${file}" not found or not in the glob.`);
+}
+
+const code = region ? extractRegion(source, region) : source.trim();
+---
+
+<Code
+  code={code}
+  lang={lang}
+  {...props}
+/>

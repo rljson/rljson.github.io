@@ -8,6 +8,13 @@ astro dev --background
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
+## Code snippets
+
+TypeScript code on the pages comes from tests. Never write a TypeScript code
+block into a page by hand. Add a region to the page's spec in
+`test/content/docs/` and show it with `<Snippet>`, as described in the
+README.
+
 ## Documentation
 
 Full documentation: https://docs.astro.build

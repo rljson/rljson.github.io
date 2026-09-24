@@ -33,6 +33,9 @@ importers:
       '@rljson/rljson':
         specifier: 0.0.81
         version: 0.0.81
+      '@tssuite/golden':
+        specifier: ^1.0.1
+        version: 1.0.1(@rljson/json@0.0.21)(@tssuite/project-root@0.0.17)
       '@tssuite/helix-js':
         specifier: ^0.3.0
         version: 0.3.0
@@ -714,6 +717,10 @@ packages:
     resolution: {integrity: sha512-1bBHWbzzaOE3ba2niyvmu4d9VYv5atLzzHDI2ka3AlHLyBDD8Q9qI/HCjimULJlprIGVeN4+jN8sth4CdnGxOQ==}
     engines: {node: '>=22.14.0'}
 
+  '@rljson/json@0.0.21':
+    resolution: {integrity: sha512-oNDY2B6HgHSzbaRh2fU8tTEEChuCzJU2sF9yzLYzS9jryT13XyfvSO13WkkPXgpMCe78AuIaGwbusNg8YARrdA==}
+    engines: {node: '>=22.14.0'}
+
   '@rljson/json@0.0.23':
     resolution: {integrity: sha512-ViYo8zx0z/SomjpS2f+xK+tS7HTwZI1HzRarHpXO3spVjpaF+GKCa7HgDXoV/Wc+zsliDzo8wz7S5NFb0yZaow==}
     engines: {node: '>=22.14.0'}
@@ -852,9 +859,20 @@ packages:
   '@shikijs/vscode-textmate@10.0.2':
     resolution: {integrity: sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg==}
 
+  '@tssuite/golden@1.0.1':
+    resolution: {integrity: sha512-tka90Ai5fIcwB4Hmoi5DYqX9SKH05G7IBiU0t9J8M8eTS9Keb4anZkjVxxQOmVNOPr0Bt5Gy7QYFZtIj2PO8AQ==}
+    engines: {node: '>=22.14.0'}
+    peerDependencies:
+      '@rljson/json': ^0.0.21
+      '@tssuite/project-root': 0.0.17
+
   '@tssuite/helix-js@0.3.0':
     resolution: {integrity: sha512-CMMgTKYzgrAUStGsxXOE4seDs6XR+I/eMzQ+O4/95H/WeFk6Tf7/EOQlT6Zb/Z50sk9QJpXRU/Zj4Zy0QoiSaA==}
     engines: {node: '>=22'}
+
+  '@tssuite/project-root@0.0.17':
+    resolution: {integrity: sha512-q076C56RTosctzH2PttSVo+jyZyMe7O4DB2RzKvYZOf0zqvvRo6S33qMvLdeznBUb1znsnygYUgakQ+gg/K5EA==}
+    engines: {node: '>=22.14.0'}
 
   '@tybys/wasm-util@0.10.4':
     resolution: {integrity: sha512-W3c4gRigFS0T/Ma4qIYF3GDAc5AQdHb1yL5znJT1Zv1YaD9Kitx656wBjvr19qbiosmZT8lWDM5BEMynUqX65A==}
@@ -2812,6 +2830,8 @@ snapshots:
     dependencies:
       '@rljson/json': 0.0.23
 
+  '@rljson/json@0.0.21': {}
+
   '@rljson/json@0.0.23': {}
 
   '@rljson/rljson@0.0.81':
@@ -2907,7 +2927,14 @@ snapshots:
 
   '@shikijs/vscode-textmate@10.0.2': {}
 
+  '@tssuite/golden@1.0.1(@rljson/json@0.0.21)(@tssuite/project-root@0.0.17)':
+    dependencies:
+      '@rljson/json': 0.0.21
+      '@tssuite/project-root': 0.0.17
+
   '@tssuite/helix-js@0.3.0': {}
+
+  '@tssuite/project-root@0.0.17': {}
 
   '@tybys/wasm-util@0.10.4':
     dependencies:

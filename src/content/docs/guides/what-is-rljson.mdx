@@ -3,6 +3,8 @@ title: What is Rljson?
 description: An introduction to the Rljson exchange format and the problem it solves.
 ---
 
+import Snippet from '../../../components/Snippet.astro';
+
 Rljson is a JSON-based exchange format inspired by relational databases,
 designed for the efficient synchronization of large datasets across networks.
 
@@ -32,18 +34,7 @@ out of the format rather than having to be bolted on.
 An Rljson file is a collection of tables. The table name is the key, the
 table data is the value:
 
-```json
-{
-  "ingredients": {
-    "_type": "components",
-    "_data": [
-      { "id": "flour", "amountUnit": "g", "_hash": "A5d..." },
-      { "id": "sugar", "amountUnit": "g", "_hash": "B7f..." }
-    ],
-    "_hash": "t5o..."
-  }
-}
-```
+<Snippet file="test/goldens/guides/what-is-rljson/first-look.json" />
 
 Each row carries a `_hash`, and so does the table itself. Change one value in
 one row and only that row's hash — and the hashes above it — change.

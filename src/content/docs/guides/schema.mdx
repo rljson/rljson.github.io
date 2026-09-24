@@ -1,0 +1,45 @@
+---
+title: Schema and validation
+description: TableCfg, column definitions and the validator system.
+---
+
+import Snippet from '../../../components/Snippet.astro';
+
+export const spec = 'test/content/docs/guides/schema.spec.ts';
+
+## TableCfg
+
+`TableCfg` defines the schema of a table: its key, content type, column
+definitions and metadata flags.
+
+<Snippet
+  file={spec}
+  region="table-cfg"
+/>
+
+Column types are `string`, `number`, `boolean`, `json`, `jsonArray` and
+`jsonValue`. A column can point at another table through its optional `ref`
+property.
+
+## Validation
+
+The `Validate` class coordinates several validators to check a whole Rljson
+object: naming conventions, hash integrity, reference validity, tree
+structure, and layer, cake and buffet consistency.
+
+<Snippet
+  file={spec}
+  region="validation"
+/>
+
+The result names each validator that found errors, and is empty when the data
+is valid. Here the table key breaks the naming rule:
+
+<Snippet
+  file="test/goldens/guides/schema/validation.json"
+  title="Output"
+/>
+
+`BaseValidator` checks all core rules. Add project-specific rules by
+implementing the `Validator` interface and registering it with
+`addValidator`.

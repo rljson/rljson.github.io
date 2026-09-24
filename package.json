@@ -24,6 +24,7 @@
     "@ggdna/dna-vscode": "^0.2.1",
     "@rljson/hash": "0.0.19",
     "@rljson/rljson": "0.0.81",
+    "@tssuite/golden": "^1.0.1",
     "@tssuite/helix-js": "^0.3.0",
     "@types/node": "^26.6.2",
     "prettier": "^3.9.9",

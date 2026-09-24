@@ -1,0 +1,87 @@
+---
+title: Sync protocol
+description: The wire protocol types shared by Connector, Server and Client.
+---
+
+import Snippet from '../../../components/Snippet.astro';
+
+export const spec = 'test/content/docs/guides/sync-protocol.spec.ts';
+
+The `sync/` module of `@rljson/rljson` defines the wire-protocol types used by
+the messaging layer of [`@rljson/db`](https://github.com/rljson/db)
+(Connector) and [`@rljson/server`](https://github.com/rljson/server).
+
+## ConnectorPayload
+
+The payload transmitted between Connector and Server.
+
+<Snippet
+  file={spec}
+  region="connector-payload"
+/>
+
+## AckPayload
+
+The server's acknowledgment that all — or some — receivers got a ref.
+
+<Snippet
+  file={spec}
+  region="ack-payload"
+/>
+
+## GapFill
+
+When a client detects a gap in the sequence, it asks for the missing refs.
+
+<Snippet
+  file={spec}
+  region="gap-fill"
+/>
+
+## SyncConfig
+
+Feature flags to opt into hardened sync behavior. All flags are optional and
+default to off.
+
+<Snippet
+  file={spec}
+  region="sync-config"
+/>
+
+## SyncEventNames
+
+`syncEvents` generates typed, route-specific socket event names:
+
+<Snippet
+  file={spec}
+  region="sync-events"
+/>
+
+<Snippet
+  file="test/goldens/guides/sync-protocol/sync-events.json"
+  title="Output"
+/>
+
+## ClientId
+
+A stable client identity that survives reconnections, unlike the ephemeral
+Connector origin.
+
+<Snippet
+  file={spec}
+  region="client-id"
+/>
+
+## Conflict detection
+
+A conflict occurs when the InsertHistory of a table has diverged into several
+branches — multiple tips that are not ancestors of each other — which means
+concurrent writes from different clients.
+
+These types signal that a conflict exists. They do not resolve it: resolution
+is left to the application.
+
+<Snippet
+  file={spec}
+  region="conflict"
+/>

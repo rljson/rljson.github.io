@@ -1,0 +1,8 @@
+{
+  "ref": "/sharedTree",
+  "ack": "/sharedTree:ack",
+  "ackClient": "/sharedTree:ack:client",
+  "gapFillReq": "/sharedTree:gapfill:req",
+  "gapFillRes": "/sharedTree:gapfill:res",
+  "bootstrap": "/sharedTree:bootstrap"
+}

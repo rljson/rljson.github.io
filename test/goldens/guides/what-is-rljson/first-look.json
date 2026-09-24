@@ -1,0 +1,18 @@
+{
+  "ingredients": {
+    "_type": "components",
+    "_data": [
+      {
+        "id": "flour",
+        "amountUnit": "g",
+        "_hash": "MBcC3ciKN8PCXzrH-zS2dZ"
+      },
+      {
+        "id": "sugar",
+        "amountUnit": "g",
+        "_hash": "Gp8KQtui6hjbWVq5BvLKSS"
+      }
+    ],
+    "_hash": "hFsTSrQqGSGc-REepvsVHR"
+  }
+}

@@ -65,6 +65,16 @@ A missing region fails `astro build`. A type error in a spec fails
 pnpm exec vitest run -u
 ```
 
+## Preview a page
+
+Open the `.mdx` file of a page and start `Preview page` in Run and Debug.
+VS Code shows the page in its integrated browser, rendered by the Astro dev
+server. The page reloads when you change it or its spec. For the landing page,
+open `/` there.
+
+The MDX Preview extension cannot render Astro components, so it fails on
+these pages.
+
 ## Commands
 
 | Command        | Action                                   |

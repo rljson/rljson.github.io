@@ -1,0 +1,11 @@
+{
+  "base": {
+    "hasErrors": true,
+    "tableKeysNotLowerCamelCase": {
+      "error": "Table names must be lower camel case",
+      "invalidTableKeys": [
+        "my-table"
+      ]
+    }
+  }
+}

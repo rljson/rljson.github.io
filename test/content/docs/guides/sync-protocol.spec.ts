@@ -41,6 +41,7 @@ import {
   syncConfigDefault,
   syncConfigFullExample,
 } from '@rljson/rljson';
+import { writeGolden } from '@tssuite/golden';
 import { describe, expect, it, vi } from 'vitest';
 
 describe('Sync protocol', () => {
@@ -131,9 +132,7 @@ describe('Sync protocol', () => {
     const events = syncEvents('/sharedTree');
     // #endregion sync-events
 
-    await expect(JSON.stringify(events, null, 2)).toMatchFileSnapshot(
-      '../../../goldens/guides/sync-protocol/sync-events.json',
-    );
+    await writeGolden('sync-events.json', events);
   });
 
   it('ClientId: creates a stable client identity', () => {

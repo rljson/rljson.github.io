@@ -5,15 +5,13 @@ description: TableCfg, column definitions and the validator system.
 
 import Snippet from '../../../components/Snippet.astro';
 
-export const spec = 'test/content/docs/guides/schema.spec.ts';
-
 ## TableCfg
 
 `TableCfg` defines the schema of a table: its key, content type, column
 definitions and metadata flags.
 
 <Snippet
-  file={spec}
+  file="schema.spec.ts"
   region="table-cfg"
 />
 
@@ -28,7 +26,7 @@ object: naming conventions, hash integrity, reference validity, tree
 structure, and layer, cake and buffet consistency.
 
 <Snippet
-  file={spec}
+  file="schema.spec.ts"
   region="validation"
 />
 
@@ -36,7 +34,7 @@ The result names each validator that found errors, and is empty when the data
 is valid. Here the table key breaks the naming rule:
 
 <Snippet
-  file="test/goldens/guides/schema/validation.json"
+  file="validation.json"
   title="Output"
 />
 

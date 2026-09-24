@@ -38,6 +38,7 @@ import {
   exampleLayersTable,
   type Rljson,
 } from '@rljson/rljson';
+import { writeGolden } from '@tssuite/golden';
 import { describe, expect, it } from 'vitest';
 
 describe('Data types', () => {
@@ -56,9 +57,7 @@ describe('Data types', () => {
     });
     // #endregion components
 
-    await expect(JSON.stringify(ingredients, null, 2)).toMatchFileSnapshot(
-      '../../../goldens/guides/data-types/components.json',
-    );
+    await writeGolden('components.json', ingredients);
     expect(errorsOf({ ingredients })).toEqual({ hasErrors: false });
   });
 
@@ -108,9 +107,7 @@ describe('Data types', () => {
     });
     // #endregion trees
 
-    await expect(JSON.stringify(nodes, null, 2)).toMatchFileSnapshot(
-      '../../../goldens/guides/data-types/trees.json',
-    );
+    await writeGolden('trees.json', nodes);
     expect(errorsOf({ trees: { _type: 'trees', _data: nodes } })).toEqual({
       hasErrors: false,
     });

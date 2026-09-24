@@ -8,6 +8,7 @@
 
 import { hip } from '@rljson/hash';
 import type { ComponentsTable } from '@rljson/rljson';
+import { writeGolden } from '@tssuite/golden';
 import { describe, expect, it } from 'vitest';
 
 describe('What is Rljson?', () => {
@@ -23,11 +24,7 @@ describe('What is Rljson?', () => {
     });
 
   it('A first look: hashes each row and the table', async () => {
-    await expect(
-      JSON.stringify({ ingredients: ingredients('g') }, null, 2),
-    ).toMatchFileSnapshot(
-      '../../../goldens/guides/what-is-rljson/first-look.json',
-    );
+    await writeGolden('first-look.json', { ingredients: ingredients('g') });
   });
 
   it('changes only the hashes of a changed row and above', () => {

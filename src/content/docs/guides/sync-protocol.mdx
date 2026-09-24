@@ -5,8 +5,6 @@ description: The wire protocol types shared by Connector, Server and Client.
 
 import Snippet from '../../../components/Snippet.astro';
 
-export const spec = 'test/content/docs/guides/sync-protocol.spec.ts';
-
 The `sync/` module of `@rljson/rljson` defines the wire-protocol types used by
 the messaging layer of [`@rljson/db`](https://github.com/rljson/db)
 (Connector) and [`@rljson/server`](https://github.com/rljson/server).
@@ -16,7 +14,7 @@ the messaging layer of [`@rljson/db`](https://github.com/rljson/db)
 The payload transmitted between Connector and Server.
 
 <Snippet
-  file={spec}
+  file="sync-protocol.spec.ts"
   region="connector-payload"
 />
 
@@ -25,7 +23,7 @@ The payload transmitted between Connector and Server.
 The server's acknowledgment that all — or some — receivers got a ref.
 
 <Snippet
-  file={spec}
+  file="sync-protocol.spec.ts"
   region="ack-payload"
 />
 
@@ -34,7 +32,7 @@ The server's acknowledgment that all — or some — receivers got a ref.
 When a client detects a gap in the sequence, it asks for the missing refs.
 
 <Snippet
-  file={spec}
+  file="sync-protocol.spec.ts"
   region="gap-fill"
 />
 
@@ -44,7 +42,7 @@ Feature flags to opt into hardened sync behavior. All flags are optional and
 default to off.
 
 <Snippet
-  file={spec}
+  file="sync-protocol.spec.ts"
   region="sync-config"
 />
 
@@ -53,12 +51,12 @@ default to off.
 `syncEvents` generates typed, route-specific socket event names:
 
 <Snippet
-  file={spec}
+  file="sync-protocol.spec.ts"
   region="sync-events"
 />
 
 <Snippet
-  file="test/goldens/guides/sync-protocol/sync-events.json"
+  file="sync-events.json"
   title="Output"
 />
 
@@ -68,7 +66,7 @@ A stable client identity that survives reconnections, unlike the ephemeral
 Connector origin.
 
 <Snippet
-  file={spec}
+  file="sync-protocol.spec.ts"
   region="client-id"
 />
 
@@ -82,6 +80,6 @@ These types signal that a conflict exists. They do not resolve it: resolution
 is left to the application.
 
 <Snippet
-  file={spec}
+  file="sync-protocol.spec.ts"
   region="conflict"
 />

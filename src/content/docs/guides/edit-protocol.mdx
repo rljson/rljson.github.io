@@ -5,8 +5,6 @@ description: Inserts, InsertHistory, Edits, MultiEdits and EditHistory.
 
 import Snippet from '../../../components/Snippet.astro';
 
-export const spec = 'test/content/docs/guides/edit-protocol.spec.ts';
-
 Rljson data is immutable, so a change is expressed as an operation rather
 than as an in-place edit.
 
@@ -16,7 +14,7 @@ An `Insert` describes a data modification: a command, a value, a route and an
 optional origin.
 
 <Snippet
-  file={spec}
+  file="edit-protocol.spec.ts"
   region="insert"
 />
 
@@ -27,7 +25,7 @@ that was modified, and optionally its `origin`, its causal predecessors
 (`previous`) and a `clientTimestamp`.
 
 <Snippet
-  file={spec}
+  file="edit-protocol.spec.ts"
   region="insert-history"
 />
 
@@ -49,6 +47,6 @@ A `timeId` is a unique, time-based identifier of the form
 `"timestamp:xxxx"`:
 
 <Snippet
-  file={spec}
+  file="edit-protocol.spec.ts"
   region="time-id"
 />

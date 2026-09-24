@@ -59,7 +59,7 @@ describe('Getting started', () => {
     });
     // #endregion create-table
 
-    await writeGolden('create-table2.json', ingredients);
+    await writeGolden('create-table.json', ingredients);
 
     // #region validate
     const validate = new Validate();

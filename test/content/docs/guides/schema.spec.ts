@@ -15,6 +15,7 @@ import { hip } from '@rljson/hash';
 import { BaseValidator, Validate } from '@rljson/rljson';
 // #endregion validation
 
+import { writeGolden } from '@tssuite/golden';
 import { describe, expect, it } from 'vitest';
 
 describe('Schema and validation', () => {
@@ -50,8 +51,6 @@ describe('Schema and validation', () => {
     });
     // #endregion validation
 
-    await expect(JSON.stringify(errors, null, 2)).toMatchFileSnapshot(
-      '../../../goldens/guides/schema/validation.json',
-    );
+    await writeGolden('validation.json', errors);
   });
 });

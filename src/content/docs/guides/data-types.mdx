@@ -8,8 +8,6 @@ import CakeSliced from '../../../assets/figures/cake-sliced.svg';
 import Slice from '../../../assets/figures/slice.svg';
 import Snippet from '../../../components/Snippet.astro';
 
-export const spec = 'test/content/docs/guides/data-types.spec.ts';
-
 Rljson defines six content types. A table declares which one it holds through
 its `_type` field.
 
@@ -19,12 +17,12 @@ The fundamental data unit. A `ComponentsTable` contains key-value rows whose
 auto-generated `_hash` serves as the primary key.
 
 <Snippet
-  file={spec}
+  file="data-types.spec.ts"
   region="components"
 />
 
 <Snippet
-  file="test/goldens/guides/data-types/components.json"
+  file="components.json"
   title="Output"
 />
 
@@ -40,7 +38,7 @@ Large layers keep their slice IDs separate from their data. That way a client
 can fetch the IDs first and pull the details only for what it actually needs.
 
 <Snippet
-  file={spec}
+  file="data-types.spec.ts"
   region="slice-ids"
 />
 
@@ -60,7 +58,7 @@ A layer assigns components to slices. It references a `componentsTable` and a
 block.
 
 <Snippet
-  file={spec}
+  file="data-types.spec.ts"
   region="layers"
 />
 
@@ -77,7 +75,7 @@ assigns different component values to those shared slices — one cake, many
 views of the same set of things.
 
 <Snippet
-  file={spec}
+  file="data-types.spec.ts"
   region="cakes"
 />
 
@@ -87,7 +85,7 @@ A `Buffet` is a heterogeneous collection of related items: references to rows
 in any other table — cakes, layers, components and so on.
 
 <Snippet
-  file={spec}
+  file="data-types.spec.ts"
   region="buffets"
 />
 
@@ -99,11 +97,11 @@ of type `Json | null`, and a `children` array of child hashes — or `null` for
 a leaf.
 
 <Snippet
-  file={spec}
+  file="data-types.spec.ts"
   region="trees"
 />
 
 <Snippet
-  file="test/goldens/guides/data-types/trees.json"
+  file="trees.json"
   title="Output"
 />

@@ -42,28 +42,28 @@ against the pinned `@rljson/*` versions.
 - Give each snippet its own import line at the top of the file, marked with
   the same name
 - Put the checks the reader should see into the region, all others after it
-- Write larger results with `toMatchFileSnapshot` to
-  `test/goldens/<page>/<name>.json`
-- Show a snippet with `<Snippet file="…" region="<name>" />`
-- Show an output with `<Snippet file="test/goldens/…" title="Output" />`
+- Write larger results with `writeGolden('<name>.json', value)` from
+  `@tssuite/golden`. It writes them to `test/goldens/content/docs/<page>/`
+- Show a snippet with `<Snippet file="<page>.spec.ts" region="<name>" />`
+- Show an output with `<Snippet file="<name>.json" title="Output" />`
+
+`<Snippet>` takes only the file name. It looks for the file next to the
+page's spec and in the page's goldens.
 
 ```mdx
 import Snippet from '../../../components/Snippet.astro';
 
 <Snippet
-  file="test/content/docs/guides/routing.spec.ts"
+  file="routing.spec.ts"
   region="route"
 />
 ```
 
 Keep shell commands and JSON that only sketches the format inline.
 
-A missing region fails `astro build`. A type error in a spec fails
-`astro check`. Update the outputs after a change:
-
-```bash
-pnpm exec vitest run -u
-```
+A missing file or region fails `astro build`. A type error in a spec fails
+`astro check`. `pnpm test` rewrites the outputs, so review their changes in
+git.
 
 ## Preview a page
 

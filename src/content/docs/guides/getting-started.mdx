@@ -5,8 +5,6 @@ description: Install the Rljson packages and create your first hashed dataset.
 
 import Snippet from '../../../components/Snippet.astro';
 
-export const spec = 'test/content/docs/guides/getting-started.spec.ts';
-
 ## Installation
 
 The core types, validation rules and protocol definitions live in
@@ -25,7 +23,7 @@ pnpm add @rljson/hash
 ## Import what you need
 
 <Snippet
-  file={spec}
+  file="getting-started.spec.ts"
   region="imports"
 />
 
@@ -35,12 +33,12 @@ A table declares its `_type` and holds its rows in `_data`. `hip` from
 `@rljson/hash` adds the hashes:
 
 <Snippet
-  file={spec}
+  file="getting-started.spec.ts"
   region="create-table"
 />
 
 <Snippet
-  file="test/goldens/content/docs/guides/getting-started/create-table2.json"
+  file="create-table.json"
   title="Output"
 />
 
@@ -50,7 +48,7 @@ A table declares its `_type` and holds its rows in `_data`. `hip` from
 conventions, hash integrity, reference validity and structural consistency:
 
 <Snippet
-  file={spec}
+  file="getting-started.spec.ts"
   region="validate"
 />
 

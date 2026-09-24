@@ -17,6 +17,14 @@ export default defineConfig({
       },
       favicon: '/favicon.png',
       customCss: ['./src/styles/angular.css'],
+      // Round and outline each code frame as a whole, so titles and tabs
+      // stay attached to their code.
+      expressiveCode: {
+        styleOverrides: {
+          borderRadius: '0.5rem',
+          borderColor: 'var(--sl-color-hairline-shade)',
+        },
+      },
       head: [
         {
           tag: 'link',

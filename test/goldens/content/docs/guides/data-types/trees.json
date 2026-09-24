@@ -1,0 +1,30 @@
+[
+  {
+    "id": "index.ts",
+    "isParent": false,
+    "meta": {
+      "value": "console.log(\"hello\")",
+      "_hash": "LyuDNwADJvK3FOXBKMmvmp"
+    },
+    "children": null,
+    "_hash": "Cgj0iKGbRmqvB_fuAkX36D"
+  },
+  {
+    "id": "src",
+    "isParent": true,
+    "meta": null,
+    "children": [
+      "Cgj0iKGbRmqvB_fuAkX36D"
+    ],
+    "_hash": "HOgDjxGrmhoSa27-Z-GcG5"
+  },
+  {
+    "id": "root",
+    "isParent": true,
+    "meta": null,
+    "children": [
+      "HOgDjxGrmhoSa27-Z-GcG5"
+    ],
+    "_hash": "EiLEnpe6IJwmm44Wgqyd_G"
+  }
+]

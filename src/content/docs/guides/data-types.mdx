@@ -6,6 +6,7 @@ description: Components, SliceIds, Layers, Cakes, Buffets and Trees — the six 
 import CakeLayered from '../../../assets/figures/cake-layered.svg';
 import CakeSliced from '../../../assets/figures/cake-sliced.svg';
 import Slice from '../../../assets/figures/slice.svg';
+import Snippet from '../../../components/Snippet.astro';
 
 Rljson defines six content types. A table declares which one it holds through
 its `_type` field.
@@ -15,18 +16,15 @@ its `_type` field.
 The fundamental data unit. A `ComponentsTable` contains key-value rows whose
 auto-generated `_hash` serves as the primary key.
 
-```typescript
-import { ComponentsTable } from '@rljson/rljson';
+<Snippet
+  file="data-types.spec.ts"
+  region="components"
+/>
 
-const ingredients: ComponentsTable = {
-  _type: 'components',
-  _data: [
-    { id: 'flour', amountUnit: 'g', _hash: 'A5d...' },
-    { id: 'sugar', amountUnit: 'g', _hash: 'B7f...' },
-  ],
-  _hash: 't5o...',
-};
-```
+<Snippet
+  file="components.json"
+  title="Output"
+/>
 
 ## SliceIds
 
@@ -39,15 +37,10 @@ const ingredients: ComponentsTable = {
 Large layers keep their slice IDs separate from their data. That way a client
 can fetch the IDs first and pull the details only for what it actually needs.
 
-```typescript
-import { SliceIds, SliceIdsTable } from '@rljson/rljson';
-
-const slices: SliceIdsTable = {
-  _type: 'sliceIds',
-  _data: [{ add: ['slice0', 'slice1'], remove: [], _hash: 'wyY...' }],
-  _hash: 'cnG...',
-};
-```
+<Snippet
+  file="data-types.spec.ts"
+  region="slice-ids"
+/>
 
 A derived set modifies an existing one through `base`, `add` and `remove`,
 so related sets share most of their storage.
@@ -64,9 +57,10 @@ A layer assigns components to slices. It references a `componentsTable` and a
 `sliceIdsTable`, then maps each slice ID to a component hash in its `add`
 block.
 
-```typescript
-import { Layer, LayersTable } from '@rljson/rljson';
-```
+<Snippet
+  file="data-types.spec.ts"
+  region="layers"
+/>
 
 ## Cakes
 
@@ -80,18 +74,20 @@ A `Cake` is a stack of layers that share the same slice IDs. Each layer
 assigns different component values to those shared slices — one cake, many
 views of the same set of things.
 
-```typescript
-import { Cake, CakesTable } from '@rljson/rljson';
-```
+<Snippet
+  file="data-types.spec.ts"
+  region="cakes"
+/>
 
 ## Buffets
 
 A `Buffet` is a heterogeneous collection of related items: references to rows
 in any other table — cakes, layers, components and so on.
 
-```typescript
-import { Buffet, BuffetsTable } from '@rljson/rljson';
-```
+<Snippet
+  file="data-types.spec.ts"
+  region="buffets"
+/>
 
 ## Trees
 
@@ -100,9 +96,12 @@ optional `id` (unique among its siblings), an `isParent` flag, a `meta` field
 of type `Json | null`, and a `children` array of child hashes — or `null` for
 a leaf.
 
-```typescript
-import { Tree, TreesTable, treeFromObject } from '@rljson/rljson';
+<Snippet
+  file="data-types.spec.ts"
+  region="trees"
+/>
 
-// Convert a plain object into hashed tree nodes
-const nodes = treeFromObject({ src: { 'index.ts': 'console.log("hello")' } });
-```
+<Snippet
+  file="trees.json"
+  title="Output"
+/>

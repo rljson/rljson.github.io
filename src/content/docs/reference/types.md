@@ -19,11 +19,11 @@ explained.
 
 ## Schema
 
-| Type                                        | Guide                                    |
-| ------------------------------------------- | ---------------------------------------- |
-| `TableCfg`, `ColumnCfg`, `ColumnCfgWithRef` | [Schema and validation](/guides/schema/) |
-| `throwOnInvalidTableCfg`                    | [Schema and validation](/guides/schema/) |
-| `Validate`, `BaseValidator`, `Validator`    | [Schema and validation](/guides/schema/) |
+| Type                                     | Guide                                    |
+| ---------------------------------------- | ---------------------------------------- |
+| `TableCfg`, `ColumnCfg`                  | [Schema and validation](/guides/schema/) |
+| `throwOnInvalidTableCfg`                 | [Schema and validation](/guides/schema/) |
+| `Validate`, `BaseValidator`, `Validator` | [Schema and validation](/guides/schema/) |
 
 ## Edit protocol
 

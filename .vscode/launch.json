@@ -6,6 +6,17 @@
       "name": "Development server",
       "request": "launch",
       "type": "node-terminal"
+    },
+    {
+      "command": "./node_modules/.bin/astro dev",
+      "name": "Preview page",
+      "request": "launch",
+      "serverReadyAction": {
+        "action": "openIntegratedBrowser",
+        "pattern": "localhost:([0-9]+)",
+        "uriFormat": "http://localhost:%s/${fileDirnameBasename}/${fileBasenameNoExtension}/"
+      },
+      "type": "node-terminal"
     }
   ]
 }

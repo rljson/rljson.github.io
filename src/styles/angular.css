@@ -261,7 +261,8 @@ header.header {
   padding: 0.0625rem 0.3rem;
 }
 
-.expressive-code .frame pre,
+/* Expressive Code frames get their radius and border in astro.config.mjs.
+ * Styling their inner `pre` here would split tabs and title bars off. */
 .sl-markdown-content pre:not(:where(.not-content *)) {
   border-radius: 0.5rem;
   border: 1px solid var(--sl-color-hairline-shade);

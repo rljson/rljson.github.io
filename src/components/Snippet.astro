@@ -1,0 +1,45 @@
+---
+// Renders a region of a tested file with Starlight's <Code> component.
+import { Code } from '@astrojs/starlight/components';
+import type { ComponentProps } from 'astro/types';
+
+import { extractRegion } from '../snippets/extract-region';
+import { snippetPaths } from '../snippets/snippet-paths';
+
+// Vite reads these files at build time and tracks them: the dev server
+// updates the page as soon as a test changes.
+const files = import.meta.glob<string>(
+  ['/test/content/**/*', '/test/goldens/**/*'],
+  { query: '?raw', import: 'default', eager: true },
+);
+
+type Props = Omit<ComponentProps<typeof Code>, 'code'> & {
+  /** The spec or an output of this page, e.g. `x.spec.ts` or `a.json` */
+  file: string;
+  /** Name of the region to show. Omit it to show the whole file. */
+  region?: string;
+};
+
+const { file, region, lang = file.split('.').pop(), ...props } = Astro.props;
+
+// Look for the file where the test tree mirrors this page
+const page = Astro.locals.starlightRoute.entry.filePath;
+const paths = snippetPaths(page, file);
+const found = paths.filter((path) => `/${path}` in files);
+
+if (!found.length) {
+  throw new Error(`Snippet: "${file}" not found in ${paths.join(' or ')}.`);
+}
+if (found.length > 1) {
+  throw new Error(`Snippet: "${file}" exists in ${found.join(' and ')}.`);
+}
+
+const source = files[`/${found[0]}`];
+const code = region ? extractRegion(source, region) : source.trim();
+---
+
+<Code
+  code={code}
+  lang={lang}
+  {...props}
+/>

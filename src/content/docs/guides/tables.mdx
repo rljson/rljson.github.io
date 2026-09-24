@@ -3,6 +3,8 @@ title: Tables, rows and hashes
 description: How an Rljson file is structured — tables, rows, columns, hashes and references.
 ---
 
+import Snippet from '../../../components/Snippet.astro';
+
 ## Tables
 
 An Rljson file is a collection of tables. The table name is the key and the
@@ -35,8 +37,8 @@ A row is a plain JSON object. Its keys are the columns:
 }
 ```
 
-Column values may be of type `string`, `number`, `boolean`, `json` or
-`jsonArray`.
+Column values may be of type `string`, `number`, `boolean`, `json`,
+`jsonArray` or `jsonValue`.
 
 ## Hashes
 
@@ -72,8 +74,7 @@ id, references stay valid across machines without coordination.
 `removeDuplicates` deduplicates rows by `_hash` across all tables of an
 Rljson object:
 
-```typescript
-import { removeDuplicates } from '@rljson/rljson';
-
-const deduped = removeDuplicates(myRljsonData);
-```
+<Snippet
+  file="tables.spec.ts"
+  region="remove-duplicates"
+/>

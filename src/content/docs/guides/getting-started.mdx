@@ -3,6 +3,8 @@ title: Getting started
 description: Install the Rljson packages and create your first hashed dataset.
 ---
 
+import Snippet from '../../../components/Snippet.astro';
+
 ## Installation
 
 The core types, validation rules and protocol definitions live in
@@ -20,48 +22,35 @@ pnpm add @rljson/hash
 
 ## Import what you need
 
-```typescript
-import {
-  ConnectorPayload,
-  Rljson,
-  Route,
-  SyncConfig,
-  timeId,
-} from '@rljson/rljson';
-```
+<Snippet
+  file="getting-started.spec.ts"
+  region="imports"
+/>
 
 ## Create a table
 
-A table declares its `_type` and holds its rows in `_data`. Hashes are added
-for you:
+A table declares its `_type` and holds its rows in `_data`. `hip` from
+`@rljson/hash` adds the hashes:
 
-```typescript
-import { ComponentsTable } from '@rljson/rljson';
+<Snippet
+  file="getting-started.spec.ts"
+  region="create-table"
+/>
 
-const ingredients: ComponentsTable = {
-  _type: 'components',
-  _data: [
-    { id: 'flour', amountUnit: 'g', _hash: 'A5d...' },
-    { id: 'sugar', amountUnit: 'g', _hash: 'B7f...' },
-  ],
-  _hash: 't5o...',
-};
-```
+<Snippet
+  file="create-table.json"
+  title="Output"
+/>
 
 ## Validate it
 
 `Validate` runs a set of validators over a whole Rljson object — naming
 conventions, hash integrity, reference validity and structural consistency:
 
-```typescript
-import { BaseValidator, Validate } from '@rljson/rljson';
-
-const validate = new Validate();
-validate.addValidator(new BaseValidator());
-
-const errors = await validate.run(myRljsonData);
-// { base: { hasErrors: false } }
-```
+<Snippet
+  file="getting-started.spec.ts"
+  region="validate"
+/>
 
 `BaseValidator` covers the core rules. Add your own by implementing the
 `Validator` interface.

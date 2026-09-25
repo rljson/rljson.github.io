@@ -74,25 +74,25 @@ export default defineConfig({
         {
           label: 'Start here',
           items: [
-            { label: 'What is Rljson?', slug: 'guides/what-is-rljson' },
-            { label: 'Getting started', slug: 'guides/getting-started' },
-            { label: 'Principles', slug: 'guides/principles' },
+            { label: 'What is Rljson?', slug: 'guides/old/what-is-rljson' },
+            { label: 'Getting started', slug: 'guides/old/getting-started' },
+            { label: 'Principles', slug: 'guides/old/principles' },
           ],
         },
         {
           label: 'Format',
           items: [
-            { label: 'Tables, rows and hashes', slug: 'guides/tables' },
-            { label: 'Data types', slug: 'guides/data-types' },
-            { label: 'Schema and validation', slug: 'guides/schema' },
+            { label: 'Tables, rows and hashes', slug: 'guides/old/tables' },
+            { label: 'Data types', slug: 'guides/old/data-types' },
+            { label: 'Schema and validation', slug: 'guides/old/schema' },
           ],
         },
         {
           label: 'Protocols',
           items: [
-            { label: 'Edit protocol', slug: 'guides/edit-protocol' },
-            { label: 'Routing', slug: 'guides/routing' },
-            { label: 'Sync protocol', slug: 'guides/sync-protocol' },
+            { label: 'Edit protocol', slug: 'guides/old/edit-protocol' },
+            { label: 'Routing', slug: 'guides/old/routing' },
+            { label: 'Sync protocol', slug: 'guides/old/sync-protocol' },
           ],
         },
         {

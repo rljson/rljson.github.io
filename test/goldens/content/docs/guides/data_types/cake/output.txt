@@ -1,0 +1,6 @@
+berryCake:
+  left: vanilla sponge, vanilla cream, strawberries
+  right: chocolate sponge, chocolate cream, raspberries
+chocolateCake:
+  left: vanilla sponge, vanilla cream, chocolate flakes
+  right: chocolate sponge, chocolate cream, chocolate flakes

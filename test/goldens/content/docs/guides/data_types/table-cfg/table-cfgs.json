@@ -1,0 +1,94 @@
+{
+  "_type": "tableCfgs",
+  "_data": [
+    {
+      "key": "nutritionalValues",
+      "type": "components",
+      "columns": [
+        {
+          "key": "_hash",
+          "type": "string",
+          "titleLong": "Hash",
+          "titleShort": "Hash",
+          "_hash": "Np5O9L6tfUaUFTAYyx6g5E"
+        },
+        {
+          "key": "energy",
+          "type": "number",
+          "titleLong": "Energy in kcal per 100 g",
+          "titleShort": "Energy",
+          "_hash": "UehrE56a7gtsQigT8wAGdN"
+        },
+        {
+          "key": "fat",
+          "type": "number",
+          "titleLong": "Fat in g per 100 g",
+          "titleShort": "Fat",
+          "_hash": "9sprIiedAeYefx6-iYH3CE"
+        },
+        {
+          "key": "protein",
+          "type": "number",
+          "titleLong": "Protein in g per 100 g",
+          "titleShort": "Protein",
+          "_hash": "8y4kRczWXmxgWDwOZJMoeO"
+        },
+        {
+          "key": "carbohydrates",
+          "type": "number",
+          "titleLong": "Carbohydrates in g per 100 g",
+          "titleShort": "Carbs",
+          "_hash": "NJcVRPTslfCgNUSzNKY3is"
+        }
+      ],
+      "isHead": false,
+      "isRoot": false,
+      "isShared": true,
+      "_hash": "ZavzatXbwf6chOi1OkQ5jf"
+    },
+    {
+      "key": "ingredients",
+      "type": "components",
+      "columns": [
+        {
+          "key": "_hash",
+          "type": "string",
+          "titleLong": "Hash",
+          "titleShort": "Hash",
+          "_hash": "Np5O9L6tfUaUFTAYyx6g5E"
+        },
+        {
+          "key": "id",
+          "type": "string",
+          "titleLong": "Ingredient",
+          "titleShort": "Id",
+          "_hash": "lkbT7BPDanJ5A83ZHWoUK1"
+        },
+        {
+          "key": "amountUnit",
+          "type": "string",
+          "titleLong": "Amount unit",
+          "titleShort": "Unit",
+          "_hash": "v9mX_6HhTKlRWlIWuLf7WF"
+        },
+        {
+          "key": "nutritionalValuesRef",
+          "type": "string",
+          "titleLong": "Nutritional values",
+          "titleShort": "Nutrition",
+          "ref": {
+            "tableKey": "nutritionalValues",
+            "type": "components",
+            "_hash": "EAHb2YtjGsrOiupkaFsBaV"
+          },
+          "_hash": "kx1cKDOJzwnd3VN70lb277"
+        }
+      ],
+      "isHead": true,
+      "isRoot": true,
+      "isShared": false,
+      "_hash": "i4-R_5GvCGvoeo1ZJIUhWD"
+    }
+  ],
+  "_hash": "U82WGUkrqE-ymVqIl1hGDx"
+}

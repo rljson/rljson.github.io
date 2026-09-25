@@ -1,0 +1,18 @@
+{
+  "base": {
+    "hasErrors": true,
+    "refsNotFound": {
+      "error": "Broken references",
+      "missingRefs": [
+        {
+          "sourceTable": "ingredients",
+          "sourceItemHash": "pAHce-ygFxoRLkNqjusuAK",
+          "sourceKey": "nutritionalValuesRef",
+          "targetItemHash": "noHash",
+          "targetTable": "nutritionalValues",
+          "error": "Table \"nutritionalValues\" has no item with hash \"noHash\""
+        }
+      ]
+    }
+  }
+}

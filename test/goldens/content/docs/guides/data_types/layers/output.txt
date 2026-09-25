@@ -1,0 +1,3 @@
+sponge: 250 g flour, 200 g sugar, 200 ml milk
+butterCake: 250 g flour, 200 g sugar, 200 ml milk, 200 g butter
+glutenFree: 200 g sugar, 200 ml milk, 250 g almonds

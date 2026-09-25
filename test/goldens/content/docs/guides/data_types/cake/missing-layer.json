@@ -1,0 +1,16 @@
+{
+  "base": {
+    "hasErrors": true,
+    "cakeLayersNotFound": {
+      "error": "Layer layers of cakes are missing",
+      "brokenCakes": [
+        {
+          "cakeTable": "cakes",
+          "brokenCake": "LaZo-_SvwnZpuphFKI4pTv",
+          "layersTable": "toppingLayers",
+          "missingLayer": "c5eIVIr4REtVjJmifrVmDM"
+        }
+      ]
+    }
+  }
+}

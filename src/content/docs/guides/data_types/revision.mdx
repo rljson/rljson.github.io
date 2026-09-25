@@ -1,0 +1,207 @@
+---
+title: Revision
+description: Record corrections of your data as revisions, list the history of a row, find its newest version and write a validator of your own.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+Rljson data is immutable. To change a row, you add a new row: it gets a new
+hash, and every reference to the old row stays as it is. A revision records
+such a change. It names the table, the old row, the new row and the time of
+the change. Revisions are rows of a table of type `revisions`.
+
+In this tutorial you correct the nutritional values of flour and sugar. You
+keep both versions, record the corrections as revisions and print the
+history of each ingredient. Along the way you write a validator of your own,
+which checks that the rows a revision links exist.
+
+You will learn how to:
+
+- change data by adding a row instead of editing one
+- record a change as a revision
+- list the history of an element and find its newest version
+- write a validator and run it together with `BaseValidator`
+
+## 1. Set up the project
+
+Create a project and install the core package and the hashing package:
+
+```bash
+mkdir nutrition-history
+cd nutrition-history
+echo '{ "type": "module" }' > package.json
+pnpm add @rljson/rljson @rljson/hash
+```
+
+`"type": "module"` lets the application use ES modules and top-level `await`.
+Now create the file `history.ts`. Each of the following steps adds code to it:
+put the imports of a step at the top of the file, and its code below the code
+of the previous step. The complete file is shown at the end.
+
+## 2. Create the first version
+
+Start with the nutritional values you know. `hip` hashes each row on its
+own, and `ref` reads the hash of a row:
+
+<Snippet
+  file="revision.spec.ts"
+  region="first-version"
+  title="history.ts"
+/>
+
+## 3. Add the corrected version
+
+A lab has measured the values more precisely. Do not change the old rows:
+create new ones. They get new hashes, while the old rows and their hashes
+stay valid:
+
+<Snippet
+  file="revision.spec.ts"
+  region="second-version"
+  title="history.ts"
+/>
+
+## 4. Record the revisions
+
+Link each old row to its new row:
+
+<Snippet
+  file="revision.spec.ts"
+  region="revisions"
+  title="history.ts"
+/>
+
+A revision has these fields:
+
+| Field         | Meaning                                                       |
+| ------------- | ------------------------------------------------------------- |
+| `table`       | The name of the table that holds the two rows                 |
+| `predecessor` | The hash of the old row                                       |
+| `successor`   | The hash of the new row                                       |
+| `timestamp`   | The UTC time of the change, here in milliseconds              |
+| `id`          | Optional: the id of the element, to find all of its revisions |
+
+<Snippet
+  file="revisions.json"
+  title="Output"
+/>
+
+## 5. Put the rows into tables
+
+The table of nutritional values keeps the old and the new versions:
+
+<Snippet
+  file="revision.spec.ts"
+  region="tables"
+  title="history.ts"
+/>
+
+Anything that refers to the old flour row still sees the old values. The
+revisions tell an application that a newer version exists.
+
+<Aside type="note">
+  Databases built on `@rljson/io` create a table named `revisions` when they are
+  initialized.
+</Aside>
+
+## 6. Write a validator of your own
+
+`BaseValidator` checks the format, but it does not know what a revision
+means. Nothing stops a revision from pointing to rows that do not exist. A
+validator of your own can check that. It implements the `Validator`
+interface: a `name` and an asynchronous `validate` function, which returns
+`hasErrors` and any details you like:
+
+<Snippet
+  file="revision.spec.ts"
+  region="validator"
+  title="history.ts"
+/>
+
+## 7. Validate with both validators
+
+`Validate` runs all validators and returns the errors of those that found
+some, under their names:
+
+<Snippet
+  file="revision.spec.ts"
+  region="validate"
+  title="history.ts"
+/>
+
+## 8. Print the history
+
+The application lists the revisions of each ingredient by their `id`, in the
+order of their timestamps. For each revision it compares the old row with
+the new one:
+
+<Snippet
+  file="revision.spec.ts"
+  region="history"
+  title="history.ts"
+/>
+
+## 9. Find the newest version
+
+Revisions form a chain: the successor of one revision can be the
+predecessor of the next. Follow the chain to find the newest version of a
+row:
+
+<Snippet
+  file="revision.spec.ts"
+  region="latest"
+/>
+
+## 10. See what the validator catches
+
+Validate the revisions without the table they describe:
+
+<Snippet
+  file="revision.spec.ts"
+  region="missing-rows"
+/>
+
+`BaseValidator` finds nothing wrong, so the result holds the errors of your
+validator only:
+
+<Snippet
+  file="missing-rows.json"
+  title="Output"
+/>
+
+## 11. Run the application
+
+Here is the complete `history.ts`:
+
+<Snippet
+  file="revision.spec.ts"
+  region="app"
+  title="history.ts"
+/>
+
+Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
+or with `npx tsx history.ts`:
+
+```bash
+node history.ts
+```
+
+<Snippet
+  file="output.txt"
+  title="Output"
+/>
+
+## What you have learned
+
+- Rows are never edited. A change is a new row with a new hash, and the old
+  row stays valid.
+- A revision links the old row, its `predecessor`, to the new row, its
+  `successor`, with a timestamp and an optional `id`.
+- Following the successors leads to the newest version of a row.
+- A validator of your own implements `Validator` and runs next to
+  `BaseValidator` in `Validate`.
+
+You have finished the tutorials on the data types. Start again with
+[Components](/guides/data_types/components/), or read about the
+[Principles](/guides/old/principles/) behind the format.

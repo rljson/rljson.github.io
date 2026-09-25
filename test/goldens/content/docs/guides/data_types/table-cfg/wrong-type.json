@@ -1,0 +1,16 @@
+{
+  "base": {
+    "hasErrors": true,
+    "dataDoesNotMatchColumnConfig": {
+      "error": "Table values have wrong types",
+      "brokenValues": [
+        {
+          "table": "nutritionalValues",
+          "row": "CGwEIztztLmRxNfbht1qJr",
+          "column": "energy",
+          "tableCfg": "ZavzatXbwf6chOi1OkQ5jf"
+        }
+      ]
+    }
+  }
+}

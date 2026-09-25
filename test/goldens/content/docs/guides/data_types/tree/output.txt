@@ -1,0 +1,18 @@
+root
+  cakes
+    cheesecake 4.20 €
+    carrotCake 3.80 €
+  breads
+    sourdough 5.50 €
+    baguette 2.50 €
+
+After the price change:
+root
+  cakes
+    cheesecake 3.90 €
+    carrotCake 3.80 €
+  breads
+    sourdough 5.50 €
+    baguette 2.50 €
+
+New nodes: root, cakes, cheesecake

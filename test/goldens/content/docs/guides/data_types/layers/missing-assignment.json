@@ -1,0 +1,17 @@
+{
+  "base": {
+    "hasErrors": true,
+    "layerAssignmentsDoNotMatchSliceIds": {
+      "error": "Layers have missing assignments",
+      "layers": [
+        {
+          "brokenLayer": "0hSNUXE7qgR-ZVdKtMAkYr",
+          "layersTable": "recipes",
+          "unassignedSliceIds": [
+            "butter"
+          ]
+        }
+      ]
+    }
+  }
+}

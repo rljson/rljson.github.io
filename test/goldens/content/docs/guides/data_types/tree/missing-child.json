@@ -1,0 +1,15 @@
+{
+  "base": {
+    "hasErrors": true,
+    "treeChildNodesNotFound": {
+      "error": "Child nodes are missing",
+      "brokenTrees": [
+        {
+          "treesTable": "menu",
+          "brokenTree": "rxzcDsnso0J_LgextyNxGB",
+          "missingChildNode": "i9ptS9uxdNert5npc-E_-5"
+        }
+      ]
+    }
+  }
+}

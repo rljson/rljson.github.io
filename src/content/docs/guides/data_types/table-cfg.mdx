@@ -1,0 +1,257 @@
+---
+title: TableCfg
+description: Describe the columns of your tables with table configurations, check new rows against them and let the validator enforce types and references.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+A `TableCfg` describes a table: its name, its content type and its columns.
+Each column has a key, a type and titles for people, and it may refer to
+another table. The configurations are rows of a table of their own,
+`tableCfgs`, and a data table points to its configuration by hash.
+
+With a configuration, the validator checks more than the format. It checks
+that every column of a row is configured, that every value has the
+configured type, and that every reference points to an existing row.
+
+In this tutorial you build an ingredient catalog with a schema. You describe
+two tables, check a delivery of new ingredients against the schema, and let
+the validator enforce types and references.
+
+You will learn how to:
+
+- describe a table and its columns with `TableCfg`
+- declare a column as a reference to another table
+- link a table to its configuration
+- check rows with `validateRljsonAgainstTableCfg` before you add them
+- read the errors that the validator reports for types and references
+
+## 1. Set up the project
+
+Create a project and install the core package and the hashing package:
+
+```bash
+mkdir ingredient-catalog
+cd ingredient-catalog
+echo '{ "type": "module" }' > package.json
+pnpm add @rljson/rljson @rljson/hash
+```
+
+`"type": "module"` lets the application use ES modules and top-level `await`.
+Now create the file `catalog.ts`. Each of the following steps adds code to it:
+put the imports of a step at the top of the file, and its code below the code
+of the previous step. The complete file is shown at the end.
+
+## 2. Describe a table
+
+The first table holds nutritional values. Describe it and its columns:
+
+<Snippet
+  file="table-cfg.spec.ts"
+  region="nutritional-values-cfg"
+  title="catalog.ts"
+/>
+
+A configuration has these fields:
+
+| Field      | Meaning                                                         |
+| ---------- | --------------------------------------------------------------- |
+| `key`      | The name of the table in the Rljson object                      |
+| `type`     | The content type of the table, e.g. `components`                |
+| `columns`  | The columns of the table                                        |
+| `isHead`   | Whether the table is a versioning entry point, see below        |
+| `isRoot`   | Whether the table has no parent table, see below                |
+| `isShared` | Whether several parents use the rows of the table, see below    |
+| `previous` | Optional: the hash of the previous version of the configuration |
+
+And every column has these:
+
+| Field        | Meaning                                                           |
+| ------------ | ----------------------------------------------------------------- |
+| `key`        | The name of the column, in lower camel case                       |
+| `type`       | `string`, `number`, `boolean`, `json`, `jsonArray` or `jsonValue` |
+| `titleLong`  | A long title, e.g. for a tooltip                                  |
+| `titleShort` | A short title, e.g. for a column header                           |
+| `ref`        | Optional: the referenced table, as `tableKey` and `type`          |
+
+`jsonValue` accepts any value. `throwOnInvalidTableCfg` checks the basic rules
+of a configuration: it needs at least two columns, the first one is `_hash`
+of type `string`, and every column has a valid type.
+
+## 3. Describe a table with a reference
+
+The second table holds the ingredients. Its column `nutritionalValuesRef`
+refers to the table of nutritional values:
+
+<Snippet
+  file="table-cfg.spec.ts"
+  region="ingredients-cfg"
+  title="catalog.ts"
+/>
+
+The flags `isHead`, `isRoot` and `isShared` describe the role of a table in
+a database. The validator accepts three combinations:
+
+| `isRoot` | `isHead` | `isShared` | The table is ...                                                   |
+| -------- | -------- | ---------- | ------------------------------------------------------------------ |
+| `true`   | `true`   | `false`    | a root: an entry point without a parent table                      |
+| `false`  | `true`   | `false`    | a head: an entry point for versions, with at most one parent table |
+| `false`  | `false`  | `true`     | shared: its rows are used by several parents                       |
+
+Head and root tables need an `id` column: a row with the same id is the same
+object, in every version. The ingredients are the root of the catalog, so
+they are identified by their id. The nutritional values are shared: several
+ingredients may use the same row, like the sugar and the powdered sugar in
+step 6.
+
+## 4. Store the configurations
+
+The configurations are rows, too. Store them in the table `tableCfgs`:
+
+<Snippet
+  file="table-cfg.spec.ts"
+  region="table-cfgs"
+  title="catalog.ts"
+/>
+
+<Snippet
+  file="table-cfgs.json"
+  title="Output"
+/>
+
+Like every row, a configuration has a hash. A changed configuration is a new
+row with a new hash, and its `previous` field can point to the old one.
+
+## 5. Link a table to its configuration
+
+A table names its configuration in `_tableCfg`, by hash:
+
+<Snippet
+  file="table-cfg.spec.ts"
+  region="nutritional-values"
+  title="catalog.ts"
+/>
+
+## 6. Check new rows
+
+A supplier delivers new ingredients. Before the application adds them, it
+checks each row against the configuration with
+`validateRljsonAgainstTableCfg`. The function returns a list of problems,
+which is empty for a valid row:
+
+<Snippet
+  file="table-cfg.spec.ts"
+  region="check-rows"
+  title="catalog.ts"
+/>
+
+The powdered sugar refers to the same nutritional values as the sugar. The
+butter uses the column `unit`, which the configuration does not know, so the
+application rejects it.
+
+<Aside type="note">
+  `validateRljsonAgainstTableCfg` checks the columns and types of the rows you
+  pass. It does not look at other tables, so it cannot check references. The
+  validator in step 8 does.
+</Aside>
+
+## 7. Create the ingredients table
+
+Create the ingredients table from the accepted rows:
+
+<Snippet
+  file="table-cfg.spec.ts"
+  region="ingredients"
+  title="catalog.ts"
+/>
+
+<Snippet
+  file="ingredients.json"
+  title="Output"
+/>
+
+## 8. Validate the catalog
+
+<Snippet
+  file="table-cfg.spec.ts"
+  region="validate"
+  title="catalog.ts"
+/>
+
+For a table with a `_tableCfg`, `BaseValidator` checks that:
+
+- the configuration exists in `tableCfgs`, and the configured table exists
+- every column of every row is configured
+- every value has the type of its column; `null` is always allowed
+- the flags `isHead`, `isRoot` and `isShared` form a valid combination
+- head and root tables have an `id` column
+- every reference points to an existing row of the referenced table
+
+## 9. See what the validator catches
+
+A delivery from a CSV file carries the energy as text:
+
+<Snippet
+  file="table-cfg.spec.ts"
+  region="wrong-type"
+/>
+
+<Snippet
+  file="wrong-type.json"
+  title="Output"
+/>
+
+An ingredient refers to nutritional values that do not exist:
+
+<Snippet
+  file="table-cfg.spec.ts"
+  region="broken-ref"
+/>
+
+<Snippet
+  file="broken-ref.json"
+  title="Output"
+/>
+
+## 10. Run the application
+
+Here is the complete `catalog.ts`:
+
+<Snippet
+  file="table-cfg.spec.ts"
+  region="app"
+  title="catalog.ts"
+/>
+
+Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
+or with `npx tsx catalog.ts`:
+
+```bash
+node catalog.ts
+```
+
+<Snippet
+  file="output.txt"
+  title="Output"
+/>
+
+## Configurations for other content types
+
+`@rljson/rljson` has functions that create the configurations of other
+content types: `createLayerTableCfg`, `createCakeTableCfg`,
+`createSliceIdsTableCfg` and `createTreesTableCfg`. Each of them takes the
+name of the table and returns its configuration.
+
+## What you have learned
+
+- A `TableCfg` describes the name, the content type and the columns of a
+  table. Configurations are rows of the table `tableCfgs`.
+- A column with `ref` refers to another table.
+- A table points to its configuration with `_tableCfg`.
+- `validateRljsonAgainstTableCfg` checks rows before you add them.
+- With configurations, `BaseValidator` checks columns, types, flags and
+  references.
+
+Next, a [Revision](/guides/data_types/revision/) records how a row has
+changed.

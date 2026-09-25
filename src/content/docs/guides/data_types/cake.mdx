@@ -1,0 +1,220 @@
+---
+title: Cake
+description: Stack layers into cakes that share their slices, reuse layers in a second cake and serve every slice.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import CakeLayered from '../../../../assets/figures/cake-layered.svg';
+import Snippet from '../../../../components/Snippet.astro';
+
+<CakeLayered
+  width={170}
+  role="img"
+  aria-label="A cake: layers stacked over the same slices"
+/>
+
+A cake stacks layers. All layers of a cake cover the same slice ids, and
+each of them assigns a different kind of component to them: one set of
+slices, seen through several layers.
+
+In this tutorial you build a cake shop. Its half-and-half cake has two
+slices, `left` and `right`, and three layers: a sponge, a cream and a
+topping. Then you bake a second cake that reuses the sponge and the cream and
+only changes the topping.
+
+You will learn how to:
+
+- share one set of slice ids between several layers
+- stack layers into a cake
+- reuse layers in another cake
+- resolve what each slice of a cake is made of
+
+## 1. Set up the project
+
+Create a project and install the core package and the hashing package:
+
+```bash
+mkdir cake-shop
+cd cake-shop
+echo '{ "type": "module" }' > package.json
+pnpm add @rljson/rljson @rljson/hash
+```
+
+`"type": "module"` lets the application use ES modules and top-level `await`.
+Now create the file `cake.ts`. Each of the following steps adds code to it:
+put the imports of a step at the top of the file, and its code below the code
+of the previous step. The complete file is shown at the end.
+
+## 2. Create the parts
+
+A cake is made of parts: sponges, creams and toppings. Each kind of part gets
+a components table:
+
+<Snippet
+  file="cake.spec.ts"
+  region="parts"
+  title="cake.ts"
+/>
+
+## 3. Define the slices
+
+The cake has two slices. List their ids in a table of type `sliceIds`:
+
+<Snippet
+  file="cake.spec.ts"
+  region="slices"
+  title="cake.ts"
+/>
+
+## 4. Create a layer for each kind of part
+
+Each layer assigns a part to both slices. The three layers take their parts
+from different components tables, but they all use the same row of slice
+ids, `halves`. The helper `createLayer` makes sure of that:
+
+<Snippet
+  file="cake.spec.ts"
+  region="layers"
+  title="cake.ts"
+/>
+
+The left half gets vanilla and strawberries, the right half chocolate and
+raspberries. [Layers](/guides/data_types/layers/) explains the fields of a
+layer in detail.
+
+## 5. Stack the layers into a cake
+
+A cake names its slice ids and maps the name of each layers table to the hash
+of one layer in it:
+
+<Snippet
+  file="cake.spec.ts"
+  region="cake"
+  title="cake.ts"
+/>
+
+| Field           | Meaning                                                   |
+| --------------- | --------------------------------------------------------- |
+| `sliceIdsTable` | The name of the table with the slice ids                  |
+| `sliceIdsRow`   | The hash of the row that lists the slice ids of the cake  |
+| `layers`        | Maps the name of each layers table to the hash of a layer |
+| `id`            | Optional: the name of the cake                            |
+
+Since `layers` is keyed by table, a cake takes at most one layer from each
+layers table. That is why the sponges, the creams and the toppings each get
+a layers table of their own. Note that the row of slice ids is called
+`sliceIdsRow` here, while a layer calls it `sliceIdsTableRow`.
+
+## 6. Bake a variant
+
+The chocolate cake has a different topping and nothing else. It gets a new
+topping layer, and refers to the same sponge and cream layers as the berry
+cake:
+
+<Snippet
+  file="cake.spec.ts"
+  region="variant"
+  title="cake.ts"
+/>
+
+## 7. Put the rows into tables
+
+<Snippet
+  file="cake.spec.ts"
+  region="tables"
+  title="cake.ts"
+/>
+
+Apart from their ids, the two cakes differ in one reference only: their
+topping layer. Both point to the same sponge layer and the same cream layer:
+
+<Snippet
+  file="cakes.json"
+  title="Output"
+/>
+
+This is how Rljson shares data: a variant stores what is new and refers to
+everything else by hash. Nothing is copied.
+
+## 8. Validate the cake shop
+
+<Snippet
+  file="cake.spec.ts"
+  region="validate"
+  title="cake.ts"
+/>
+
+For every cake, `BaseValidator` checks that the table of slice ids and the
+referenced row exist, and that every layers table exists and contains the
+referenced layer. It also checks each layer, as described in
+[Layers](/guides/data_types/layers/).
+
+<Aside type="caution">
+  The validator does not check that the layers of a cake use the slice ids of
+  the cake. Keep them in sync yourself. Here, `createLayer` takes care of it.
+</Aside>
+
+## 9. Serve the slices
+
+To serve a slice, the application goes through the layers of the cake. For
+each layer, it looks up the layer in its table, and the part that the layer
+assigns to the slice in the layer's components table. `rowOf` finds a row by
+its hash in any table of the cake shop:
+
+<Snippet
+  file="cake.spec.ts"
+  region="serve"
+  title="cake.ts"
+/>
+
+The cake's own row of slice ids tells the application which slices there
+are. Like `add` in a layer, `layers` carries a `_hash` of its own, so the
+application skips keys that start with an underscore.
+
+## 10. See what the validator catches
+
+Create a cake with a new topping layer, but do not add the layer to the
+`toppingLayers` table:
+
+<Snippet
+  file="cake.spec.ts"
+  region="missing-layer"
+/>
+
+<Snippet
+  file="missing-layer.json"
+  title="Output"
+/>
+
+## 11. Run the application
+
+Here is the complete `cake.ts`:
+
+<Snippet
+  file="cake.spec.ts"
+  region="app"
+  title="cake.ts"
+/>
+
+Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
+or with `npx tsx cake.ts`:
+
+```bash
+node cake.ts
+```
+
+<Snippet
+  file="output.txt"
+  title="Output"
+/>
+
+## What you have learned
+
+- A cake names a row of slice ids and one layer from each of several layers
+  tables.
+- All layers of a cake assign their components to the same slice ids.
+- A cake refers to its layers by hash, so another cake can reuse them.
+- To serve a slice, follow each layer of the cake to the component it assigns
+  to that slice.
+
+Next, a [Tree](/guides/data_types/tree/) stores hierarchical data.

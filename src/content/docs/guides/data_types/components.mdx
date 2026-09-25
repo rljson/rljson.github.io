@@ -1,0 +1,244 @@
+---
+title: Components
+description: Build a nutrition calculator from components tables and learn how rows, hashes and references work.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+Components are the basic data unit of Rljson. A components table holds rows
+of plain JSON values. Every row carries a hash of its content, and that hash
+is the row's primary key: other rows refer to it by its hash.
+
+In this tutorial you build a nutrition calculator for a bakery. It stores
+nutritional values, ingredients and a recipe in three components tables,
+links them by references, validates them and calculates the energy of the
+recipe.
+
+You will learn how to:
+
+- create a components table and hash it with `hip`
+- refer to a row of another table by its hash
+- validate an Rljson object with `Validate` and `BaseValidator`
+- follow references to join the tables again
+
+## 1. Set up the project
+
+Create a project and install the core package and the hashing package:
+
+```bash
+mkdir nutrition-calculator
+cd nutrition-calculator
+echo '{ "type": "module" }' > package.json
+pnpm add @rljson/rljson @rljson/hash
+```
+
+`"type": "module"` lets the application use ES modules and top-level `await`.
+Now create the file `nutrition.ts`. Each of the following steps adds code to
+it: put the imports of a step at the top of the file, and its code below the
+code of the previous step. The complete file is shown at the end.
+
+## 2. Describe the rows
+
+A row is a flat or nested JSON object. Describe the rows of the three tables
+as TypeScript types:
+
+<Snippet
+  file="components.spec.ts"
+  region="types"
+  title="nutrition.ts"
+/>
+
+Column names must be lower camel case, like `amountUnit`. A column that
+refers to a row of another table is, by convention, named after that table
+with the suffix `Ref`, like `nutritionalValuesRef`. `Ref` is the type of such
+a reference: a hash.
+
+## 3. Create a components table
+
+Create the table of nutritional values:
+
+<Snippet
+  file="components.spec.ts"
+  region="nutritional-values"
+  title="nutrition.ts"
+/>
+
+A table is a JSON object with a few reserved fields:
+
+| Field       | Meaning                                                                          |
+| ----------- | -------------------------------------------------------------------------------- |
+| `_type`     | The content type. For components tables, `components`                            |
+| `_data`     | The rows                                                                         |
+| `_hash`     | The hash of the table, calculated from all of its rows                           |
+| `_tableCfg` | Optional: the hash of the [TableCfg](/guides/data_types/table-cfg/) of the table |
+
+`hip`, short for _hash in place_, calculates the hashes and writes them into
+the object you pass to it. Afterwards every row and the table carry a `_hash`:
+
+<Snippet
+  file="nutritional-values.json"
+  title="Output"
+/>
+
+A hash is a SHA-256 hash of the content, encoded as base64url and shortened
+to 22 characters. The `id` of a row is a name for you and your application;
+Rljson itself identifies a row by its hash. The helper `ref` at the end of the
+step reads the hash that `hip` has written into a row.
+
+## 4. Understand the hashes
+
+A hash depends on nothing but the content. Hash the same values again, even
+with the keys in a different order, and you get the same hash:
+
+<Snippet
+  file="components.spec.ts"
+  region="same-content"
+/>
+
+`hip` also hashes nested objects. Each of them gets a `_hash` of its own,
+and the hash of the parent includes it. That is why Rljson data is called
+_deeply hashed_. This has three consequences:
+
+- **Duplicates are easy to find.** Two rows with the same content have the
+  same hash, so a store that is keyed by hash keeps them once.
+- **Rows are immutable.** A changed row is a new row with a new hash.
+- **Hashes need no server.** Every machine calculates the same hash for the
+  same content, without any coordination.
+
+## 5. Refer to another table
+
+An ingredient points to its nutritional values: it stores the hash of their
+row in `nutritionalValuesRef`:
+
+<Snippet
+  file="components.spec.ts"
+  region="ingredients"
+  title="nutrition.ts"
+/>
+
+<Snippet
+  file="ingredients.json"
+  title="Output"
+/>
+
+Since a reference is a hash of the content, it points to exactly one version
+of the nutritional values, and it means the same on every machine. The
+nutritional values are stored once, however many ingredients use them.
+
+## 6. Add a recipe
+
+The recipe refers to the ingredients in the same way and adds a quantity to
+each of them:
+
+<Snippet
+  file="components.spec.ts"
+  region="recipe"
+  title="nutrition.ts"
+/>
+
+## 7. Validate the tables
+
+Put the three tables into an Rljson object. Its keys are the names of the
+tables. Then validate it:
+
+<Snippet
+  file="components.spec.ts"
+  region="validate"
+  title="nutrition.ts"
+/>
+
+`Validate` runs every validator you add and returns their errors, keyed by
+the name of the validator. When no validator finds a problem, the result is
+an empty object, and the application goes on.
+
+`BaseValidator` checks the rules of the format. Among others:
+
+- every hash matches its content
+- table and column names are lower camel case
+- table names do not end with `Ref`
+- every table has a `_data` array
+- the rows that layers, cakes, buffets and trees refer to exist
+- tables with a TableCfg match it
+
+It stops at the first rule that fails and reports the errors of that rule.
+
+<Aside type="note">
+  The base validator checks the references of a components table only for
+  columns that a [TableCfg](/guides/data_types/table-cfg/) declares as
+  references. Without one, it cannot tell that `nutritionalValuesRef` is a
+  reference.
+</Aside>
+
+## 8. Calculate the energy
+
+Now the application uses its data. `rowOf` follows a reference: it finds the
+row with the given hash. The loop takes each recipe row, looks up its
+ingredient and the ingredient's nutritional values, and calculates the energy:
+
+<Snippet
+  file="components.spec.ts"
+  region="calculate"
+  title="nutrition.ts"
+/>
+
+The tables store every piece of information once. The application joins
+them again as it needs them.
+
+## 9. See what the validator catches
+
+Change a value of a row in place, as if someone had edited the data by hand,
+and validate again:
+
+<Snippet
+  file="components.spec.ts"
+  region="changed-in-place"
+/>
+
+The validator calculates every hash again and compares it with the stored
+one:
+
+<Snippet
+  file="changed-in-place.json"
+  title="Output"
+/>
+
+So never change a row in place. Create a new row instead: it gets a new hash,
+and every reference to the old row keeps pointing to the old values.
+[Revision](/guides/data_types/revision/) shows how to record such a change.
+
+## 10. Run the application
+
+Here is the complete `nutrition.ts`:
+
+<Snippet
+  file="components.spec.ts"
+  region="app"
+  title="nutrition.ts"
+/>
+
+Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
+or with `npx tsx nutrition.ts`:
+
+```bash
+node nutrition.ts
+```
+
+<Snippet
+  file="output.txt"
+  title="Output"
+/>
+
+## What you have learned
+
+- A components table holds rows of JSON values in `_data` and declares its
+  type in `_type`.
+- `hip` writes a hash into every row and into the table. The hash is the
+  primary key of a row.
+- Equal content has an equal hash. A change creates a new row.
+- A row refers to a row of another table by its hash, in a column that ends
+  with `Ref`.
+- `Validate` with `BaseValidator` checks the hashes, the names and the
+  structure of an Rljson object.
+
+Next, [Layers](/guides/data_types/layers/) assign components to a set of slices.

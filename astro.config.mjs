@@ -72,6 +72,17 @@ export default defineConfig({
       },
       sidebar: [
         {
+          label: 'Data Types',
+          items: [
+            { label: 'Components', slug: 'guides/data_types/components' },
+            { label: 'Layers', slug: 'guides/data_types/layers' },
+            { label: 'Cake', slug: 'guides/data_types/cake' },
+            { label: 'Tree', slug: 'guides/data_types/tree' },
+            { label: 'TableCfg', slug: 'guides/data_types/table-cfg' },
+            { label: 'Revision', slug: 'guides/data_types/revision' },
+          ],
+        },
+        {
           label: 'Start here',
           items: [
             { label: 'What is Rljson?', slug: 'guides/old/what-is-rljson' },

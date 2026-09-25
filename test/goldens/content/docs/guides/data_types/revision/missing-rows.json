@@ -1,0 +1,23 @@
+{
+  "revisions": {
+    "hasErrors": true,
+    "missingRows": [
+      {
+        "table": "nutritionalValues",
+        "row": "_B7QTbVEsn4XxGI-I33Vy0"
+      },
+      {
+        "table": "nutritionalValues",
+        "row": "iMJY4rMvyhTnh-_o9th8y7"
+      },
+      {
+        "table": "nutritionalValues",
+        "row": "xIFCy0l_ItvYOOVLc93I4x"
+      },
+      {
+        "table": "nutritionalValues",
+        "row": "VZNMWxUA4eREI12CwgIQcg"
+      }
+    ]
+  }
+}

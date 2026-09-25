@@ -1,0 +1,76 @@
+{
+  "_type": "trees",
+  "_data": [
+    {
+      "id": "root",
+      "isParent": true,
+      "meta": null,
+      "children": [
+        "JCufpavihOE3YvS6IzAoC5",
+        "rxzcDsnso0J_LgextyNxGB"
+      ],
+      "_hash": "2gaS_CnKCytJFqLG1jE0hB"
+    },
+    {
+      "id": "cakes",
+      "isParent": true,
+      "meta": null,
+      "children": [
+        "lp4grmEtBDJbAAI2OSGkYY",
+        "p8KwkdXltVk30ocvGJBW59"
+      ],
+      "_hash": "JCufpavihOE3YvS6IzAoC5"
+    },
+    {
+      "id": "breads",
+      "isParent": true,
+      "meta": null,
+      "children": [
+        "2mLPV8Xr5R3JueXZgP721_",
+        "i9ptS9uxdNert5npc-E_-5"
+      ],
+      "_hash": "rxzcDsnso0J_LgextyNxGB"
+    },
+    {
+      "id": "cheesecake",
+      "isParent": false,
+      "meta": {
+        "price": 4.2,
+        "_hash": "fmJsh_pfVXnHo7syx0GflJ"
+      },
+      "children": null,
+      "_hash": "lp4grmEtBDJbAAI2OSGkYY"
+    },
+    {
+      "id": "carrotCake",
+      "isParent": false,
+      "meta": {
+        "price": 3.8,
+        "_hash": "J989n1_g658cVxM2zcUQOt"
+      },
+      "children": null,
+      "_hash": "p8KwkdXltVk30ocvGJBW59"
+    },
+    {
+      "id": "sourdough",
+      "isParent": false,
+      "meta": {
+        "price": 5.5,
+        "_hash": "rc4GGathwRD2YyhYA3RcNC"
+      },
+      "children": null,
+      "_hash": "2mLPV8Xr5R3JueXZgP721_"
+    },
+    {
+      "id": "baguette",
+      "isParent": false,
+      "meta": {
+        "price": 2.5,
+        "_hash": "iwXy1_0mesSRmwaXvO0Ptw"
+      },
+      "children": null,
+      "_hash": "i9ptS9uxdNert5npc-E_-5"
+    }
+  ],
+  "_hash": "nXkcgTvOs8fR-o_eNbD8_h"
+}

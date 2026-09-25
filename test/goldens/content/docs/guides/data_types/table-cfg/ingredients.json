@@ -1,0 +1,25 @@
+{
+  "_type": "components",
+  "_tableCfg": "i4-R_5GvCGvoeo1ZJIUhWD",
+  "_data": [
+    {
+      "id": "flour",
+      "amountUnit": "g",
+      "nutritionalValuesRef": "UFjOyBI1cXa0k0C_U8Tm43",
+      "_hash": "NjTN7fA0qQBWgMMuLpKuof"
+    },
+    {
+      "id": "sugar",
+      "amountUnit": "g",
+      "nutritionalValuesRef": "yFCkH_Q2rQGUnzwmImRlr4",
+      "_hash": "WQwEXoQArjyTCee7yY9MrS"
+    },
+    {
+      "id": "powderedSugar",
+      "amountUnit": "g",
+      "nutritionalValuesRef": "yFCkH_Q2rQGUnzwmImRlr4",
+      "_hash": "f5I1f6maPQV_eXEK2VbQ2V"
+    }
+  ],
+  "_hash": "IRz8MUv5eM3mzTrtCXZ9ST"
+}

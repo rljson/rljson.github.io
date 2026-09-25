@@ -1,0 +1,18 @@
+{
+  "_type": "components",
+  "_data": [
+    {
+      "id": "flour",
+      "amountUnit": "g",
+      "nutritionalValuesRef": "_B7QTbVEsn4XxGI-I33Vy0",
+      "_hash": "6nm9Xc1yaHQ8McoHsVBcPg"
+    },
+    {
+      "id": "sugar",
+      "amountUnit": "g",
+      "nutritionalValuesRef": "xIFCy0l_ItvYOOVLc93I4x",
+      "_hash": "Op9CiR07QZqcWa_MdixI_g"
+    }
+  ],
+  "_hash": "DpeT-WXZMvND0D8Uxd_JYS"
+}

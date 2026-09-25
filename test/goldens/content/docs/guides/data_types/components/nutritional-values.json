@@ -1,0 +1,22 @@
+{
+  "_type": "components",
+  "_data": [
+    {
+      "id": "flour",
+      "energy": 364,
+      "fat": 0.98,
+      "protein": 10.33,
+      "carbohydrates": 76.31,
+      "_hash": "_B7QTbVEsn4XxGI-I33Vy0"
+    },
+    {
+      "id": "sugar",
+      "energy": 387,
+      "fat": 0,
+      "protein": 0,
+      "carbohydrates": 100,
+      "_hash": "xIFCy0l_ItvYOOVLc93I4x"
+    }
+  ],
+  "_hash": "oU1R87W0_1pVGobJt0W7nZ"
+}

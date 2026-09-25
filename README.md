@@ -14,19 +14,20 @@ and published at [rljson.github.io](https://rljson.github.io).
 
 ## Content
 
-| Path                           | Purpose                                    |
-| ------------------------------ | ------------------------------------------ |
-| `src/content/docs/index.mdx`   | Landing page                               |
-| `src/content/docs/guides/`     | Start here, Format and Protocols guides    |
-| `src/content/docs/reference/`  | Ecosystem and type reference               |
-| `src/assets/logo/`             | Rljson logos, taken from `@rljson/icons`   |
-| `src/assets/figures/`          | Architecture figures, from `@rljson/icons` |
-| `src/components/Snippet.astro` | Shows a region of a tested file            |
-| `src/snippets/`                | Extracts a region from a file              |
-| `test/content/docs/`           | The tested code of each page               |
-| `test/goldens/`                | The outputs the pages show                 |
-| `public/`                      | Favicon and touch icon                     |
-| `astro.config.mjs`             | Site title, logo, social links and sidebar |
+| Path                                  | Purpose                                    |
+| ------------------------------------- | ------------------------------------------ |
+| `src/content/docs/index.mdx`          | Landing page                               |
+| `src/content/docs/guides/data_types/` | Tutorials on the data types                |
+| `src/content/docs/guides/old/`        | Start here, Format and Protocols guides    |
+| `src/content/docs/reference/`         | Ecosystem and type reference               |
+| `src/assets/logo/`                    | Rljson logos, taken from `@rljson/icons`   |
+| `src/assets/figures/`                 | Architecture figures, from `@rljson/icons` |
+| `src/components/Snippet.astro`        | Shows a region of a tested file            |
+| `src/snippets/`                       | Extracts a region from a file              |
+| `test/content/docs/`                  | The tested code of each page               |
+| `test/goldens/`                       | The outputs the pages show                 |
+| `public/`                             | Favicon and touch icon                     |
+| `astro.config.mjs`                    | Site title, logo, social links and sidebar |
 
 Images come from [`@rljson/icons`](https://github.com/rljson/icons). Update
 them there and copy the result over, rather than editing the copies here.
@@ -64,6 +65,15 @@ Keep shell commands and JSON that only sketches the format inline.
 A missing file or region fails `astro build`. A type error in a spec fails
 `astro check`. `pnpm test` rewrites the outputs, so review their changes in
 git.
+
+### Tutorials
+
+Each tutorial in `guides/data_types/` builds a sample application. Its spec
+keeps the application in the region `app`, at the top level of the file, so
+the complete file on the page is exactly the tested code. Each step of the
+tutorial is a region nested in `app`. The application runs when vitest
+imports the spec, and the tests check what it has built. The spec records
+what the application prints and writes it to `output.txt`.
 
 ## Preview a page
 

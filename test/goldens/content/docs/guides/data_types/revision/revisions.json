@@ -1,0 +1,22 @@
+{
+  "_type": "revisions",
+  "_data": [
+    {
+      "table": "nutritionalValues",
+      "id": "flour",
+      "predecessor": "_B7QTbVEsn4XxGI-I33Vy0",
+      "successor": "iMJY4rMvyhTnh-_o9th8y7",
+      "timestamp": 1743552000000,
+      "_hash": "gez-dB9CfmITMBwvLR0o4R"
+    },
+    {
+      "table": "nutritionalValues",
+      "id": "sugar",
+      "predecessor": "xIFCy0l_ItvYOOVLc93I4x",
+      "successor": "VZNMWxUA4eREI12CwgIQcg",
+      "timestamp": 1747008000000,
+      "_hash": "6NDAYByQ8mlsJVJoIxgR1Y"
+    }
+  ],
+  "_hash": "rEJ4Szukipqj9fiAAKAR27"
+}

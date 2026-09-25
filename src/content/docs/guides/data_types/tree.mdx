@@ -1,0 +1,213 @@
+---
+title: Tree
+description: Build a bakery menu as a tree of hashed nodes, walk it from the root and change a price without copying the tree.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+Trees store hierarchical data: a menu, a file system or an organization
+chart. Every node of a tree is a row of a table of type `trees`. A parent
+refers to its children by their hashes, so the hash of the root covers the
+whole tree.
+
+In this tutorial you build the menu of a bakery. It has two categories,
+cakes and breads, with two products each. You print the menu, change a price
+and see that the change adds only the nodes on the path from the product to
+the root.
+
+You will learn how to:
+
+- create leaves and parents with `hip`
+- store the nodes of a tree in a trees table
+- walk a tree from its root
+- change a tree without copying it
+- build a tree from a plain object with `treeFromObject`
+
+## 1. Set up the project
+
+Create a project and install the core package and the hashing package:
+
+```bash
+mkdir bakery-menu
+cd bakery-menu
+echo '{ "type": "module" }' > package.json
+pnpm add @rljson/rljson @rljson/hash
+```
+
+`"type": "module"` lets the application use ES modules and top-level `await`.
+Now create the file `menu.ts`. Each of the following steps adds code to it:
+put the imports of a step at the top of the file, and its code below the code
+of the previous step. The complete file is shown at the end.
+
+## 2. Create the leaves
+
+The products are the leaves of the tree. A leaf carries its data in `meta`
+and has no children:
+
+<Snippet
+  file="tree.spec.ts"
+  region="products"
+  title="menu.ts"
+/>
+
+Every node of a tree has four fields:
+
+| Field      | Meaning                                                   |
+| ---------- | --------------------------------------------------------- |
+| `id`       | Optional: the name of the node, unique among its siblings |
+| `isParent` | `true` if the node can have children                      |
+| `meta`     | Any JSON data of the node, or `null`                      |
+| `children` | The hashes of the children, or `null` for a leaf          |
+
+## 3. Create the parents
+
+A parent refers to its children by their hashes. The categories are the
+parents of the products, and the root is the parent of the categories:
+
+<Snippet
+  file="tree.spec.ts"
+  region="categories"
+  title="menu.ts"
+/>
+
+The hash of a parent includes the hashes of its children. That is why you
+build a tree from the bottom up: first the children, then their parents. It
+also rules out cycles: a node in a cycle would have to include its own hash.
+The validator reports such data as invalid hashes.
+
+## 4. Store the nodes in a table
+
+The nodes are rows of a trees table. Their order does not matter; the
+references hold the tree together:
+
+<Snippet
+  file="tree.spec.ts"
+  region="table"
+  title="menu.ts"
+/>
+
+<Snippet
+  file="menu.json"
+  title="Output"
+/>
+
+## 5. Validate the menu
+
+<Snippet
+  file="tree.spec.ts"
+  region="validate"
+  title="menu.ts"
+/>
+
+For every node of a trees table, `BaseValidator` checks that:
+
+- every child exists in the same table
+- a node with children is a parent: `isParent` is `true`
+- no child appears twice among the children of a parent
+
+## 6. Print the menu
+
+To print the menu, the application starts at the root, looks up each child
+by its hash and descends:
+
+<Snippet
+  file="tree.spec.ts"
+  region="print"
+  title="menu.ts"
+/>
+
+## 7. Change a price
+
+The cheesecake gets cheaper. Its node is immutable, so the new price needs a
+new leaf. The new leaf has a new hash, so its parent `cakes` needs a new
+node, and so does the root. The breads are not touched:
+
+<Snippet
+  file="tree.spec.ts"
+  region="change"
+  title="menu.ts"
+/>
+
+The new menu consists of three new nodes and four nodes of the old menu. The
+old root still describes the old menu, so both versions of the menu live in
+the same table, without a copy.
+
+## 8. Build a tree from a plain object
+
+`treeFromObject` turns a plain JavaScript object into hashed tree nodes. This
+object describes the same menu:
+
+<Snippet
+  file="tree.spec.ts"
+  region="from-object"
+/>
+
+The nodes have the same content as the ones you built by hand, so they have
+the same hashes, down to the root. `treeFromObject` follows these rules:
+
+- An object becomes a parent. Its keys are the ids of the children.
+- An object with a `meta` key becomes a leaf with that `meta`.
+- A value such as a string or a number becomes a leaf with
+  `meta: { value }`.
+- An array of objects with one key each becomes a parent whose children keep
+  the order of the array. Any other array becomes a leaf with
+  `meta: { value }`.
+- A node with the id `root` is added on top, unless you pass `true` as the
+  second argument.
+
+## 9. See what the validator catches
+
+Leave out the node of the baguette:
+
+<Snippet
+  file="tree.spec.ts"
+  region="missing-child"
+/>
+
+The breads refer to a child that the table does not contain:
+
+<Snippet
+  file="missing-child.json"
+  title="Output"
+/>
+
+## 10. Run the application
+
+Here is the complete `menu.ts`:
+
+<Snippet
+  file="tree.spec.ts"
+  region="app"
+  title="menu.ts"
+/>
+
+Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
+or with `npx tsx menu.ts`:
+
+```bash
+node menu.ts
+```
+
+<Snippet
+  file="output.txt"
+  title="Output"
+/>
+
+<Aside type="tip">
+  The same idea keeps large trees cheap to change and to synchronize: two trees
+  with the same root hash are equal, and two trees that differ share every
+  subtree with an equal hash.
+</Aside>
+
+## What you have learned
+
+- Every node of a tree is a row with `id`, `isParent`, `meta` and
+  `children`.
+- A parent refers to its children by hash, so a tree is built from the
+  leaves up, and the root hash covers the whole tree.
+- A change adds new nodes on the path to the root and shares everything else.
+- `treeFromObject` builds the nodes from a plain object.
+
+Next, a [TableCfg](/guides/data_types/table-cfg/) describes the columns of a
+table.

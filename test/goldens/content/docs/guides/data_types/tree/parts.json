@@ -1,0 +1,78 @@
+{
+  "_type": "trees",
+  "_data": [
+    {
+      "isParent": true,
+      "meta": {
+        "name": "Taycan",
+        "_hash": "XLIKgqyUSY44jf0N64AM8U"
+      },
+      "children": [
+        "61TRsXiUNY-Rz8IwYgcAlO",
+        "liZC-M_cgR8mxRMEm9nO8m"
+      ],
+      "_hash": "_OEzmKGBiXaJLDC-CqL7SW"
+    },
+    {
+      "isParent": true,
+      "meta": {
+        "name": "Body",
+        "_hash": "ZQM_uJ8P4FZLLrR5E8STjX"
+      },
+      "children": [
+        "8cYL75myPuWX14iGcP0f7N",
+        "-IHRCZg6Vq7Sd8S_l57gFk"
+      ],
+      "_hash": "61TRsXiUNY-Rz8IwYgcAlO"
+    },
+    {
+      "isParent": true,
+      "meta": {
+        "name": "Drivetrain",
+        "_hash": "E_VNLSusXtQclXJCuO29-v"
+      },
+      "children": [
+        "mpyr70wnFj4w0vre4O2OQV",
+        "asEP3FQNytSzGEYMyBb06i"
+      ],
+      "_hash": "liZC-M_cgR8mxRMEm9nO8m"
+    },
+    {
+      "isParent": false,
+      "meta": {
+        "name": "Door",
+        "_hash": "-3Dy4-YsFkzmeut199l-Zl"
+      },
+      "children": null,
+      "_hash": "8cYL75myPuWX14iGcP0f7N"
+    },
+    {
+      "isParent": false,
+      "meta": {
+        "name": "Roof",
+        "_hash": "YY9h0-p2IkuBLHz1J_zJZF"
+      },
+      "children": null,
+      "_hash": "-IHRCZg6Vq7Sd8S_l57gFk"
+    },
+    {
+      "isParent": false,
+      "meta": {
+        "name": "Performance Battery",
+        "_hash": "UHq6vy13vo89ALZj8sQe34"
+      },
+      "children": null,
+      "_hash": "mpyr70wnFj4w0vre4O2OQV"
+    },
+    {
+      "isParent": false,
+      "meta": {
+        "name": "Electric Motor",
+        "_hash": "a-pC0aSvfEjF6OvspmgC05"
+      },
+      "children": null,
+      "_hash": "asEP3FQNytSzGEYMyBb06i"
+    }
+  ],
+  "_hash": "_7DdPzTrSLeJ6tDDGDCXKX"
+}

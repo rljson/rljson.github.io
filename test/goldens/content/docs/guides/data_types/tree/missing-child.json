@@ -5,9 +5,9 @@
       "error": "Child nodes are missing",
       "brokenTrees": [
         {
-          "treesTable": "priceList",
-          "brokenTree": "S5Kh_AN2-XzmWw9sFAVLLH",
-          "missingChildNode": "FIqWfY2jXLcQZMxc_bmLJX"
+          "treesTable": "parts",
+          "brokenTree": "liZC-M_cgR8mxRMEm9nO8m",
+          "missingChildNode": "asEP3FQNytSzGEYMyBb06i"
         }
       ]
     }

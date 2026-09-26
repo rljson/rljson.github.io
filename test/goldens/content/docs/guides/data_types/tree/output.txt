@@ -1,18 +1,18 @@
-root
-  porsche
-    taycan 101,000 €
-    macan 84,000 €
-  volvo
-    ex30 36,000 €
-    ex90 82,000 €
+Taycan
+  Body
+    Door
+    Roof
+  Drivetrain
+    Performance Battery
+    Electric Motor
 
-After the price change:
-root
-  porsche
-    taycan 97,000 €
-    macan 84,000 €
-  volvo
-    ex30 36,000 €
-    ex90 82,000 €
+After the battery upgrade:
+Taycan
+  Body
+    Door
+    Roof
+  Drivetrain
+    Performance Battery Plus
+    Electric Motor
 
-New nodes: root, porsche, taycan
+New parts: Taycan, Drivetrain, Performance Battery Plus

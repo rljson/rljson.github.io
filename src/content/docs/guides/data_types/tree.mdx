@@ -1,6 +1,6 @@
 ---
 title: Tree
-description: Build a bakery menu as a tree of hashed nodes, walk it from the root and change a price without copying the tree.
+description: Build a car dealer's price list as a tree of hashed nodes, walk it from the root and change a price without copying the tree.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -13,15 +13,15 @@ import Snippet from '../../../../components/Snippet.astro';
   aria-label="A tree drawn top down: the root at the top branches into nodes, down to the leaves"
 />
 
-Trees store hierarchical data: a menu, a file system or an organization
-chart. Every node of a tree is a row of a table of type `trees`. A parent
-refers to its children by their hashes, so the hash of the root covers the
-whole tree.
+Trees store hierarchical data: a price list, a file system or an
+organization chart. Every node of a tree is a row of a table of type
+`trees`. A parent refers to its children by their hashes, so the hash of the
+root covers the whole tree.
 
-In this tutorial you build the menu of a bakery. It has two categories,
-cakes and breads, with two products each. You print the menu, change a price
-and see that the change adds only the nodes on the path from the product to
-the root.
+In this tutorial you build the price list of a car dealer. It has two
+manufacturers, Porsche and Volvo, with two models each. You print the price
+list, change a price and see that the change adds only the nodes on the path
+from the model to the root.
 
 You will learn how to:
 
@@ -36,26 +36,26 @@ You will learn how to:
 Create a project and install the core package and the hashing package:
 
 ```bash
-mkdir bakery-menu
-cd bakery-menu
+mkdir price-list
+cd price-list
 echo '{ "type": "module" }' > package.json
 pnpm add @rljson/rljson @rljson/hash
 ```
 
 `"type": "module"` lets the application use ES modules and top-level `await`.
-Now create the file `menu.ts`. Each of the following steps adds code to it:
+Now create the file `prices.ts`. Each of the following steps adds code to it:
 put the imports of a step at the top of the file, and its code below the code
 of the previous step. The complete file is shown at the end.
 
 ## 2. Create the leaves
 
-The products are the leaves of the tree. A leaf carries its data in `meta`
+The models are the leaves of the tree. A leaf carries its data in `meta`
 and has no children:
 
 <Snippet
   file="tree.spec.ts"
-  region="products"
-  title="menu.ts"
+  region="models"
+  title="prices.ts"
 />
 
 Every node of a tree has four fields:
@@ -69,13 +69,13 @@ Every node of a tree has four fields:
 
 ## 3. Create the parents
 
-A parent refers to its children by their hashes. The categories are the
-parents of the products, and the root is the parent of the categories:
+A parent refers to its children by their hashes. The manufacturers are the
+parents of the models, and the root is the parent of the manufacturers:
 
 <Snippet
   file="tree.spec.ts"
-  region="categories"
-  title="menu.ts"
+  region="manufacturers"
+  title="prices.ts"
 />
 
 The hash of a parent includes the hashes of its children. That is why you
@@ -91,20 +91,20 @@ references hold the tree together:
 <Snippet
   file="tree.spec.ts"
   region="table"
-  title="menu.ts"
+  title="prices.ts"
 />
 
 <Snippet
-  file="menu.json"
+  file="price-list.json"
   title="Output"
 />
 
-## 5. Validate the menu
+## 5. Validate the price list
 
 <Snippet
   file="tree.spec.ts"
   region="validate"
-  title="menu.ts"
+  title="prices.ts"
 />
 
 For every node of a trees table, `BaseValidator` checks that:
@@ -113,37 +113,37 @@ For every node of a trees table, `BaseValidator` checks that:
 - a node with children is a parent: `isParent` is `true`
 - no child appears twice among the children of a parent
 
-## 6. Print the menu
+## 6. Print the price list
 
-To print the menu, the application starts at the root, looks up each child
+To print the price list, the application starts at the root, looks up each child
 by its hash and descends:
 
 <Snippet
   file="tree.spec.ts"
   region="print"
-  title="menu.ts"
+  title="prices.ts"
 />
 
 ## 7. Change a price
 
-The cheesecake gets cheaper. Its node is immutable, so the new price needs a
-new leaf. The new leaf has a new hash, so its parent `cakes` needs a new
-node, and so does the root. The breads are not touched:
+The Taycan gets cheaper. Its node is immutable, so the new price needs a new
+leaf. The new leaf has a new hash, so its parent `porsche` needs a new node,
+and so does the root. Volvo is not touched:
 
 <Snippet
   file="tree.spec.ts"
   region="change"
-  title="menu.ts"
+  title="prices.ts"
 />
 
-The new menu consists of three new nodes and four nodes of the old menu. The
-old root still describes the old menu, so both versions of the menu live in
-the same table, without a copy.
+The new price list consists of three new nodes and four nodes of the old
+price list. The old root still describes the old price list, so both
+versions of the price list live in the same table, without a copy.
 
 ## 8. Build a tree from a plain object
 
 `treeFromObject` turns a plain JavaScript object into hashed tree nodes. This
-object describes the same menu:
+object describes the same price list:
 
 <Snippet
   file="tree.spec.ts"
@@ -165,14 +165,14 @@ the same hashes, down to the root. `treeFromObject` follows these rules:
 
 ## 9. See what the validator catches
 
-Leave out the node of the baguette:
+Leave out the node of the EX90:
 
 <Snippet
   file="tree.spec.ts"
   region="missing-child"
 />
 
-The breads refer to a child that the table does not contain:
+Volvo refers to a child that the table does not contain:
 
 <Snippet
   file="missing-child.json"
@@ -181,19 +181,19 @@ The breads refer to a child that the table does not contain:
 
 ## 10. Run the application
 
-Here is the complete `menu.ts`:
+Here is the complete `prices.ts`:
 
 <Snippet
   file="tree.spec.ts"
   region="app"
-  title="menu.ts"
+  title="prices.ts"
 />
 
 Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
-or with `npx tsx menu.ts`:
+or with `npx tsx prices.ts`:
 
 ```bash
-node menu.ts
+node prices.ts
 ```
 
 <Snippet

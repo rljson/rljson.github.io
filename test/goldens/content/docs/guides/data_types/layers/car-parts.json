@@ -1,0 +1,31 @@
+{
+  "_type": "sliceIds",
+  "_data": [
+    {
+      "add": [
+        "body",
+        "roof",
+        "wheels"
+      ],
+      "_hash": "f3Q0uefLqc0APhPdiAZlny"
+    },
+    {
+      "base": "f3Q0uefLqc0APhPdiAZlny",
+      "add": [
+        "stripes"
+      ],
+      "_hash": "G65G92CUdDlzt_mPH5IdIm"
+    },
+    {
+      "base": "f3Q0uefLqc0APhPdiAZlny",
+      "add": [
+        "softTop"
+      ],
+      "remove": [
+        "roof"
+      ],
+      "_hash": "y2I_-q1JQvgrf_AySxsskz"
+    }
+  ],
+  "_hash": "Zw_8LRb7w1qN4TAsRJyZGS"
+}

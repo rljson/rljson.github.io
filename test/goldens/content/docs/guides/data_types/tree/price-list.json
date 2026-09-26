@@ -1,0 +1,76 @@
+{
+  "_type": "trees",
+  "_data": [
+    {
+      "id": "root",
+      "isParent": true,
+      "meta": null,
+      "children": [
+        "Wz3XEldWZw_pp9N5KPAAgN",
+        "S5Kh_AN2-XzmWw9sFAVLLH"
+      ],
+      "_hash": "q55tNQF4Y-Y3Jn-2jZmq_F"
+    },
+    {
+      "id": "porsche",
+      "isParent": true,
+      "meta": null,
+      "children": [
+        "BTS0byykca4-rwFw2Dn_Bx",
+        "evO1js4XBXTPQMMVIK9HzL"
+      ],
+      "_hash": "Wz3XEldWZw_pp9N5KPAAgN"
+    },
+    {
+      "id": "volvo",
+      "isParent": true,
+      "meta": null,
+      "children": [
+        "s5fsX0Xc7-iHApcf-rNFg_",
+        "FIqWfY2jXLcQZMxc_bmLJX"
+      ],
+      "_hash": "S5Kh_AN2-XzmWw9sFAVLLH"
+    },
+    {
+      "id": "taycan",
+      "isParent": false,
+      "meta": {
+        "price": 101000,
+        "_hash": "iQAOsSRUc89zppIb3E34Ai"
+      },
+      "children": null,
+      "_hash": "BTS0byykca4-rwFw2Dn_Bx"
+    },
+    {
+      "id": "macan",
+      "isParent": false,
+      "meta": {
+        "price": 84000,
+        "_hash": "bF_7gd3N5-tTaDMxwOMftm"
+      },
+      "children": null,
+      "_hash": "evO1js4XBXTPQMMVIK9HzL"
+    },
+    {
+      "id": "ex30",
+      "isParent": false,
+      "meta": {
+        "price": 36000,
+        "_hash": "b3WZpUXkuwD3l5KOX9rwFh"
+      },
+      "children": null,
+      "_hash": "s5fsX0Xc7-iHApcf-rNFg_"
+    },
+    {
+      "id": "ex90",
+      "isParent": false,
+      "meta": {
+        "price": 82000,
+        "_hash": "pD5t5EGuVwT2FV2RCKSXCj"
+      },
+      "children": null,
+      "_hash": "FIqWfY2jXLcQZMxc_bmLJX"
+    }
+  ],
+  "_hash": "MO0qGnVkzA5sZ91ZWyocy8"
+}

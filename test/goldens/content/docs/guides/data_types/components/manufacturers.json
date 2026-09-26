@@ -1,0 +1,18 @@
+{
+  "_type": "components",
+  "_data": [
+    {
+      "id": "porsche",
+      "country": "Germany",
+      "founded": 1931,
+      "_hash": "oGtMimnyJ8xM10PgS2WEPg"
+    },
+    {
+      "id": "volvo",
+      "country": "Sweden",
+      "founded": 1927,
+      "_hash": "SQxsTq3FTq0lQC2iWQiDfH"
+    }
+  ],
+  "_hash": "69BdGg00CZXGv-FxmX5DQK"
+}

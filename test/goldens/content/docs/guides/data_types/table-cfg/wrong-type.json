@@ -5,10 +5,10 @@
       "error": "Table values have wrong types",
       "brokenValues": [
         {
-          "table": "nutritionalValues",
-          "row": "CGwEIztztLmRxNfbht1qJr",
-          "column": "energy",
-          "tableCfg": "ZavzatXbwf6chOi1OkQ5jf"
+          "table": "manufacturers",
+          "row": "hPGhX__X7Uq4z4Mcx9v3p1",
+          "column": "founded",
+          "tableCfg": "PxMRWNieD8EMi7Ut1-svPL"
         }
       ]
     }

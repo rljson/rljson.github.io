@@ -10,10 +10,10 @@
 // vitest imports this file. The tests below check what it has built.
 
 // #region app
-// #region amounts
+// #region colors
 import { hip } from '@rljson/hash';
 import type { ComponentsTable, Ref } from '@rljson/rljson';
-// #endregion amounts
+// #endregion colors
 // #region slice-ids
 import type { SliceIds } from '@rljson/rljson';
 // #endregion slice-ids
@@ -35,91 +35,87 @@ import { describe, expect, it, vi } from 'vitest';
 const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 // #region app
-// #region amounts
-type Amount = { quantity: number; unit: 'g' | 'ml' };
+// #region colors
+type Color = { name: string };
 
-const amounts = hip<ComponentsTable<Amount>>({
+const colors = hip<ComponentsTable<Color>>({
   _type: 'components',
-  _data: [
-    { quantity: 250, unit: 'g' },
-    { quantity: 200, unit: 'g' },
-    { quantity: 200, unit: 'ml' },
-  ],
+  _data: [{ name: 'white' }, { name: 'black' }, { name: 'silver' }],
 });
 
 /** Returns the reference to a row: the hash that hip wrote into it */
 const ref = (row: object): Ref => (row as { _hash: Ref })._hash;
 
-const [g250, g200, ml200] = amounts._data;
-// #endregion amounts
+const [white, black, silver] = colors._data;
+// #endregion colors
 
 // #region slice-ids
-const spongeIngredients = hip<SliceIds>({ add: ['flour', 'sugar', 'milk'] });
+const standardParts = hip<SliceIds>({ add: ['body', 'roof', 'wheels'] });
 // #endregion slice-ids
 
 // #region layer
-const sponge = hip<Layer>({
-  id: 'sponge',
-  sliceIdsTable: 'ingredientTypes',
-  sliceIdsTableRow: ref(spongeIngredients),
-  componentsTable: 'amounts',
-  add: { flour: ref(g250), sugar: ref(g200), milk: ref(ml200) },
+const standard = hip<Layer>({
+  id: 'standard',
+  sliceIdsTable: 'carParts',
+  sliceIdsTableRow: ref(standardParts),
+  componentsTable: 'colors',
+  add: { body: ref(white), roof: ref(black), wheels: ref(silver) },
 });
 // #endregion layer
 
 // #region variants
-// A butter cake: the sponge plus butter
-const butterIngredients = hip<SliceIds>({
-  base: ref(spongeIngredients),
-  add: ['butter'],
+// A sport scheme: the standard scheme plus stripes
+const sportParts = hip<SliceIds>({
+  base: ref(standardParts),
+  add: ['stripes'],
 });
 
-const butterCake = hip<Layer>({
-  id: 'butterCake',
-  base: ref(sponge),
-  sliceIdsTable: 'ingredientTypes',
-  sliceIdsTableRow: ref(butterIngredients),
-  componentsTable: 'amounts',
-  add: { butter: ref(g200) },
+const sport = hip<Layer>({
+  id: 'sport',
+  base: ref(standard),
+  sliceIdsTable: 'carParts',
+  sliceIdsTableRow: ref(sportParts),
+  componentsTable: 'colors',
+  add: { stripes: ref(black) },
 });
 
-// A gluten-free sponge: ground almonds instead of flour
-const glutenFreeIngredients = hip<SliceIds>({
-  base: ref(spongeIngredients),
-  add: ['almonds'],
-  remove: ['flour'],
+// A convertible: a soft top instead of the roof
+const convertibleParts = hip<SliceIds>({
+  base: ref(standardParts),
+  add: ['softTop'],
+  remove: ['roof'],
 });
 
-const glutenFree = hip<Layer>({
-  id: 'glutenFree',
-  base: ref(sponge),
-  sliceIdsTable: 'ingredientTypes',
-  sliceIdsTableRow: ref(glutenFreeIngredients),
-  componentsTable: 'amounts',
-  add: { almonds: ref(g250) },
-  remove: { flour: ref(g250) },
+const convertible = hip<Layer>({
+  id: 'convertible',
+  base: ref(standard),
+  sliceIdsTable: 'carParts',
+  sliceIdsTableRow: ref(convertibleParts),
+  componentsTable: 'colors',
+  add: { softTop: ref(black) },
+  remove: { roof: ref(black) },
 });
 // #endregion variants
 
 // #region tables
-const ingredientTypes = hip<SliceIdsTable>({
+const carParts = hip<SliceIdsTable>({
   _type: 'sliceIds',
-  _data: [spongeIngredients, butterIngredients, glutenFreeIngredients],
+  _data: [standardParts, sportParts, convertibleParts],
 });
 
-const recipes = hip<LayersTable>({
+const paintSchemes = hip<LayersTable>({
   _type: 'layers',
-  _data: [sponge, butterCake, glutenFree],
+  _data: [standard, sport, convertible],
 });
 
-const recipeBook: Rljson = { amounts, ingredientTypes, recipes };
+const paintShop: Rljson = { colors, carParts, paintSchemes };
 // #endregion tables
 
 // #region validate
 const validate = new Validate();
 validate.addValidator(new BaseValidator());
 
-const errors = await validate.run(recipeBook);
+const errors = await validate.run(paintShop);
 if (Object.keys(errors).length > 0) {
   throw new Error(JSON.stringify(errors, null, 2));
 }
@@ -132,7 +128,8 @@ const rowOf = <T extends object>(table: { _data: T[] }, hash: Ref): T =>
 
 /** Returns the assignments of a layer, merged with those of its base */
 const assignmentsOf = (layer: Layer): Record<string, Ref> => {
-  const base = layer.base ? assignmentsOf(rowOf(recipes, layer.base)) : {};
+  const baseLayer = layer.base && rowOf(paintSchemes, layer.base);
+  const base = baseLayer ? assignmentsOf(baseLayer) : {};
   const assignments = { ...base, ...layer.add };
 
   for (const sliceId of Object.keys(layer.remove ?? {})) {
@@ -143,15 +140,15 @@ const assignmentsOf = (layer: Layer): Record<string, Ref> => {
   return assignments;
 };
 
-for (const recipe of recipes._data) {
-  const lines = Object.entries(assignmentsOf(recipe)).map(
-    ([ingredient, amountRef]) => {
-      const { quantity, unit } = rowOf(amounts, amountRef);
-      return `${quantity} ${unit} ${ingredient}`;
+for (const scheme of paintSchemes._data) {
+  const lines = Object.entries(assignmentsOf(scheme)).map(
+    ([part, colorRef]) => {
+      const { name } = rowOf(colors, colorRef);
+      return `${name} ${part}`;
     },
   );
 
-  console.log(`${recipe.id}: ${lines.join(', ')}`);
+  console.log(`${scheme.id}: ${lines.join(', ')}`);
 }
 // #endregion resolve
 // #endregion app
@@ -160,42 +157,42 @@ const output = log.mock.calls.map((args) => args.join(' ')).join('\n');
 log.mockRestore();
 
 describe('Layers tutorial', () => {
-  it('stores each amount once', () => {
-    expect(amounts._data).toHaveLength(3);
-    expect(butterCake.add.butter).toBe(sponge.add.sugar); // both 200 g
-    expect(glutenFree.add.almonds).toBe(sponge.add.flour); // both 250 g
+  it('stores each color once', () => {
+    expect(colors._data).toHaveLength(3);
+    expect(sport.add.stripes).toBe(standard.add.roof); // both black
+    expect(convertible.add.softTop).toBe(standard.add.roof); // both black
   });
 
   it('derives slice ids from a base', async () => {
-    await writeGolden('ingredient-types.json', ingredientTypes);
+    await writeGolden('car-parts.json', carParts);
 
-    expect(butterIngredients.base).toBe(ref(spongeIngredients));
-    expect(glutenFreeIngredients.remove).toEqual(['flour']);
+    expect(sportParts.base).toBe(ref(standardParts));
+    expect(convertibleParts.remove).toEqual(['roof']);
   });
 
   it('assigns components to slice ids', async () => {
-    await writeGolden('recipes.json', recipes);
+    await writeGolden('paint-schemes.json', paintSchemes);
 
-    expect(Object.keys(sponge.add)).toEqual([
-      'flour',
-      'sugar',
-      'milk',
+    expect(Object.keys(standard.add)).toEqual([
+      'body',
+      'roof',
+      'wheels',
       '_hash',
     ]);
   });
 
-  it('validates the recipe book', () => {
+  it('validates the paint shop', () => {
     expect(errors).toEqual({});
   });
 
-  it('resolves the ingredients of each recipe', async () => {
+  it('resolves the colors of each paint scheme', async () => {
     await writeGolden('output.txt', output);
 
     expect(output).toBe(
       [
-        'sponge: 250 g flour, 200 g sugar, 200 ml milk',
-        'butterCake: 250 g flour, 200 g sugar, 200 ml milk, 200 g butter',
-        'glutenFree: 200 g sugar, 200 ml milk, 250 g almonds',
+        'standard: white body, black roof, silver wheels',
+        'sport: white body, black roof, silver wheels, black stripes',
+        'convertible: white body, silver wheels, black softTop',
       ].join('\n'),
     );
   });
@@ -203,19 +200,19 @@ describe('Layers tutorial', () => {
   it('detects a slice id without a component', async () => {
     // #region missing-assignment
     const forgetful = hip<Layer>({
-      id: 'butterCake',
-      base: ref(sponge),
-      sliceIdsTable: 'ingredientTypes',
-      sliceIdsTableRow: ref(butterIngredients),
-      componentsTable: 'amounts',
-      add: {}, // no amount for butter
+      id: 'sport',
+      base: ref(standard),
+      sliceIdsTable: 'carParts',
+      sliceIdsTableRow: ref(sportParts),
+      componentsTable: 'colors',
+      add: {}, // no color for the stripes
     });
 
     const result = await validate.run({
-      ...recipeBook,
-      recipes: hip<LayersTable>({
+      ...paintShop,
+      paintSchemes: hip<LayersTable>({
         _type: 'layers',
-        _data: [sponge, forgetful],
+        _data: [standard, forgetful],
       }),
     });
     // #endregion missing-assignment
@@ -226,8 +223,8 @@ describe('Layers tutorial', () => {
       layers: [
         {
           brokenLayer: ref(forgetful),
-          layersTable: 'recipes',
-          unassignedSliceIds: ['butter'],
+          layersTable: 'paintSchemes',
+          unassignedSliceIds: ['stripes'],
         },
       ],
     });

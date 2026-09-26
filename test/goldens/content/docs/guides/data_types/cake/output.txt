@@ -1,6 +1,6 @@
-berryCake:
-  left: vanilla sponge, vanilla cream, strawberries
-  right: chocolate sponge, chocolate cream, raspberries
-chocolateCake:
-  left: vanilla sponge, vanilla cream, chocolate flakes
-  right: chocolate sponge, chocolate cream, chocolate flakes
+summerSetup:
+  front: 410 mm brake, 20″ rim, 245/45 R20 summer
+  rear: 365 mm brake, 21″ rim, 285/40 R21 summer
+winterSetup:
+  front: 410 mm brake, 20″ rim, 245/45 R20 winter
+  rear: 365 mm brake, 21″ rim, 285/40 R21 winter

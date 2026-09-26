@@ -1,0 +1,47 @@
+{
+  "_type": "layers",
+  "_data": [
+    {
+      "id": "standard",
+      "sliceIdsTable": "carParts",
+      "sliceIdsTableRow": "f3Q0uefLqc0APhPdiAZlny",
+      "componentsTable": "colors",
+      "add": {
+        "body": "gFdm09wOMfLMkhdlQCWWGr",
+        "roof": "YCdt62XOF9BIQ5ckj6PJAY",
+        "wheels": "JzBMauAMTUdPkip9Q2hsNy",
+        "_hash": "dmLE4JG9r_4Xi4kn5CIv2V"
+      },
+      "_hash": "wXsLSXJEMUI0EoEQd9oNm4"
+    },
+    {
+      "id": "sport",
+      "base": "wXsLSXJEMUI0EoEQd9oNm4",
+      "sliceIdsTable": "carParts",
+      "sliceIdsTableRow": "G65G92CUdDlzt_mPH5IdIm",
+      "componentsTable": "colors",
+      "add": {
+        "stripes": "YCdt62XOF9BIQ5ckj6PJAY",
+        "_hash": "H3SCnbUgYwmHzswiO_8avg"
+      },
+      "_hash": "OtP-sVaOJDygyuVkUVPy4O"
+    },
+    {
+      "id": "convertible",
+      "base": "wXsLSXJEMUI0EoEQd9oNm4",
+      "sliceIdsTable": "carParts",
+      "sliceIdsTableRow": "y2I_-q1JQvgrf_AySxsskz",
+      "componentsTable": "colors",
+      "add": {
+        "softTop": "YCdt62XOF9BIQ5ckj6PJAY",
+        "_hash": "rZZ2edjzODdkMKMDG1TWPC"
+      },
+      "remove": {
+        "roof": "YCdt62XOF9BIQ5ckj6PJAY",
+        "_hash": "7EK-8xPsTc6wwK1fdzj7tx"
+      },
+      "_hash": "NGXqA0tkC0eRUjavLagMOS"
+    }
+  ],
+  "_hash": "mpqW-0iiaOD0Wn1TtvbolJ"
+}

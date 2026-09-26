@@ -1,6 +1,6 @@
 ---
 title: Components
-description: Build a nutrition calculator from components tables and learn how rows, hashes and references work.
+description: Build a car catalog from components tables and learn how rows, hashes and references work.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -10,10 +10,9 @@ Components are the basic data unit of Rljson. A components table holds rows
 of plain JSON values. Every row carries a hash of its content, and that hash
 is the row's primary key: other rows refer to it by its hash.
 
-In this tutorial you build a nutrition calculator for a bakery. It stores
-nutritional values, ingredients and a recipe in three components tables,
-links them by references, validates them and calculates the energy of the
-recipe.
+In this tutorial you build a car catalog. It stores manufacturers, cars and
+their wheels in three components tables, links them by references, validates
+them and lists every wheel with its car and manufacturer.
 
 You will learn how to:
 
@@ -27,14 +26,14 @@ You will learn how to:
 Create a project and install the core package and the hashing package:
 
 ```bash
-mkdir nutrition-calculator
-cd nutrition-calculator
+mkdir car-catalog
+cd car-catalog
 echo '{ "type": "module" }' > package.json
 pnpm add @rljson/rljson @rljson/hash
 ```
 
 `"type": "module"` lets the application use ES modules and top-level `await`.
-Now create the file `nutrition.ts`. Each of the following steps adds code to
+Now create the file `cars.ts`. Each of the following steps adds code to
 it: put the imports of a step at the top of the file, and its code below the
 code of the previous step. The complete file is shown at the end.
 
@@ -46,22 +45,22 @@ as TypeScript types:
 <Snippet
   file="components.spec.ts"
   region="types"
-  title="nutrition.ts"
+  title="cars.ts"
 />
 
-Column names must be lower camel case, like `amountUnit`. A column that
-refers to a row of another table is, by convention, named after that table
-with the suffix `Ref`, like `nutritionalValuesRef`. `Ref` is the type of such
-a reference: a hash.
+Column names must be lower camel case, like `manufacturersRef`. A column
+that refers to a row of another table is, by convention, named after that
+table with the suffix `Ref`, like `carsRef`. `Ref` is the type of such a
+reference: a hash.
 
 ## 3. Create a components table
 
-Create the table of nutritional values:
+Create the table of manufacturers:
 
 <Snippet
   file="components.spec.ts"
-  region="nutritional-values"
-  title="nutrition.ts"
+  region="manufacturers"
+  title="cars.ts"
 />
 
 A table is a JSON object with a few reserved fields:
@@ -77,7 +76,7 @@ A table is a JSON object with a few reserved fields:
 the object you pass to it. Afterwards every row and the table carry a `_hash`:
 
 <Snippet
-  file="nutritional-values.json"
+  file="manufacturers.json"
   title="Output"
 />
 
@@ -108,33 +107,33 @@ _deeply hashed_. This has three consequences:
 
 ## 5. Refer to another table
 
-An ingredient points to its nutritional values: it stores the hash of their
-row in `nutritionalValuesRef`:
+A car points to its manufacturer: it stores the hash of its row in
+`manufacturersRef`:
 
 <Snippet
   file="components.spec.ts"
-  region="ingredients"
-  title="nutrition.ts"
+  region="cars"
+  title="cars.ts"
 />
 
 <Snippet
-  file="ingredients.json"
+  file="cars.json"
   title="Output"
 />
 
 Since a reference is a hash of the content, it points to exactly one version
-of the nutritional values, and it means the same on every machine. The
-nutritional values are stored once, however many ingredients use them.
+of the manufacturer, and it means the same on every machine. The manufacturer
+is stored once, however many cars use it.
 
-## 6. Add a recipe
+## 6. Add the wheels
 
-The recipe refers to the ingredients in the same way and adds a quantity to
-each of them:
+A wheel refers to the car it belongs to in the same way and adds its position
+and size:
 
 <Snippet
   file="components.spec.ts"
-  region="recipe"
-  title="nutrition.ts"
+  region="wheels"
+  title="cars.ts"
 />
 
 ## 7. Validate the tables
@@ -145,7 +144,7 @@ tables. Then validate it:
 <Snippet
   file="components.spec.ts"
   region="validate"
-  title="nutrition.ts"
+  title="cars.ts"
 />
 
 `Validate` runs every validator you add and returns their errors, keyed by
@@ -166,20 +165,20 @@ It stops at the first rule that fails and reports the errors of that rule.
 <Aside type="note">
   The base validator checks the references of a components table only for
   columns that a [TableCfg](/guides/data_types/table-cfg/) declares as
-  references. Without one, it cannot tell that `nutritionalValuesRef` is a
+  references. Without one, it cannot tell that `manufacturersRef` is a
   reference.
 </Aside>
 
-## 8. Calculate the energy
+## 8. List the wheels
 
 Now the application uses its data. `rowOf` follows a reference: it finds the
-row with the given hash. The loop takes each recipe row, looks up its
-ingredient and the ingredient's nutritional values, and calculates the energy:
+row with the given hash. The loop takes each wheel, looks up its car and the
+car's manufacturer, and prints them:
 
 <Snippet
   file="components.spec.ts"
-  region="calculate"
-  title="nutrition.ts"
+  region="list"
+  title="cars.ts"
 />
 
 The tables store every piece of information once. The application joins
@@ -209,19 +208,19 @@ and every reference to the old row keeps pointing to the old values.
 
 ## 10. Run the application
 
-Here is the complete `nutrition.ts`:
+Here is the complete `cars.ts`:
 
 <Snippet
   file="components.spec.ts"
   region="app"
-  title="nutrition.ts"
+  title="cars.ts"
 />
 
 Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
-or with `npx tsx nutrition.ts`:
+or with `npx tsx cars.ts`:
 
 ```bash
-node nutrition.ts
+node cars.ts
 ```
 
 <Snippet

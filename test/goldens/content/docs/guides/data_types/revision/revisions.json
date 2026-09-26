@@ -2,21 +2,21 @@
   "_type": "revisions",
   "_data": [
     {
-      "table": "nutritionalValues",
-      "id": "flour",
-      "predecessor": "_B7QTbVEsn4XxGI-I33Vy0",
-      "successor": "iMJY4rMvyhTnh-_o9th8y7",
+      "table": "cars",
+      "id": "taycan",
+      "predecessor": "IAS_Jw1gssdgdMVGa717BN",
+      "successor": "DYDPSkXQkz_sd5abFUrnS8",
       "timestamp": 1743552000000,
-      "_hash": "gez-dB9CfmITMBwvLR0o4R"
+      "_hash": "soQr7Vx5sC7pF-ApUvkWpr"
     },
     {
-      "table": "nutritionalValues",
-      "id": "sugar",
-      "predecessor": "xIFCy0l_ItvYOOVLc93I4x",
-      "successor": "VZNMWxUA4eREI12CwgIQcg",
+      "table": "cars",
+      "id": "ex30",
+      "predecessor": "XQGkKGau9atgdpAY_w8aEC",
+      "successor": "0fW6kKpSHYPoh7lvSGN5bu",
       "timestamp": 1747008000000,
-      "_hash": "6NDAYByQ8mlsJVJoIxgR1Y"
+      "_hash": "zwAtXNDVeG5gv6Zqbw7Nil"
     }
   ],
-  "_hash": "rEJ4Szukipqj9fiAAKAR27"
+  "_hash": "cGBx57hXPjgLZX1APj4HRk"
 }

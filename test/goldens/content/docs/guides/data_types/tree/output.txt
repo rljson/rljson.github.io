@@ -1,18 +1,18 @@
 root
-  cakes
-    cheesecake 4.20 €
-    carrotCake 3.80 €
-  breads
-    sourdough 5.50 €
-    baguette 2.50 €
+  porsche
+    taycan 101,000 €
+    macan 84,000 €
+  volvo
+    ex30 36,000 €
+    ex90 82,000 €
 
 After the price change:
 root
-  cakes
-    cheesecake 3.90 €
-    carrotCake 3.80 €
-  breads
-    sourdough 5.50 €
-    baguette 2.50 €
+  porsche
+    taycan 97,000 €
+    macan 84,000 €
+  volvo
+    ex30 36,000 €
+    ex90 82,000 €
 
-New nodes: root, cakes, cheesecake
+New nodes: root, porsche, taycan

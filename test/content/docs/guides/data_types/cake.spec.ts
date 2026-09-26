@@ -41,119 +41,116 @@ const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 // #region parts
 type Part = { name: string };
 
-const sponges = hip<ComponentsTable<Part>>({
+const brakes = hip<ComponentsTable<Part>>({
   _type: 'components',
-  _data: [{ name: 'vanilla sponge' }, { name: 'chocolate sponge' }],
+  _data: [{ name: '410 mm brake' }, { name: '365 mm brake' }],
 });
 
-const creams = hip<ComponentsTable<Part>>({
+const rims = hip<ComponentsTable<Part>>({
   _type: 'components',
-  _data: [{ name: 'vanilla cream' }, { name: 'chocolate cream' }],
+  _data: [{ name: '20″ rim' }, { name: '21″ rim' }],
 });
 
-const toppings = hip<ComponentsTable<Part>>({
+const tires = hip<ComponentsTable<Part>>({
   _type: 'components',
   _data: [
-    { name: 'strawberries' },
-    { name: 'raspberries' },
-    { name: 'chocolate flakes' },
+    { name: '245/45 R20 summer' },
+    { name: '285/40 R21 summer' },
+    { name: '245/45 R20 winter' },
+    { name: '285/40 R21 winter' },
   ],
 });
 // #endregion parts
 
 // #region slices
-const slices = hip<SliceIdsTable>({
+const axles = hip<SliceIdsTable>({
   _type: 'sliceIds',
-  _data: [{ add: ['left', 'right'] }],
+  _data: [{ add: ['front', 'rear'] }],
 });
 
-const halves = slices._data[0];
+const bothAxles = axles._data[0];
 // #endregion slices
 
 // #region layers
 /** Returns the reference to a row: the hash that hip wrote into it */
 const ref = (row: object): Ref => (row as { _hash: Ref })._hash;
 
-/** Creates a layer that assigns a part to each half of the cake */
-const createLayer = (componentsTable: string, left: object, right: object) =>
+/** Creates a layer that assigns a part to each axle of the car */
+const createLayer = (componentsTable: string, front: object, rear: object) =>
   hip<Layer>({
-    sliceIdsTable: 'slices',
-    sliceIdsTableRow: ref(halves),
+    sliceIdsTable: 'axles',
+    sliceIdsTableRow: ref(bothAxles),
     componentsTable,
-    add: { left: ref(left), right: ref(right) },
+    add: { front: ref(front), rear: ref(rear) },
   });
 
-const [vanillaSponge, chocolateSponge] = sponges._data;
-const [vanillaCream, chocolateCream] = creams._data;
-const [strawberries, raspberries, chocolateFlakes] = toppings._data;
+const [frontBrake, rearBrake] = brakes._data;
+const [frontRim, rearRim] = rims._data;
+const [summerFront, summerRear, winterFront, winterRear] = tires._data;
 
-const spongeLayer = createLayer('sponges', vanillaSponge, chocolateSponge);
-const creamLayer = createLayer('creams', vanillaCream, chocolateCream);
-const berryTopping = createLayer('toppings', strawberries, raspberries);
+const brakeLayer = createLayer('brakes', frontBrake, rearBrake);
+const rimLayer = createLayer('rims', frontRim, rearRim);
+const summerTires = createLayer('tires', summerFront, summerRear);
 // #endregion layers
 
 // #region cake
-const berryCake = hip<Cake>({
-  id: 'berryCake',
-  sliceIdsTable: 'slices',
-  sliceIdsRow: ref(halves),
+const summerSetup = hip<Cake>({
+  id: 'summerSetup',
+  sliceIdsTable: 'axles',
+  sliceIdsRow: ref(bothAxles),
   layers: {
-    spongeLayers: ref(spongeLayer),
-    creamLayers: ref(creamLayer),
-    toppingLayers: ref(berryTopping),
+    brakeLayers: ref(brakeLayer),
+    rimLayers: ref(rimLayer),
+    tireLayers: ref(summerTires),
   },
 });
 // #endregion cake
 
 // #region variant
-const chocolateTopping = createLayer(
-  'toppings',
-  chocolateFlakes,
-  chocolateFlakes,
-);
+const winterTires = createLayer('tires', winterFront, winterRear);
 
-const chocolateCake = hip<Cake>({
-  id: 'chocolateCake',
-  sliceIdsTable: 'slices',
-  sliceIdsRow: ref(halves),
+const winterSetup = hip<Cake>({
+  id: 'winterSetup',
+  sliceIdsTable: 'axles',
+  sliceIdsRow: ref(bothAxles),
   layers: {
-    spongeLayers: ref(spongeLayer), // the same as in the berry cake
-    creamLayers: ref(creamLayer), // the same as in the berry cake
-    toppingLayers: ref(chocolateTopping),
+    brakeLayers: ref(brakeLayer), // the same as in the summer setup
+    rimLayers: ref(rimLayer), // the same as in the summer setup
+    tireLayers: ref(winterTires),
   },
 });
 // #endregion variant
 
 // #region tables
-const spongeLayers = hip<LayersTable>({
+const brakeLayers = hip<LayersTable>({
   _type: 'layers',
-  _data: [spongeLayer],
+  _data: [brakeLayer],
 });
 
-const creamLayers = hip<LayersTable>({
+const rimLayers = hip<LayersTable>({
   _type: 'layers',
-  _data: [creamLayer],
+  _data: [rimLayer],
 });
 
-const toppingLayers = hip<LayersTable>({
+const tireLayers = hip<LayersTable>({
   _type: 'layers',
-  _data: [berryTopping, chocolateTopping],
+  _data: [summerTires, winterTires],
 });
 
-const cakes = hip<CakesTable>({
+const wheelSetups = hip<CakesTable>({
   _type: 'cakes',
-  _data: [berryCake, chocolateCake],
+  _data: [summerSetup, winterSetup],
 });
 
-const cakeShop: Rljson = {
-  sponges,
-  creams,
-  toppings,
-  slices,
-  spongeLayers,
-  creamLayers,
-  toppingLayers,
-  cakes,
+const wheelShop: Rljson = {
+  brakes,
+  rims,
+  tires,
+  axles,
+  brakeLayers,
+  rimLayers,
+  tireLayers,
+  wheelSetups,
 };
 // #endregion tables
 
@@ -161,32 +158,32 @@ const cakeShop: Rljson = {
 const validate = new Validate();
 validate.addValidator(new BaseValidator());
 
-const errors = await validate.run(cakeShop);
+const errors = await validate.run(wheelShop);
 if (Object.keys(errors).length > 0) {
   throw new Error(JSON.stringify(errors, null, 2));
 }
 // #endregion validate
 
 // #region serve
-/** Finds the row with the given hash in a table of the cake shop */
+/** Finds the row with the given hash in a table of the wheel shop */
 const rowOf = (tableKey: string, hash: Ref) =>
-  cakeShop[tableKey]._data.find((row) => ref(row) === hash);
+  wheelShop[tableKey]._data.find((row) => ref(row) === hash);
 
-/** Returns what one slice of a cake is made of: a part from each layer */
-const partsOf = (cake: Cake, sliceId: string) =>
-  Object.entries(cake.layers)
+/** Returns what goes onto one axle of a setup: a part from each layer */
+const partsOf = (setup: Cake, sliceId: string) =>
+  Object.entries(setup.layers)
     .filter(([layersTable]) => !layersTable.startsWith('_')) // skip _hash
     .map(([layersTable, layerRef]) => {
       const layer: Layer = rowOf(layersTable, layerRef);
       return rowOf(layer.componentsTable, layer.add[sliceId]).name;
     });
 
-for (const cake of cakes._data) {
-  const { add: sliceIds } = rowOf(cake.sliceIdsTable, cake.sliceIdsRow);
+for (const setup of wheelSetups._data) {
+  const { add: sliceIds } = rowOf(setup.sliceIdsTable, setup.sliceIdsRow);
 
-  console.log(`${cake.id}:`);
+  console.log(`${setup.id}:`);
   for (const sliceId of sliceIds) {
-    console.log(`  ${sliceId}: ${partsOf(cake, sliceId).join(', ')}`);
+    console.log(`  ${sliceId}: ${partsOf(setup, sliceId).join(', ')}`);
   }
 }
 // #endregion serve
@@ -196,60 +193,59 @@ const output = log.mock.calls.map((args) => args.join(' ')).join('\n');
 log.mockRestore();
 
 describe('Cake tutorial', () => {
-  it('lets all layers share the slice ids of the cake', () => {
-    for (const layer of [spongeLayer, creamLayer, berryTopping]) {
-      expect(layer.sliceIdsTableRow).toBe(berryCake.sliceIdsRow);
+  it('lets all layers share the slice ids of the wheel setup', () => {
+    for (const layer of [brakeLayer, rimLayer, summerTires]) {
+      expect(layer.sliceIdsTableRow).toBe(summerSetup.sliceIdsRow);
     }
   });
 
-  it('stacks layers into cakes', async () => {
-    await writeGolden('cakes.json', cakes);
+  it('stacks layers into wheel setups', async () => {
+    await writeGolden('wheel-setups.json', wheelSetups);
 
-    expect(chocolateCake.layers.spongeLayers).toBe(
-      berryCake.layers.spongeLayers,
-    );
-    expect(chocolateCake.layers.toppingLayers).not.toBe(
-      berryCake.layers.toppingLayers,
+    expect(winterSetup.layers.brakeLayers).toBe(summerSetup.layers.brakeLayers);
+    expect(winterSetup.layers.rimLayers).toBe(summerSetup.layers.rimLayers);
+    expect(winterSetup.layers.tireLayers).not.toBe(
+      summerSetup.layers.tireLayers,
     );
   });
 
-  it('validates the cake shop', () => {
+  it('validates the wheel shop', () => {
     expect(errors).toEqual({});
   });
 
-  it('serves each slice of each cake', async () => {
+  it('mounts the wheels of each setup', async () => {
     await writeGolden('output.txt', output);
 
     expect(output).toBe(
       [
-        'berryCake:',
-        '  left: vanilla sponge, vanilla cream, strawberries',
-        '  right: chocolate sponge, chocolate cream, raspberries',
-        'chocolateCake:',
-        '  left: vanilla sponge, vanilla cream, chocolate flakes',
-        '  right: chocolate sponge, chocolate cream, chocolate flakes',
+        'summerSetup:',
+        '  front: 410 mm brake, 20″ rim, 245/45 R20 summer',
+        '  rear: 365 mm brake, 21″ rim, 285/40 R21 summer',
+        'winterSetup:',
+        '  front: 410 mm brake, 20″ rim, 245/45 R20 winter',
+        '  rear: 365 mm brake, 21″ rim, 285/40 R21 winter',
       ].join('\n'),
     );
   });
 
-  it('detects a cake with a missing layer', async () => {
+  it('detects a wheel setup with a missing layer', async () => {
     // #region missing-layer
-    const mixedTopping = createLayer('toppings', raspberries, strawberries);
+    const mixedTires = createLayer('tires', winterFront, summerRear);
 
-    const mixedCake = hip<Cake>({
-      id: 'mixedCake',
-      sliceIdsTable: 'slices',
-      sliceIdsRow: ref(halves),
+    const mixedSetup = hip<Cake>({
+      id: 'mixedSetup',
+      sliceIdsTable: 'axles',
+      sliceIdsRow: ref(bothAxles),
       layers: {
-        spongeLayers: ref(spongeLayer),
-        creamLayers: ref(creamLayer),
-        toppingLayers: ref(mixedTopping), // not added to toppingLayers
+        brakeLayers: ref(brakeLayer),
+        rimLayers: ref(rimLayer),
+        tireLayers: ref(mixedTires), // not added to tireLayers
       },
     });
 
     const result = await validate.run({
-      ...cakeShop,
-      cakes: hip<CakesTable>({ _type: 'cakes', _data: [mixedCake] }),
+      ...wheelShop,
+      wheelSetups: hip<CakesTable>({ _type: 'cakes', _data: [mixedSetup] }),
     });
     // #endregion missing-layer
 
@@ -258,10 +254,10 @@ describe('Cake tutorial', () => {
       error: 'Layer layers of cakes are missing',
       brokenCakes: [
         {
-          cakeTable: 'cakes',
-          brokenCake: ref(mixedCake),
-          layersTable: 'toppingLayers',
-          missingLayer: ref(mixedTopping),
+          cakeTable: 'wheelSetups',
+          brokenCake: ref(mixedSetup),
+          layersTable: 'tireLayers',
+          missingLayer: ref(mixedTires),
         },
       ],
     });

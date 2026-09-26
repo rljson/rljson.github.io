@@ -1,0 +1,18 @@
+{
+  "_type": "components",
+  "_data": [
+    {
+      "id": "taycan",
+      "seats": 4,
+      "manufacturersRef": "oGtMimnyJ8xM10PgS2WEPg",
+      "_hash": "CPCiCfijIvljdCKyl-I91H"
+    },
+    {
+      "id": "ex30",
+      "seats": 5,
+      "manufacturersRef": "SQxsTq3FTq0lQC2iWQiDfH",
+      "_hash": "JHmQ1UeTD2C41bGqdgTZh6"
+    }
+  ],
+  "_hash": "cjP3MVWMdrlxQebB_1HfAO"
+}

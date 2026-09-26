@@ -10,10 +10,10 @@
 // vitest imports this file. The tests below check what it has built.
 
 // #region app
-// #region products
+// #region models
 import { hip } from '@rljson/hash';
 import type { Ref, Tree } from '@rljson/rljson';
-// #endregion products
+// #endregion models
 // #region table
 import type { TreesTable } from '@rljson/rljson';
 // #endregion table
@@ -33,34 +33,34 @@ import { describe, expect, it, vi } from 'vitest';
 const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 // #region app
-// #region products
+// #region models
 /** Returns the reference to a node: the hash that hip wrote into it */
 const ref = (node: object): Ref => (node as { _hash: Ref })._hash;
 
-/** Creates a leaf: a product and its price */
-const product = (id: string, price: number) =>
+/** Creates a leaf: a car model and its price in euros */
+const model = (id: string, price: number) =>
   hip<Tree>({ id, isParent: false, meta: { price }, children: null });
 
-const cheesecake = product('cheesecake', 4.2);
-const carrotCake = product('carrotCake', 3.8);
-const sourdough = product('sourdough', 5.5);
-const baguette = product('baguette', 2.5);
-// #endregion products
+const taycan = model('taycan', 101000);
+const macan = model('macan', 84000);
+const ex30 = model('ex30', 36000);
+const ex90 = model('ex90', 82000);
+// #endregion models
 
-// #region categories
+// #region manufacturers
 /** Creates a parent that references its children by their hashes */
-const category = (id: string, children: Tree[]) =>
+const manufacturer = (id: string, children: Tree[]) =>
   hip<Tree>({ id, isParent: true, meta: null, children: children.map(ref) });
 
-const cakes = category('cakes', [cheesecake, carrotCake]);
-const breads = category('breads', [sourdough, baguette]);
-const root = category('root', [cakes, breads]);
-// #endregion categories
+const porsche = manufacturer('porsche', [taycan, macan]);
+const volvo = manufacturer('volvo', [ex30, ex90]);
+const root = manufacturer('root', [porsche, volvo]);
+// #endregion manufacturers
 
 // #region table
-const menu = hip<TreesTable>({
+const priceList = hip<TreesTable>({
   _type: 'trees',
-  _data: [root, cakes, breads, cheesecake, carrotCake, sourdough, baguette],
+  _data: [root, porsche, volvo, taycan, macan, ex30, ex90],
 });
 // #endregion table
 
@@ -68,7 +68,7 @@ const menu = hip<TreesTable>({
 const validate = new Validate();
 validate.addValidator(new BaseValidator());
 
-const errors = await validate.run({ menu });
+const errors = await validate.run({ priceList });
 if (Object.keys(errors).length > 0) {
   throw new Error(JSON.stringify(errors, null, 2));
 }
@@ -78,7 +78,9 @@ if (Object.keys(errors).length > 0) {
 /** Prints a node and, indented below it, all of its descendants */
 const print = (table: TreesTable, hash: Ref, indent = '') => {
   const node = table._data.find((row) => ref(row) === hash)!;
-  const price = node.meta ? ` ${(node.meta.price as number).toFixed(2)} €` : '';
+  const price = node.meta
+    ? ` ${(node.meta.price as number).toLocaleString('en-US')} €`
+    : '';
   console.log(`${indent}${node.id}${price}`);
 
   for (const child of node.children ?? []) {
@@ -86,25 +88,25 @@ const print = (table: TreesTable, hash: Ref, indent = '') => {
   }
 };
 
-print(menu, ref(root));
+print(priceList, ref(root));
 // #endregion print
 
 // #region change
-// The cheesecake gets cheaper
-const cheaperCheesecake = product('cheesecake', 3.9);
-const newCakes = category('cakes', [cheaperCheesecake, carrotCake]);
-const newRoot = category('root', [newCakes, breads]);
+// The Taycan gets cheaper
+const cheaperTaycan = model('taycan', 97000);
+const newPorsche = manufacturer('porsche', [cheaperTaycan, macan]);
+const newRoot = manufacturer('root', [newPorsche, volvo]);
 
-const newMenu = hip<TreesTable>({
+const newPriceList = hip<TreesTable>({
   _type: 'trees',
-  _data: [...menu._data, newRoot, newCakes, cheaperCheesecake],
+  _data: [...priceList._data, newRoot, newPorsche, cheaperTaycan],
 });
 
 console.log('\nAfter the price change:');
-print(newMenu, ref(newRoot));
+print(newPriceList, ref(newRoot));
 
-const known = new Set(menu._data.map(ref));
-const added = newMenu._data.filter((node) => !known.has(ref(node)));
+const known = new Set(priceList._data.map(ref));
+const added = newPriceList._data.filter((node) => !known.has(ref(node)));
 console.log(`\nNew nodes: ${added.map((node) => node.id).join(', ')}`);
 // #endregion change
 // #endregion app
@@ -114,40 +116,40 @@ log.mockRestore();
 
 describe('Tree tutorial', () => {
   it('references the children by their hashes', () => {
-    expect(root.children).toEqual([ref(cakes), ref(breads)]);
-    expect(cheesecake.children).toBeNull();
+    expect(root.children).toEqual([ref(porsche), ref(volvo)]);
+    expect(taycan.children).toBeNull();
   });
 
   it('stores the nodes as rows of a trees table', async () => {
-    await writeGolden('menu.json', menu);
+    await writeGolden('price-list.json', priceList);
   });
 
-  it('validates the menu', async () => {
+  it('validates the price list', async () => {
     expect(errors).toEqual({});
-    expect(await validate.run({ menu: newMenu })).toEqual({});
+    expect(await validate.run({ priceList: newPriceList })).toEqual({});
   });
 
-  it('prints the menu and replaces the changed path only', async () => {
+  it('prints the price list and replaces the changed path only', async () => {
     await writeGolden('output.txt', output);
 
     expect(output).toBe(
       [
         'root',
-        '  cakes',
-        '    cheesecake 4.20 €',
-        '    carrotCake 3.80 €',
-        '  breads',
-        '    sourdough 5.50 €',
-        '    baguette 2.50 €',
+        '  porsche',
+        '    taycan 101,000 €',
+        '    macan 84,000 €',
+        '  volvo',
+        '    ex30 36,000 €',
+        '    ex90 82,000 €',
         '\nAfter the price change:',
         'root',
-        '  cakes',
-        '    cheesecake 3.90 €',
-        '    carrotCake 3.80 €',
-        '  breads',
-        '    sourdough 5.50 €',
-        '    baguette 2.50 €',
-        '\nNew nodes: root, cakes, cheesecake',
+        '  porsche',
+        '    taycan 97,000 €',
+        '    macan 84,000 €',
+        '  volvo',
+        '    ex30 36,000 €',
+        '    ex90 82,000 €',
+        '\nNew nodes: root, porsche, taycan',
       ].join('\n'),
     );
   });
@@ -155,13 +157,13 @@ describe('Tree tutorial', () => {
   it('builds the same tree from a plain object', () => {
     // #region from-object
     const nodes = treeFromObject({
-      cakes: {
-        cheesecake: { meta: { price: 4.2 } },
-        carrotCake: { meta: { price: 3.8 } },
+      porsche: {
+        taycan: { meta: { price: 101000 } },
+        macan: { meta: { price: 84000 } },
       },
-      breads: {
-        sourdough: { meta: { price: 5.5 } },
-        baguette: { meta: { price: 2.5 } },
+      volvo: {
+        ex30: { meta: { price: 36000 } },
+        ex90: { meta: { price: 82000 } },
       },
     });
 
@@ -169,17 +171,17 @@ describe('Tree tutorial', () => {
     expect(rootNode._hash).toBe(ref(root)); // same tree, same root hash
     // #endregion from-object
 
-    expect(nodes).toHaveLength(menu._data.length);
+    expect(nodes).toHaveLength(priceList._data.length);
   });
 
   it('detects a missing child', async () => {
     // #region missing-child
     const incomplete = hip<TreesTable>({
       _type: 'trees',
-      _data: [root, cakes, breads, cheesecake, carrotCake, sourdough],
+      _data: [root, porsche, volvo, taycan, macan, ex30],
     });
 
-    const result = await validate.run({ menu: incomplete });
+    const result = await validate.run({ priceList: incomplete });
     // #endregion missing-child
 
     await writeGolden('missing-child.json', result);
@@ -187,9 +189,9 @@ describe('Tree tutorial', () => {
       error: 'Child nodes are missing',
       brokenTrees: [
         {
-          treesTable: 'menu',
-          brokenTree: ref(breads),
-          missingChildNode: ref(baguette),
+          treesTable: 'priceList',
+          brokenTree: ref(volvo),
+          missingChildNode: ref(ex90),
         },
       ],
     });
@@ -197,16 +199,16 @@ describe('Tree tutorial', () => {
 
   it('detects a leaf with children', async () => {
     const leafWithChildren = hip<Tree>({
-      id: 'cakes',
+      id: 'porsche',
       isParent: false,
       meta: null,
-      children: [ref(cheesecake)],
+      children: [ref(taycan)],
     });
 
     const result = await validate.run({
-      menu: hip<TreesTable>({
+      priceList: hip<TreesTable>({
         _type: 'trees',
-        _data: [leafWithChildren, cheesecake],
+        _data: [leafWithChildren, taycan],
       }),
     });
 

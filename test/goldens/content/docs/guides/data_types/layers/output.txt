@@ -1,3 +1,2 @@
-standard: white body, black roof, silver wheels
-sport: white body, black roof, silver wheels, black stripes
-convertible: white body, silver wheels, black softTop
+colors2025: taycan white, macan black, ex30 white
+colors2026: taycan white, ex30 white, ex90 silver

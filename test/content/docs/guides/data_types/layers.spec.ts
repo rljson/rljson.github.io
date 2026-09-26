@@ -50,72 +50,57 @@ const [white, black, silver] = colors._data;
 // #endregion colors
 
 // #region slice-ids
-const standardParts = hip<SliceIds>({ add: ['body', 'roof', 'wheels'] });
+const cars2025 = hip<SliceIds>({ add: ['taycan', 'macan', 'ex30'] });
 // #endregion slice-ids
 
 // #region layer
-const standard = hip<Layer>({
-  id: 'standard',
-  sliceIdsTable: 'carParts',
-  sliceIdsTableRow: ref(standardParts),
+const colors2025 = hip<Layer>({
+  id: 'colors2025',
+  sliceIdsTable: 'cars',
+  sliceIdsTableRow: ref(cars2025),
   componentsTable: 'colors',
-  add: { body: ref(white), roof: ref(black), wheels: ref(silver) },
+  add: { taycan: ref(white), macan: ref(black), ex30: ref(white) },
 });
 // #endregion layer
 
 // #region variants
-// A sport scheme: the standard scheme plus stripes
-const sportParts = hip<SliceIds>({
-  base: ref(standardParts),
-  add: ['stripes'],
+// The cars of 2026: the EX90 is new, the Macan is gone
+const cars2026 = hip<SliceIds>({
+  base: ref(cars2025),
+  add: ['ex90'],
+  remove: ['macan'],
 });
 
-const sport = hip<Layer>({
-  id: 'sport',
-  base: ref(standard),
-  sliceIdsTable: 'carParts',
-  sliceIdsTableRow: ref(sportParts),
+const colors2026 = hip<Layer>({
+  id: 'colors2026',
+  base: ref(colors2025),
+  sliceIdsTable: 'cars',
+  sliceIdsTableRow: ref(cars2026),
   componentsTable: 'colors',
-  add: { stripes: ref(black) },
-});
-
-// A convertible: a soft top instead of the roof
-const convertibleParts = hip<SliceIds>({
-  base: ref(standardParts),
-  add: ['softTop'],
-  remove: ['roof'],
-});
-
-const convertible = hip<Layer>({
-  id: 'convertible',
-  base: ref(standard),
-  sliceIdsTable: 'carParts',
-  sliceIdsTableRow: ref(convertibleParts),
-  componentsTable: 'colors',
-  add: { softTop: ref(black) },
-  remove: { roof: ref(black) },
+  add: { ex90: ref(silver) },
+  remove: { macan: ref(black) },
 });
 // #endregion variants
 
 // #region tables
-const carParts = hip<SliceIdsTable>({
+const cars = hip<SliceIdsTable>({
   _type: 'sliceIds',
-  _data: [standardParts, sportParts, convertibleParts],
+  _data: [cars2025, cars2026],
 });
 
-const paintSchemes = hip<LayersTable>({
+const colorLayers = hip<LayersTable>({
   _type: 'layers',
-  _data: [standard, sport, convertible],
+  _data: [colors2025, colors2026],
 });
 
-const paintShop: Rljson = { colors, carParts, paintSchemes };
+const carCatalog: Rljson = { colors, cars, colorLayers };
 // #endregion tables
 
 // #region validate
 const validate = new Validate();
 validate.addValidator(new BaseValidator());
 
-const errors = await validate.run(paintShop);
+const errors = await validate.run(carCatalog);
 if (Object.keys(errors).length > 0) {
   throw new Error(JSON.stringify(errors, null, 2));
 }
@@ -128,7 +113,7 @@ const rowOf = <T extends object>(table: { _data: T[] }, hash: Ref): T =>
 
 /** Returns the assignments of a layer, merged with those of its base */
 const assignmentsOf = (layer: Layer): Record<string, Ref> => {
-  const baseLayer = layer.base && rowOf(paintSchemes, layer.base);
+  const baseLayer = layer.base && rowOf(colorLayers, layer.base);
   const base = baseLayer ? assignmentsOf(baseLayer) : {};
   const assignments = { ...base, ...layer.add };
 
@@ -140,15 +125,13 @@ const assignmentsOf = (layer: Layer): Record<string, Ref> => {
   return assignments;
 };
 
-for (const scheme of paintSchemes._data) {
-  const lines = Object.entries(assignmentsOf(scheme)).map(
-    ([part, colorRef]) => {
-      const { name } = rowOf(colors, colorRef);
-      return `${name} ${part}`;
-    },
-  );
+for (const layer of colorLayers._data) {
+  const lines = Object.entries(assignmentsOf(layer)).map(([car, colorRef]) => {
+    const { name } = rowOf(colors, colorRef);
+    return `${car} ${name}`;
+  });
 
-  console.log(`${scheme.id}: ${lines.join(', ')}`);
+  console.log(`${layer.id}: ${lines.join(', ')}`);
 }
 // #endregion resolve
 // #endregion app
@@ -159,40 +142,41 @@ log.mockRestore();
 describe('Layers tutorial', () => {
   it('stores each color once', () => {
     expect(colors._data).toHaveLength(3);
-    expect(sport.add.stripes).toBe(standard.add.roof); // both black
-    expect(convertible.add.softTop).toBe(standard.add.roof); // both black
+    expect(colors2025.add.taycan).toBe(colors2025.add.ex30); // both white
+    expect(colors2026.add.ex90).toBe(ref(silver));
   });
 
   it('derives slice ids from a base', async () => {
-    await writeGolden('car-parts.json', carParts);
+    await writeGolden('cars.json', cars);
 
-    expect(sportParts.base).toBe(ref(standardParts));
-    expect(convertibleParts.remove).toEqual(['roof']);
+    expect(cars2026.base).toBe(ref(cars2025));
+    expect(cars2026.add).toEqual(['ex90']);
+    expect(cars2026.remove).toEqual(['macan']);
   });
 
   it('assigns components to slice ids', async () => {
-    await writeGolden('paint-schemes.json', paintSchemes);
+    await writeGolden('color-layers.json', colorLayers);
 
-    expect(Object.keys(standard.add)).toEqual([
-      'body',
-      'roof',
-      'wheels',
+    expect(Object.keys(colors2025.add)).toEqual([
+      'taycan',
+      'macan',
+      'ex30',
       '_hash',
     ]);
+    expect(colors2026.base).toBe(ref(colors2025));
   });
 
-  it('validates the paint shop', () => {
+  it('validates the car catalog', () => {
     expect(errors).toEqual({});
   });
 
-  it('resolves the colors of each paint scheme', async () => {
+  it('resolves the colors of each model year', async () => {
     await writeGolden('output.txt', output);
 
     expect(output).toBe(
       [
-        'standard: white body, black roof, silver wheels',
-        'sport: white body, black roof, silver wheels, black stripes',
-        'convertible: white body, silver wheels, black softTop',
+        'colors2025: taycan white, macan black, ex30 white',
+        'colors2026: taycan white, ex30 white, ex90 silver',
       ].join('\n'),
     );
   });
@@ -200,19 +184,20 @@ describe('Layers tutorial', () => {
   it('detects a slice id without a component', async () => {
     // #region missing-assignment
     const forgetful = hip<Layer>({
-      id: 'sport',
-      base: ref(standard),
-      sliceIdsTable: 'carParts',
-      sliceIdsTableRow: ref(sportParts),
+      id: 'colors2026',
+      base: ref(colors2025),
+      sliceIdsTable: 'cars',
+      sliceIdsTableRow: ref(cars2026),
       componentsTable: 'colors',
-      add: {}, // no color for the stripes
+      add: {}, // no color for the EX90
+      remove: { macan: ref(black) },
     });
 
     const result = await validate.run({
-      ...paintShop,
-      paintSchemes: hip<LayersTable>({
+      ...carCatalog,
+      colorLayers: hip<LayersTable>({
         _type: 'layers',
-        _data: [standard, forgetful],
+        _data: [colors2025, forgetful],
       }),
     });
     // #endregion missing-assignment
@@ -223,8 +208,8 @@ describe('Layers tutorial', () => {
       layers: [
         {
           brokenLayer: ref(forgetful),
-          layersTable: 'paintSchemes',
-          unassignedSliceIds: ['stripes'],
+          layersTable: 'colorLayers',
+          unassignedSliceIds: ['ex90'],
         },
       ],
     });

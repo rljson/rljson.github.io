@@ -5,10 +5,10 @@
       "error": "Layers have missing assignments",
       "layers": [
         {
-          "brokenLayer": "wjjv_L1NMiXB_LZSooM3VA",
-          "layersTable": "paintSchemes",
+          "brokenLayer": "wMIXhZYMhzKAMZhAfmpEA2",
+          "layersTable": "colorLayers",
           "unassignedSliceIds": [
-            "stripes"
+            "ex90"
           ]
         }
       ]

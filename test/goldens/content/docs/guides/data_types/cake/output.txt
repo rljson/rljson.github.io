@@ -1,6 +1,6 @@
-summerSetup:
-  front: 410 mm brake, 20″ rim, 245/45 R20 summer
-  rear: 365 mm brake, 21″ rim, 285/40 R21 summer
-winterSetup:
-  front: 410 mm brake, 20″ rim, 245/45 R20 winter
-  rear: 365 mm brake, 21″ rim, 285/40 R21 winter
+germany:
+  taycan: white, 300 kW electric, 101,000 EUR
+  ex30: black, 200 kW electric, 36,000 EUR
+switzerland:
+  taycan: white, 300 kW electric, 108,000 CHF
+  ex30: black, 200 kW electric, 38,000 CHF

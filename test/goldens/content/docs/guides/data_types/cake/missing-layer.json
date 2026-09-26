@@ -5,10 +5,10 @@
       "error": "Layer layers of cakes are missing",
       "brokenCakes": [
         {
-          "cakeTable": "wheelSetups",
-          "brokenCake": "agRa_A_5T7u207cYVnWmUL",
-          "layersTable": "tireLayers",
-          "missingLayer": "m2uJpcxRLzT7SPy8P2KeU2"
+          "cakeTable": "catalogs",
+          "brokenCake": "KIAne7BHMKXIaRo4cu9EKE",
+          "layersTable": "priceLayers",
+          "missingLayer": "fuKywvtTs4xdj_UqjGd7pu"
         }
       ]
     }

@@ -1,0 +1,30 @@
+{
+  "_type": "cakes",
+  "_data": [
+    {
+      "id": "germany",
+      "sliceIdsTable": "cars",
+      "sliceIdsRow": "5Zwcu21qZMBI-mGn3LNMPz",
+      "layers": {
+        "colorLayers": "Ph2sYOHXg556oCF1uGGEqi",
+        "engineLayers": "L0UwTn2lB272Ug-Tlp6m29",
+        "priceLayers": "6MQdW5EMTT3-6pjCnZzyAY",
+        "_hash": "UIxBBoP3iZedbG4JMUPtSl"
+      },
+      "_hash": "gCS2oNrGf8GAizhaG6HRqm"
+    },
+    {
+      "id": "switzerland",
+      "sliceIdsTable": "cars",
+      "sliceIdsRow": "5Zwcu21qZMBI-mGn3LNMPz",
+      "layers": {
+        "colorLayers": "Ph2sYOHXg556oCF1uGGEqi",
+        "engineLayers": "L0UwTn2lB272Ug-Tlp6m29",
+        "priceLayers": "-YdjDz6WM0gUQSlmWZ8HET",
+        "_hash": "VvVlhzw-SN75ZsLi3Zr_b8"
+      },
+      "_hash": "BEBLNhdBcQnOtx8S6OZp8F"
+    }
+  ],
+  "_hash": "PSQQU6DJ_130VjtdWHFROb"
+}

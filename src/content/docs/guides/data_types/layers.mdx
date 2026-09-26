@@ -1,6 +1,6 @@
 ---
 title: Layers
-description: Paint cars with layers that assign colors to car parts, and derive new paint schemes from a base layer.
+description: 'Describe one aspect of a car catalog with a layer: assign a color to every car, and derive the next model year from a base layer.'
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -13,16 +13,28 @@ import Snippet from '../../../../components/Snippet.astro';
   aria-label="A layer cut into slices"
 />
 
-Think of a cake layer that is cut into slices: each slice has its own
-filling. A layer in Rljson works the same way. It has a set of slices, and
-it gives each slice a component. The slices are named by slice ids. The slice ids
-live in a table of their own, and the components in a components table. The
-layer maps each slice id to the hash of a component.
+To allow an efficient processing of thousands of objects we are introducing
+the concept **layer**:
 
-In this tutorial you paint cars. The slice ids are the parts of a car, like
-`body` and `roof`, and the components are colors, like white. Each paint
-scheme is a layer. You create a standard scheme first, and then derive a
-sport scheme with stripes and a convertible with a soft top from it.
+- Layers separate the data of complex objects into meaningful concerns
+- Layers can be loaded and processed independently
+- Layers can be updated using differences only
+
+Examples:
+
+- A price layer stores the prices of cars
+- An engine layer stores the engines of cars
+- A color layer stores the colors of cars
+
+A single object in a layer is called a **slice**:
+
+- A **slice** describes properties of a single object, e.g. a car
+- A **layer** describes certain aspects of multiple slice, e.g. the price of multipe cars
+- A **slice id** identifies a slice in a layer, e.g. the name of the car
+
+In this tutorial you build the color layer of a car catalog. You describe the
+colors of the cars of 2025, and then derive the catalog of 2026, which adds
+the EX90 and drops the Macan.
 
 You will learn how to:
 
@@ -36,52 +48,51 @@ You will learn how to:
 Create a project and install the core package and the hashing package:
 
 ```bash
-mkdir paint-shop
-cd paint-shop
+mkdir car-catalog
+cd car-catalog
 echo '{ "type": "module" }' > package.json
 pnpm add @rljson/rljson @rljson/hash
 ```
 
 `"type": "module"` lets the application use ES modules and top-level `await`.
-Now create the file `paint.ts`. Each of the following steps adds code to it:
+Now create the file `colors.ts`. Each of the following steps adds code to it:
 put the imports of a step at the top of the file, and its code below the code
 of the previous step. The complete file is shown at the end.
 
 ## 2. Create the components
 
-The components of the paint schemes are colors. Store them in a components
+The components of the color layer are colors. Store them in a components
 table:
 
 <Snippet
   file="layers.spec.ts"
   region="colors"
-  title="paint.ts"
+  title="colors.ts"
 />
 
-The helper `ref` reads the hash that `hip` has written into a row. The
-paint schemes will use each color for more than one part: the roof and the
-stripes, for example, are both black. Since equal rows have equal hashes,
-the table stores each color once. If components tables are new to
-you, start with [Components](/guides/data_types/components/).
+The helper `ref` reads the hash that `hip` has written into a row. Several
+cars share a color: the Taycan and the EX30, for example, are both white.
+Since equal rows have equal hashes, the table stores each color once. If
+components tables are new to you, start with [Components](/guides/data_types/components/).
 
 ## 3. List the slice ids
 
-A standard car has a body, a roof and wheels. List these slice ids in a row
-of type `SliceIds`:
+The slice ids are the cars of the catalog. List the cars of 2025 in a row of
+type `SliceIds`:
 
 <Snippet
   file="layers.spec.ts"
   region="slice-ids"
-  title="paint.ts"
+  title="colors.ts"
 />
 
 A row of slice ids has three fields:
 
-| Field    | Meaning                                             |
-| -------- | --------------------------------------------------- |
-| `add`    | The slice ids of the row                            |
-| `base`   | Optional: the hash of a row that this row extends   |
-| `remove` | Optional: slice ids of the base that this row drops |
+| Field    | Meaning                                      |
+| -------- | -------------------------------------------- |
+| `base`   | The hash of a layer that this layer extends  |
+| `add`    | The slice ids that are added to the base     |
+| `remove` | The slice ids that are removed from the base |
 
 Keeping the slice ids apart from the data pays off with large layers: a
 client can fetch the slice ids first and load the components only for the
@@ -89,45 +100,43 @@ slices it needs.
 
 ## 4. Create a layer
 
-The standard paint scheme is a layer. It assigns a color to each of its
-slice ids:
+The colors of 2025 are a layer. It assigns a color to each car:
 
 <Snippet
   file="layers.spec.ts"
   region="layer"
-  title="paint.ts"
+  title="colors.ts"
 />
 
 | Field              | Meaning                                                    |
 | ------------------ | ---------------------------------------------------------- |
 | `sliceIdsTable`    | The name of the table with the slice ids                   |
 | `sliceIdsTableRow` | The hash of the row in that table that lists the slice ids |
-| `componentsTable`  | The name of the table with the components                  |
-| `add`              | Maps each slice id to the hash of a component              |
+| `componentsTable`  | The name of the table with the slice properties            |
+| `add`              | The slices that are added to the layer                     |
 | `base`             | Optional: the hash of a layer that this layer extends      |
 | `remove`           | Optional: assignments of the base that this layer drops    |
 
-A layer refers to tables by the names they will get in the Rljson object,
+A layer refers to tables by name
 and to rows by their hashes. Like other rows, a layer may have an `id`; here
-it names the paint scheme.
+it names the model year.
 
-## 5. Derive new paint schemes
+## 5. Derive the next model year
 
-A sport scheme is the standard scheme with stripes. Instead of repeating
-the standard scheme, derive it: a new row of slice ids extends the parts of
-the standard car with `stripes`, and a new layer extends the standard layer
-with a color for them. The convertible has a soft top instead of the roof,
-so it adds `softTop` and removes `roof`:
+In 2026 the EX90 is new and the Macan is gone. Instead of repeating the cars
+of 2025, derive them: a new row of slice ids extends the cars of 2025 with
+`ex90` and removes `macan`. A new layer extends the colors of 2025 with a
+color for the EX90 and drops the Macan's color:
 
 <Snippet
   file="layers.spec.ts"
   region="variants"
-  title="paint.ts"
+  title="colors.ts"
 />
 
-A derived layer stores only what differs from its base. It follows one rule:
+The 2026 layer stores only what differs from its base. It follows one rule:
 it assigns a component to every slice id that its own row of slice ids adds.
-The sport scheme adds `stripes`, so it assigns a color to `stripes`.
+The row of 2026 adds `ex90`, so the layer assigns a color to `ex90`.
 
 ## 6. Put the rows into tables
 
@@ -137,20 +146,20 @@ in a table of type `layers`, and put all tables into an Rljson object:
 <Snippet
   file="layers.spec.ts"
   region="tables"
-  title="paint.ts"
+  title="colors.ts"
 />
 
 The table of slice ids shows how the rows build on each other:
 
 <Snippet
-  file="car-parts.json"
+  file="cars.json"
   title="Output"
 />
 
 The layers table:
 
 <Snippet
-  file="paint-schemes.json"
+  file="color-layers.json"
   title="Output"
 />
 
@@ -158,12 +167,12 @@ The layers table:
 `_hash` of their own. Keep that in mind when you iterate over them: keys that
 start with an underscore are not slice ids.
 
-## 7. Validate the paint shop
+## 7. Validate the catalog
 
 <Snippet
   file="layers.spec.ts"
   region="validate"
-  title="paint.ts"
+  title="colors.ts"
 />
 
 For every layer, `BaseValidator` checks that:
@@ -174,28 +183,28 @@ For every layer, `BaseValidator` checks that:
 - every slice id of the row has an assignment
 - the base layer exists in the same table, if there is one
 
-## 8. Resolve the paint schemes
+## 8. Resolve the colors
 
-To show a paint scheme, the application resolves its layer: it starts with
-the assignments of the base, adds the assignments of the layer and drops the
-removed ones. Then it looks up the color of each part:
+To show the colors of a model year, the application resolves its layer: it
+starts with the assignments of the base, adds the assignments of the layer
+and drops the removed ones. Then it looks up the color of each car:
 
 <Snippet
   file="layers.spec.ts"
   region="resolve"
-  title="paint.ts"
+  title="colors.ts"
 />
 
 ## 9. See what the validator catches
 
-Create the sport scheme again, but forget the color of its stripes:
+Create the 2026 layer again, but forget the color of the EX90:
 
 <Snippet
   file="layers.spec.ts"
   region="missing-assignment"
 />
 
-Its row of slice ids adds `stripes`, but the layer assigns nothing to it:
+Its row of slice ids adds `ex90`, but the layer assigns nothing to it:
 
 <Snippet
   file="missing-assignment.json"
@@ -210,19 +219,19 @@ Its row of slice ids adds `stripes`, but the layer assigns nothing to it:
 
 ## 10. Run the application
 
-Here is the complete `paint.ts`:
+Here is the complete `colors.ts`:
 
 <Snippet
   file="layers.spec.ts"
   region="app"
-  title="paint.ts"
+  title="colors.ts"
 />
 
 Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
-or with `npx tsx paint.ts`:
+or with `npx tsx colors.ts`:
 
 ```bash
-node paint.ts
+node colors.ts
 ```
 
 <Snippet
@@ -232,6 +241,7 @@ node paint.ts
 
 ## What you have learned
 
+- A layer describes one aspect of a catalog, like the colors of the cars.
 - A row of type `SliceIds` lists slice ids in `add`. It can extend a base row
   and remove slice ids from it.
 - A layer names its table of slice ids, its row of slice ids and its
@@ -240,5 +250,5 @@ node paint.ts
   only the difference.
 - Equal components are stored once, however many slices use them.
 
-Next, a [Cake](/guides/data_types/cake/) stacks several layers over the same
-slices.
+Next, a [Cake](/guides/data_types/cake/) stacks the color, engine and price
+layers into a complete catalog.

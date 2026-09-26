@@ -1,0 +1,35 @@
+{
+  "_type": "layers",
+  "_data": [
+    {
+      "id": "colors2025",
+      "sliceIdsTable": "cars",
+      "sliceIdsTableRow": "V3lPAgJq9QELw5yB8Vphbh",
+      "componentsTable": "colors",
+      "add": {
+        "taycan": "gFdm09wOMfLMkhdlQCWWGr",
+        "macan": "YCdt62XOF9BIQ5ckj6PJAY",
+        "ex30": "gFdm09wOMfLMkhdlQCWWGr",
+        "_hash": "6Q5YjP7x16X1Cl-Q4gLv8P"
+      },
+      "_hash": "MlELp_W9inU8NSYzXNrvIX"
+    },
+    {
+      "id": "colors2026",
+      "base": "MlELp_W9inU8NSYzXNrvIX",
+      "sliceIdsTable": "cars",
+      "sliceIdsTableRow": "TKFgA8weeN1r7llQ_S_920",
+      "componentsTable": "colors",
+      "add": {
+        "ex90": "JzBMauAMTUdPkip9Q2hsNy",
+        "_hash": "Ffzj_qWs8vbHaMq1Yw1Ht2"
+      },
+      "remove": {
+        "macan": "YCdt62XOF9BIQ5ckj6PJAY",
+        "_hash": "QuLrb66WOJdgxqXx6_sGUE"
+      },
+      "_hash": "8NwGkwvtFKCEjb07vhXAh9"
+    }
+  ],
+  "_hash": "cz5xG4UjKQ3srSsCmW3--1"
+}

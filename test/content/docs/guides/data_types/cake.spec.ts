@@ -10,10 +10,10 @@
 // vitest imports this file. The tests below check what it has built.
 
 // #region app
-// #region parts
+// #region components
 import { hip } from '@rljson/hash';
 import type { ComponentsTable } from '@rljson/rljson';
-// #endregion parts
+// #endregion components
 // #region slices
 import type { SliceIdsTable } from '@rljson/rljson';
 // #endregion slices
@@ -38,119 +38,124 @@ import { describe, expect, it, vi } from 'vitest';
 const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 // #region app
-// #region parts
-type Part = { name: string };
+// #region components
+type Color = { name: string };
+type Engine = { power: number /* kW */; drive: 'electric' | 'combustion' };
+type Price = { amount: number; currency: 'EUR' | 'CHF' };
 
-const brakes = hip<ComponentsTable<Part>>({
+const colors = hip<ComponentsTable<Color>>({
   _type: 'components',
-  _data: [{ name: '410 mm brake' }, { name: '365 mm brake' }],
+  _data: [{ name: 'white' }, { name: 'black' }],
 });
 
-const rims = hip<ComponentsTable<Part>>({
-  _type: 'components',
-  _data: [{ name: '20″ rim' }, { name: '21″ rim' }],
-});
-
-const tires = hip<ComponentsTable<Part>>({
+const engines = hip<ComponentsTable<Engine>>({
   _type: 'components',
   _data: [
-    { name: '245/45 R20 summer' },
-    { name: '285/40 R21 summer' },
-    { name: '245/45 R20 winter' },
-    { name: '285/40 R21 winter' },
+    { power: 300, drive: 'electric' },
+    { power: 200, drive: 'electric' },
   ],
 });
-// #endregion parts
+
+const prices = hip<ComponentsTable<Price>>({
+  _type: 'components',
+  _data: [
+    { amount: 101000, currency: 'EUR' },
+    { amount: 36000, currency: 'EUR' },
+    { amount: 108000, currency: 'CHF' },
+    { amount: 38000, currency: 'CHF' },
+  ],
+});
+// #endregion components
 
 // #region slices
-const axles = hip<SliceIdsTable>({
+const cars = hip<SliceIdsTable>({
   _type: 'sliceIds',
-  _data: [{ add: ['front', 'rear'] }],
+  _data: [{ add: ['taycan', 'ex30'] }],
 });
 
-const bothAxles = axles._data[0];
+const models = cars._data[0];
 // #endregion slices
 
 // #region layers
 /** Returns the reference to a row: the hash that hip wrote into it */
 const ref = (row: object): Ref => (row as { _hash: Ref })._hash;
 
-/** Creates a layer that assigns a part to each axle of the car */
-const createLayer = (componentsTable: string, front: object, rear: object) =>
+/** Creates a layer that assigns a component to each car of the catalog */
+const createLayer = (componentsTable: string, taycan: object, ex30: object) =>
   hip<Layer>({
-    sliceIdsTable: 'axles',
-    sliceIdsTableRow: ref(bothAxles),
+    sliceIdsTable: 'cars',
+    sliceIdsTableRow: ref(models),
     componentsTable,
-    add: { front: ref(front), rear: ref(rear) },
+    add: { taycan: ref(taycan), ex30: ref(ex30) },
   });
 
-const [frontBrake, rearBrake] = brakes._data;
-const [frontRim, rearRim] = rims._data;
-const [summerFront, summerRear, winterFront, winterRear] = tires._data;
+const [white, black] = colors._data;
+const [strongEngine, smallEngine] = engines._data;
+const [taycanEur, ex30Eur, taycanChf, ex30Chf] = prices._data;
 
-const brakeLayer = createLayer('brakes', frontBrake, rearBrake);
-const rimLayer = createLayer('rims', frontRim, rearRim);
-const summerTires = createLayer('tires', summerFront, summerRear);
+const colorLayer = createLayer('colors', white, black);
+const engineLayer = createLayer('engines', strongEngine, smallEngine);
+const germanPrices = createLayer('prices', taycanEur, ex30Eur);
 // #endregion layers
 
 // #region cake
-const summerSetup = hip<Cake>({
-  id: 'summerSetup',
-  sliceIdsTable: 'axles',
-  sliceIdsRow: ref(bothAxles),
+const germany = hip<Cake>({
+  id: 'germany',
+  sliceIdsTable: 'cars',
+  sliceIdsRow: ref(models),
   layers: {
-    brakeLayers: ref(brakeLayer),
-    rimLayers: ref(rimLayer),
-    tireLayers: ref(summerTires),
+    colorLayers: ref(colorLayer),
+    engineLayers: ref(engineLayer),
+    priceLayers: ref(germanPrices),
   },
 });
 // #endregion cake
 
 // #region variant
-const winterTires = createLayer('tires', winterFront, winterRear);
+const swissPrices = createLayer('prices', taycanChf, ex30Chf);
 
-const winterSetup = hip<Cake>({
-  id: 'winterSetup',
-  sliceIdsTable: 'axles',
-  sliceIdsRow: ref(bothAxles),
+const switzerland = hip<Cake>({
+  id: 'switzerland',
+  sliceIdsTable: 'cars',
+  sliceIdsRow: ref(models),
   layers: {
-    brakeLayers: ref(brakeLayer), // the same as in the summer setup
-    rimLayers: ref(rimLayer), // the same as in the summer setup
-    tireLayers: ref(winterTires),
+    colorLayers: ref(colorLayer), // the same as in Germany
+    engineLayers: ref(engineLayer), // the same as in Germany
+    priceLayers: ref(swissPrices),
   },
 });
 // #endregion variant
 
 // #region tables
-const brakeLayers = hip<LayersTable>({
+const colorLayers = hip<LayersTable>({
   _type: 'layers',
-  _data: [brakeLayer],
+  _data: [colorLayer],
 });
 
-const rimLayers = hip<LayersTable>({
+const engineLayers = hip<LayersTable>({
   _type: 'layers',
-  _data: [rimLayer],
+  _data: [engineLayer],
 });
 
-const tireLayers = hip<LayersTable>({
+const priceLayers = hip<LayersTable>({
   _type: 'layers',
-  _data: [summerTires, winterTires],
+  _data: [germanPrices, swissPrices],
 });
 
-const wheelSetups = hip<CakesTable>({
+const catalogs = hip<CakesTable>({
   _type: 'cakes',
-  _data: [summerSetup, winterSetup],
+  _data: [germany, switzerland],
 });
 
-const wheelShop: Rljson = {
-  brakes,
-  rims,
-  tires,
-  axles,
-  brakeLayers,
-  rimLayers,
-  tireLayers,
-  wheelSetups,
+const carMarket: Rljson = {
+  colors,
+  engines,
+  prices,
+  cars,
+  colorLayers,
+  engineLayers,
+  priceLayers,
+  catalogs,
 };
 // #endregion tables
 
@@ -158,94 +163,110 @@ const wheelShop: Rljson = {
 const validate = new Validate();
 validate.addValidator(new BaseValidator());
 
-const errors = await validate.run(wheelShop);
+const errors = await validate.run(carMarket);
 if (Object.keys(errors).length > 0) {
   throw new Error(JSON.stringify(errors, null, 2));
 }
 // #endregion validate
 
-// #region serve
-/** Finds the row with the given hash in a table of the wheel shop */
+// #region read
+/** Finds the row with the given hash in a table of the car market */
 const rowOf = (tableKey: string, hash: Ref) =>
-  wheelShop[tableKey]._data.find((row) => ref(row) === hash);
+  carMarket[tableKey]._data.find((row) => ref(row) === hash);
 
-/** Returns what goes onto one axle of a setup: a part from each layer */
-const partsOf = (setup: Cake, sliceId: string) =>
-  Object.entries(setup.layers)
+/** Describes a component in words, one formatter per components table */
+const formats = {
+  colors: (color: Color) => color.name,
+  engines: (engine: Engine) => `${engine.power} kW ${engine.drive}`,
+  prices: (price: Price) =>
+    `${price.amount.toLocaleString('en-US')} ${price.currency}`,
+};
+
+/** Describes one car of a catalog: a component from each layer */
+const describeCar = (catalog: Cake, sliceId: string) =>
+  Object.entries(catalog.layers)
     .filter(([layersTable]) => !layersTable.startsWith('_')) // skip _hash
     .map(([layersTable, layerRef]) => {
       const layer: Layer = rowOf(layersTable, layerRef);
-      return rowOf(layer.componentsTable, layer.add[sliceId]).name;
+      const component = rowOf(layer.componentsTable, layer.add[sliceId]);
+      const format = formats[layer.componentsTable as keyof typeof formats];
+      return format(component);
     });
 
-for (const setup of wheelSetups._data) {
-  const { add: sliceIds } = rowOf(setup.sliceIdsTable, setup.sliceIdsRow);
+for (const catalog of catalogs._data) {
+  const { add: sliceIds } = rowOf(catalog.sliceIdsTable, catalog.sliceIdsRow);
 
-  console.log(`${setup.id}:`);
+  console.log(`${catalog.id}:`);
   for (const sliceId of sliceIds) {
-    console.log(`  ${sliceId}: ${partsOf(setup, sliceId).join(', ')}`);
+    console.log(`  ${sliceId}: ${describeCar(catalog, sliceId).join(', ')}`);
   }
 }
-// #endregion serve
+// #endregion read
 // #endregion app
 
 const output = log.mock.calls.map((args) => args.join(' ')).join('\n');
 log.mockRestore();
 
 describe('Cake tutorial', () => {
-  it('lets all layers share the slice ids of the wheel setup', () => {
-    for (const layer of [brakeLayer, rimLayer, summerTires]) {
-      expect(layer.sliceIdsTableRow).toBe(summerSetup.sliceIdsRow);
+  it('lets all layers share the slice ids of the catalog', () => {
+    for (const layer of [colorLayer, engineLayer, germanPrices, swissPrices]) {
+      expect(layer.sliceIdsTableRow).toBe(germany.sliceIdsRow);
     }
+    expect(switzerland.sliceIdsRow).toBe(germany.sliceIdsRow);
   });
 
-  it('stacks layers into wheel setups', async () => {
-    await writeGolden('wheel-setups.json', wheelSetups);
+  it('stacks layers into catalogs', async () => {
+    await writeGolden('catalogs.json', catalogs);
 
-    expect(winterSetup.layers.brakeLayers).toBe(summerSetup.layers.brakeLayers);
-    expect(winterSetup.layers.rimLayers).toBe(summerSetup.layers.rimLayers);
-    expect(winterSetup.layers.tireLayers).not.toBe(
-      summerSetup.layers.tireLayers,
-    );
+    expect(switzerland.layers.colorLayers).toBe(germany.layers.colorLayers);
+    expect(switzerland.layers.engineLayers).toBe(germany.layers.engineLayers);
+    expect(switzerland.layers.priceLayers).not.toBe(germany.layers.priceLayers);
   });
 
-  it('validates the wheel shop', () => {
+  it('validates the car market', () => {
     expect(errors).toEqual({});
   });
 
-  it('mounts the wheels of each setup', async () => {
+  it('reads the cars of each catalog', async () => {
     await writeGolden('output.txt', output);
 
     expect(output).toBe(
       [
-        'summerSetup:',
-        '  front: 410 mm brake, 20″ rim, 245/45 R20 summer',
-        '  rear: 365 mm brake, 21″ rim, 285/40 R21 summer',
-        'winterSetup:',
-        '  front: 410 mm brake, 20″ rim, 245/45 R20 winter',
-        '  rear: 365 mm brake, 21″ rim, 285/40 R21 winter',
+        'germany:',
+        '  taycan: white, 300 kW electric, 101,000 EUR',
+        '  ex30: black, 200 kW electric, 36,000 EUR',
+        'switzerland:',
+        '  taycan: white, 300 kW electric, 108,000 CHF',
+        '  ex30: black, 200 kW electric, 38,000 CHF',
       ].join('\n'),
     );
   });
 
-  it('detects a wheel setup with a missing layer', async () => {
+  it('detects a catalog with a missing layer', async () => {
     // #region missing-layer
-    const mixedTires = createLayer('tires', winterFront, summerRear);
+    // Austria takes over the German prices with a layer of its own
+    const austrianPrices = hip<Layer>({
+      base: ref(germanPrices),
+      sliceIdsTable: 'cars',
+      sliceIdsTableRow: ref(models),
+      componentsTable: 'prices',
+      add: {},
+    });
 
-    const mixedSetup = hip<Cake>({
-      id: 'mixedSetup',
-      sliceIdsTable: 'axles',
-      sliceIdsRow: ref(bothAxles),
+    const austria = hip<Cake>({
+      id: 'austria',
+      sliceIdsTable: 'cars',
+      sliceIdsRow: ref(models),
       layers: {
-        brakeLayers: ref(brakeLayer),
-        rimLayers: ref(rimLayer),
-        tireLayers: ref(mixedTires), // not added to tireLayers
+        colorLayers: ref(colorLayer),
+        engineLayers: ref(engineLayer),
+        priceLayers: ref(austrianPrices), // not added to priceLayers
       },
     });
 
     const result = await validate.run({
-      ...wheelShop,
-      wheelSetups: hip<CakesTable>({ _type: 'cakes', _data: [mixedSetup] }),
+      ...carMarket,
+      catalogs: hip<CakesTable>({ _type: 'cakes', _data: [austria] }),
     });
     // #endregion missing-layer
 
@@ -254,10 +275,10 @@ describe('Cake tutorial', () => {
       error: 'Layer layers of cakes are missing',
       brokenCakes: [
         {
-          cakeTable: 'wheelSetups',
-          brokenCake: ref(mixedSetup),
-          layersTable: 'tireLayers',
-          missingLayer: ref(mixedTires),
+          cakeTable: 'catalogs',
+          brokenCake: ref(austria),
+          layersTable: 'priceLayers',
+          missingLayer: ref(austrianPrices),
         },
       ],
     });

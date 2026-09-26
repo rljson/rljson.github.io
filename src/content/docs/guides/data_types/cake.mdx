@@ -1,6 +1,6 @@
 ---
 title: Cake
-description: 'Stack layers into cakes that share their slices: build wheel setups from brakes, rims and tires, and reuse layers in a second setup.'
+description: Stack a color, an engine and a price layer into a complete car catalog, and reuse layers in a catalog for a second market.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
@@ -13,77 +13,78 @@ import Snippet from '../../../../components/Snippet.astro';
   aria-label="A cake: layers stacked over the same slices"
 />
 
-A cake stacks layers. All layers of a cake cover the same slice ids, and
-each of them assigns a different kind of component to them: one set of
-slices, seen through several layers.
+A cake stacks layers into a complete catalog. All layers of a cake cover
+the same slice ids, and each of them describes one aspect: in a car catalog,
+the slices are the cars, and the layers give their colors, engines and
+prices.
 
-In this tutorial you build a wheel shop. Its summer setup for a car has two
-slices, `front` and `rear`, and three layers: brakes, rims and tires. Then you
-put together a winter setup that reuses the brakes and the rims and only
-changes the tires.
+In this tutorial you build a car catalog for Germany with two cars, the
+Taycan and the EX30, and three layers: colors, engines and prices. Then you
+create a catalog for Switzerland that reuses the colors and the engines and
+only changes the prices.
 
 You will learn how to:
 
 - share one set of slice ids between several layers
 - stack layers into a cake
 - reuse layers in another cake
-- resolve what each slice of a cake is made of
+- read what a cake says about each slice
 
 ## 1. Set up the project
 
 Create a project and install the core package and the hashing package:
 
 ```bash
-mkdir wheel-shop
-cd wheel-shop
+mkdir car-market
+cd car-market
 echo '{ "type": "module" }' > package.json
 pnpm add @rljson/rljson @rljson/hash
 ```
 
 `"type": "module"` lets the application use ES modules and top-level `await`.
-Now create the file `wheels.ts`. Each of the following steps adds code to it:
+Now create the file `catalog.ts`. Each of the following steps adds code to it:
 put the imports of a step at the top of the file, and its code below the code
 of the previous step. The complete file is shown at the end.
 
-## 2. Create the parts
+## 2. Create the components
 
-A wheel setup is made of parts: brakes, rims and tires. Each kind of part
-gets a components table:
+The catalog describes colors, engines and prices. Each of them gets a
+components table with a type of its own:
 
 <Snippet
   file="cake.spec.ts"
-  region="parts"
-  title="wheels.ts"
+  region="components"
+  title="catalog.ts"
 />
 
 ## 3. Define the slices
 
-The car has two slices, its axles. List their ids in a table of type
+The catalog has two slices, its cars. List their ids in a table of type
 `sliceIds`:
 
 <Snippet
   file="cake.spec.ts"
   region="slices"
-  title="wheels.ts"
+  title="catalog.ts"
 />
 
-## 4. Create a layer for each kind of part
+## 4. Create a layer for each aspect
 
-Each layer assigns a part to both slices. The three layers take their parts
-from different components tables, but they all use the same row of slice
-ids, `bothAxles`. The helper `createLayer` makes sure of that:
+Each layer assigns a component to both cars. The three layers take their
+components from different components tables, but they all use the same row
+of slice ids, `models`. The helper `createLayer` makes sure of that:
 
 <Snippet
   file="cake.spec.ts"
   region="layers"
-  title="wheels.ts"
+  title="catalog.ts"
 />
 
-The front axle gets the larger brake and the 20″ rims, the rear axle the
-smaller brake and the 21″ rims. [Layers](/guides/data_types/layers/)
-explains the fields of a layer in detail.
+The Taycan is white with 300 kW, the EX30 black with 200 kW.
+[Layers](/guides/data_types/layers/) explains the fields of a layer in
+detail.
 
-## 5. Stack the layers into a wheel setup
+## 5. Stack the layers into a catalog
 
 A cake names its slice ids and maps the name of each layers table to the hash
 of one layer in it:
@@ -91,7 +92,7 @@ of one layer in it:
 <Snippet
   file="cake.spec.ts"
   region="cake"
-  title="wheels.ts"
+  title="catalog.ts"
 />
 
 | Field           | Meaning                                                   |
@@ -102,19 +103,20 @@ of one layer in it:
 | `id`            | Optional: the name of the cake                            |
 
 Since `layers` is keyed by table, a cake takes at most one layer from each
-layers table. That is why the brakes, the rims and the tires each get a
+layers table. That is why the colors, the engines and the prices each get a
 layers table of their own. Note that the row of slice ids is called
 `sliceIdsRow` here, while a layer calls it `sliceIdsTableRow`.
 
-## 6. Put together a variant
+## 6. Create a catalog for Switzerland
 
-The winter setup has different tires and nothing else. It gets a new tire
-layer, and refers to the same brake and rim layers as the summer setup:
+Switzerland sells the same cars at different prices. Its catalog gets a new
+price layer, and refers to the same color and engine layers as the catalog
+for Germany:
 
 <Snippet
   file="cake.spec.ts"
   region="variant"
-  title="wheels.ts"
+  title="catalog.ts"
 />
 
 ## 7. Put the rows into tables
@@ -122,26 +124,26 @@ layer, and refers to the same brake and rim layers as the summer setup:
 <Snippet
   file="cake.spec.ts"
   region="tables"
-  title="wheels.ts"
+  title="catalog.ts"
 />
 
-Apart from their ids, the two setups differ in one reference only: their
-tire layer. Both point to the same brake layer and the same rim layer:
+Apart from their ids, the two catalogs differ in one reference only: their
+price layer. Both point to the same color layer and the same engine layer:
 
 <Snippet
-  file="wheel-setups.json"
+  file="catalogs.json"
   title="Output"
 />
 
 This is how Rljson shares data: a variant stores what is new and refers to
 everything else by hash. Nothing is copied.
 
-## 8. Validate the wheel shop
+## 8. Validate the catalogs
 
 <Snippet
   file="cake.spec.ts"
   region="validate"
-  title="wheels.ts"
+  title="catalog.ts"
 />
 
 For every cake, `BaseValidator` checks that the table of slice ids and the
@@ -154,27 +156,28 @@ referenced layer. It also checks each layer, as described in
   the cake. Keep them in sync yourself. Here, `createLayer` takes care of it.
 </Aside>
 
-## 9. Mount the wheels
+## 9. Read the catalog
 
-To mount the wheels on an axle, the application goes through the layers of
-the setup. For each layer, it looks up the layer in its table, and the part
-that the layer assigns to the axle in the layer's components table. `rowOf`
-finds a row by its hash in any table of the wheel shop:
+To describe a car, the application goes through the layers of the catalog.
+For each layer, it looks up the layer in its table, and the component that
+the layer assigns to the car in the layer's components table. `rowOf` finds
+a row by its hash in any table of the car market, and `formats` turns a
+component of each components table into words:
 
 <Snippet
   file="cake.spec.ts"
-  region="serve"
-  title="wheels.ts"
+  region="read"
+  title="catalog.ts"
 />
 
-The setup's own row of slice ids tells the application which axles there
+The catalog's own row of slice ids tells the application which cars there
 are. Like `add` in a layer, `layers` carries a `_hash` of its own, so the
 application skips keys that start with an underscore.
 
 ## 10. See what the validator catches
 
-Create a wheel setup with a new tire layer, but do not add the layer to the
-`tireLayers` table:
+Create a catalog for Austria that takes over the German prices with a price
+layer of its own, but do not add the layer to the `priceLayers` table:
 
 <Snippet
   file="cake.spec.ts"
@@ -188,19 +191,19 @@ Create a wheel setup with a new tire layer, but do not add the layer to the
 
 ## 11. Run the application
 
-Here is the complete `wheels.ts`:
+Here is the complete `catalog.ts`:
 
 <Snippet
   file="cake.spec.ts"
   region="app"
-  title="wheels.ts"
+  title="catalog.ts"
 />
 
 Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
-or with `npx tsx wheels.ts`:
+or with `npx tsx catalog.ts`:
 
 ```bash
-node wheels.ts
+node catalog.ts
 ```
 
 <Snippet
@@ -212,9 +215,10 @@ node wheels.ts
 
 - A cake names a row of slice ids and one layer from each of several layers
   tables.
-- All layers of a cake assign their components to the same slice ids.
+- All layers of a cake assign their components to the same slice ids, and
+  each of them describes one aspect of the catalog.
 - A cake refers to its layers by hash, so another cake can reuse them.
-- To find out what goes onto a slice, follow each layer of the cake to the
-  component it assigns to that slice.
+- To read what a cake says about a slice, follow each layer of the cake to
+  the component it assigns to that slice.
 
 Next, a [Tree](/guides/data_types/tree/) stores hierarchical data.

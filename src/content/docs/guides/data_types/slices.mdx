@@ -1,0 +1,143 @@
+---
+title: Slices
+description: 'Name the objects of a car catalog with slice ids, and derive the cars of the next model year from a base.'
+---
+
+import Slice from '../../../../assets/figures/slice.svg';
+import Snippet from '../../../../components/Snippet.astro';
+
+<Slice
+  width={60}
+  role="img"
+  aria-label="A slice of a cake"
+/>
+
+Slices allow to organize huge collections of objects. A **slice** is a
+single object of a collection. A slice is identified by a **slice id**. A
+data structure called `SliceIds` allows you to:
+
+- create different sets of slices
+- derive new sets of slices from existing ones
+
+## 1. Set up the project
+
+Create a project and install the core package and the hashing package:
+
+```bash
+mkdir car-catalog
+cd car-catalog
+echo '{ "type": "module" }' > package.json
+pnpm add @rljson/rljson @rljson/hash
+```
+
+`"type": "module"` lets the application use ES modules and top-level `await`.
+Now create the file `slices.ts`. Each of the following steps adds code to
+it: put the imports of a step at the top of the file, and its code below the
+code of the previous step. The complete file is shown at the end.
+
+## 2. List the slice ids
+
+The slice ids are the cars of the catalog. List the cars of 2025 in a row of
+type `SliceIds`:
+
+<Snippet
+  file="slices.spec.ts"
+  region="slice-ids"
+  title="slices.ts"
+/>
+
+The helper `ref` reads the hash that `hip` has written into a row. If hashes
+are new to you, start with [Components](/guides/data_types/components/).
+
+A row of slice ids has three fields:
+
+| Field    | Meaning                                                  |
+| -------- | -------------------------------------------------------- |
+| `base`   | Optional: the hash of a row of slice ids that it extends |
+| `add`    | The slice ids that are added to the base                 |
+| `remove` | Optional: the slice ids that are removed from the base   |
+
+## 3. Derive the next model year
+
+In 2026 the EX90 is new and the Macan is gone. Instead of repeating the cars
+of 2025, derive them: a new row extends the cars of 2025 with `ex90` and
+removes `macan`:
+
+<Snippet
+  file="slices.spec.ts"
+  region="derive"
+  title="slices.ts"
+/>
+
+## 4. Put the rows into a table
+
+Collect the rows in a table of type `sliceIds` and put it into an Rljson
+object:
+
+<Snippet
+  file="slices.spec.ts"
+  region="tables"
+  title="slices.ts"
+/>
+
+The table shows how the rows build on each other:
+
+<Snippet
+  file="cars.json"
+  title="Output"
+/>
+
+## 5. Validate the catalog
+
+<Snippet
+  file="slices.spec.ts"
+  region="validate"
+  title="slices.ts"
+/>
+
+`BaseValidator` checks the hashes and the structure of the table.
+
+## 6. Resolve the slice ids
+
+To list the cars of a model year, the application resolves its row: it
+starts with the slice ids of the base, adds the slice ids of the row and
+drops the removed ones:
+
+<Snippet
+  file="slices.spec.ts"
+  region="resolve"
+  title="slices.ts"
+/>
+
+## 7. Run the application
+
+Here is the complete `slices.ts`:
+
+<Snippet
+  file="slices.spec.ts"
+  region="app"
+  title="slices.ts"
+/>
+
+Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
+or with `npx tsx slices.ts`:
+
+```bash
+node slices.ts
+```
+
+<Snippet
+  file="output.txt"
+  title="Output"
+/>
+
+## What you have learned
+
+- A slice is a single object of a catalog, and a slice id identifies it.
+- A row of type `SliceIds` lists slice ids
+- A `SliceIds` row can extend a base row and remove slice ids from it, so it stores
+  only the difference.
+- Rows of slice ids live in a table of type `sliceIds`.
+
+Next, [Layers](/guides/data_types/layers/) assign components to the slice
+ids.

@@ -30,6 +30,7 @@ const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 // #region app
 // #region types
+// The rows of the three tables
 type Manufacturer = {
   id: string;
   country: string;
@@ -51,6 +52,7 @@ type Wheel = {
 // #endregion types
 
 // #region manufacturers
+// hip writes a hash into every row and into the table
 const manufacturers = hip<ComponentsTable<Manufacturer>>({
   _type: 'components',
   _data: [
@@ -66,6 +68,7 @@ const [porsche, volvo] = manufacturers._data;
 // #endregion manufacturers
 
 // #region cars
+// Each car refers to its manufacturer by the manufacturer's hash
 const cars = hip<ComponentsTable<Car>>({
   _type: 'components',
   _data: [
@@ -78,6 +81,7 @@ const cars = hip<ComponentsTable<Car>>({
 // #region wheels
 const [taycan, ex30] = cars._data;
 
+// Each wheel refers to its car
 const wheels = hip<ComponentsTable<Wheel>>({
   _type: 'components',
   _data: [
@@ -90,8 +94,10 @@ const wheels = hip<ComponentsTable<Wheel>>({
 // #endregion wheels
 
 // #region validate
+// The keys are the table names, e.g. "cars" for carsRef
 const carCatalog: Rljson = { manufacturers, cars, wheels };
 
+// BaseValidator checks the hashes, the names and the references
 const validate = new Validate();
 validate.addValidator(new BaseValidator());
 
@@ -106,6 +112,7 @@ if (Object.keys(errors).length > 0) {
 const rowOf = <T extends object>(table: { _data: T[] }, hash: Ref): T =>
   table._data.find((row) => ref(row) === hash)!;
 
+// Join the tables again: wheel → car → manufacturer
 for (const wheel of wheels._data) {
   const car = rowOf(cars, wheel.carsRef);
   const manufacturer = rowOf(manufacturers, car.manufacturersRef);

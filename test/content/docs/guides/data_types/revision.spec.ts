@@ -49,6 +49,7 @@ type Car = {
 /** Returns the reference to a row: the hash that hip wrote into it */
 const ref = (row: object): Ref => (row as { _hash: Ref })._hash;
 
+// The first version of each car
 const taycanV1 = hip<Car>({
   id: 'taycan',
   power: 300,
@@ -82,6 +83,7 @@ const ex30V2 = hip<Car>({
 // #endregion second-version
 
 // #region revisions
+// Each revision links the old version of a car to the new one
 const revisions = hip<RevisionsTable>({
   _type: 'revisions',
   _data: [
@@ -104,6 +106,7 @@ const revisions = hip<RevisionsTable>({
 // #endregion revisions
 
 // #region tables
+// The table keeps both versions: the revisions point to them
 const cars = hip<ComponentsTable<Car>>({
   _type: 'components',
   _data: [taycanV1, ex30V1, taycanV2, ex30V2], // old and new versions
@@ -138,6 +141,7 @@ const revisionsValidator: Validator = {
 // #region validate
 const validate = new Validate();
 validate.addValidator(new BaseValidator());
+// Also check the rows that the revisions link
 validate.addValidator(revisionsValidator);
 
 const errors = await validate.run(garage);
@@ -160,6 +164,7 @@ const changesOf = (revision: Revision) => {
     .map((key) => `${key} ${before[key]} → ${after[key]}`);
 };
 
+// Print the history of each car, oldest change first
 for (const id of ['taycan', 'ex30']) {
   console.log(id);
 

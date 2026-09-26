@@ -41,6 +41,7 @@ const ref = (node: object): Ref => (node as { _hash: Ref })._hash;
 const model = (id: string, price: number) =>
   hip<Tree>({ id, isParent: false, meta: { price }, children: null });
 
+// The leaves: the car models
 const taycan = model('taycan', 101000);
 const macan = model('macan', 84000);
 const ex30 = model('ex30', 36000);
@@ -52,12 +53,14 @@ const ex90 = model('ex90', 82000);
 const manufacturer = (id: string, children: Tree[]) =>
   hip<Tree>({ id, isParent: true, meta: null, children: children.map(ref) });
 
+// The parents: the manufacturers, and a root above them
 const porsche = manufacturer('porsche', [taycan, macan]);
 const volvo = manufacturer('volvo', [ex30, ex90]);
 const root = manufacturer('root', [porsche, volvo]);
 // #endregion manufacturers
 
 // #region table
+// All nodes of the tree live in one trees table
 const priceList = hip<TreesTable>({
   _type: 'trees',
   _data: [root, porsche, volvo, taycan, macan, ex30, ex90],
@@ -65,6 +68,7 @@ const priceList = hip<TreesTable>({
 // #endregion table
 
 // #region validate
+// BaseValidator checks that every child exists
 const validate = new Validate();
 validate.addValidator(new BaseValidator());
 
@@ -88,15 +92,18 @@ const print = (table: TreesTable, hash: Ref, indent = '') => {
   }
 };
 
+// Print the whole tree, starting at the root
 print(priceList, ref(root));
 // #endregion print
 
 // #region change
 // The Taycan gets cheaper
 const cheaperTaycan = model('taycan', 97000);
+// A new child has a new hash, so every parent up to the root changes
 const newPorsche = manufacturer('porsche', [cheaperTaycan, macan]);
 const newRoot = manufacturer('root', [newPorsche, volvo]);
 
+// Add the new nodes; the old ones stay as they are
 const newPriceList = hip<TreesTable>({
   _type: 'trees',
   _data: [...priceList._data, newRoot, newPorsche, cheaperTaycan],
@@ -105,6 +112,7 @@ const newPriceList = hip<TreesTable>({
 console.log('\nAfter the price change:');
 print(newPriceList, ref(newRoot));
 
+// Only the changed path is new: the Volvo branch is reused
 const known = new Set(priceList._data.map(ref));
 const added = newPriceList._data.filter((node) => !known.has(ref(node)));
 console.log(`\nNew nodes: ${added.map((node) => node.id).join(', ')}`);

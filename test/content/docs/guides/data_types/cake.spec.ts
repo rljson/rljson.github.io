@@ -39,6 +39,7 @@ const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 // #region app
 // #region components
+// The components of the three layers
 type Color = { name: string };
 type Engine = { power: number /* kW */; drive: 'electric' | 'combustion' };
 type Price = { amount: number; currency: 'EUR' | 'CHF' };
@@ -68,6 +69,7 @@ const prices = hip<ComponentsTable<Price>>({
 // #endregion components
 
 // #region slices
+// The cars of the catalog: the slice ids all layers share
 const cars = hip<SliceIdsTable>({
   _type: 'sliceIds',
   _data: [{ add: ['taycan', 'ex30'] }],
@@ -89,16 +91,19 @@ const createLayer = (componentsTable: string, taycan: object, ex30: object) =>
     add: { taycan: ref(taycan), ex30: ref(ex30) },
   });
 
+// The components of each car: the Taycan first, then the EX30
 const [white, black] = colors._data;
 const [strongEngine, smallEngine] = engines._data;
 const [taycanEur, ex30Eur, taycanChf, ex30Chf] = prices._data;
 
+// One layer per aspect of the cars
 const colorLayer = createLayer('colors', white, black);
 const engineLayer = createLayer('engines', strongEngine, smallEngine);
 const germanPrices = createLayer('prices', taycanEur, ex30Eur);
 // #endregion layers
 
 // #region cake
+// The German catalog stacks the three layers onto the cars
 const germany = hip<Cake>({
   id: 'germany',
   sliceIdsTable: 'cars',
@@ -112,6 +117,7 @@ const germany = hip<Cake>({
 // #endregion cake
 
 // #region variant
+// Switzerland differs only in its prices
 const swissPrices = createLayer('prices', taycanChf, ex30Chf);
 
 const switzerland = hip<Cake>({
@@ -127,6 +133,7 @@ const switzerland = hip<Cake>({
 // #endregion variant
 
 // #region tables
+// Each kind of layer lives in a layers table of its own
 const colorLayers = hip<LayersTable>({
   _type: 'layers',
   _data: [colorLayer],
@@ -142,11 +149,13 @@ const priceLayers = hip<LayersTable>({
   _data: [germanPrices, swissPrices],
 });
 
+// Both catalogs live in one cakes table
 const catalogs = hip<CakesTable>({
   _type: 'cakes',
   _data: [germany, switzerland],
 });
 
+// The keys are the table names that the layers and cakes refer to
 const carMarket: Rljson = {
   colors,
   engines,
@@ -160,6 +169,7 @@ const carMarket: Rljson = {
 // #endregion tables
 
 // #region validate
+// BaseValidator also checks the layers and slice ids of every cake
 const validate = new Validate();
 validate.addValidator(new BaseValidator());
 
@@ -193,6 +203,7 @@ const describeCar = (catalog: Cake, sliceId: string) =>
       return format(component);
     });
 
+// Print every car of every catalog with its color, engine and price
 for (const catalog of catalogs._data) {
   const { add: sliceIds } = rowOf(catalog.sliceIdsTable, catalog.sliceIdsRow);
 

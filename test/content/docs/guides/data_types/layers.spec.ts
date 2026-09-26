@@ -36,8 +36,10 @@ const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 // #region app
 // #region colors
+// The components of the color layer
 type Color = { name: string };
 
+// Equal colors have equal hashes, so each color is stored once
 const colors = hip<ComponentsTable<Color>>({
   _type: 'components',
   _data: [{ name: 'white' }, { name: 'black' }, { name: 'silver' }],
@@ -50,10 +52,12 @@ const [white, black, silver] = colors._data;
 // #endregion colors
 
 // #region slice-ids
+// The cars of 2025: the slice ids of the layer
 const cars2025 = hip<SliceIds>({ add: ['taycan', 'macan', 'ex30'] });
 // #endregion slice-ids
 
 // #region layer
+// Assigns a color to each car of 2025
 const colors2025 = hip<Layer>({
   id: 'colors2025',
   sliceIdsTable: 'cars',
@@ -71,6 +75,7 @@ const cars2026 = hip<SliceIds>({
   remove: ['macan'],
 });
 
+// Stores only the difference to the colors of 2025
 const colors2026 = hip<Layer>({
   id: 'colors2026',
   base: ref(colors2025),
@@ -83,6 +88,7 @@ const colors2026 = hip<Layer>({
 // #endregion variants
 
 // #region tables
+// The layers refer to these tables by their keys in the Rljson object
 const cars = hip<SliceIdsTable>({
   _type: 'sliceIds',
   _data: [cars2025, cars2026],
@@ -97,6 +103,7 @@ const carCatalog: Rljson = { colors, cars, colorLayers };
 // #endregion tables
 
 // #region validate
+// BaseValidator also checks that every car has a color
 const validate = new Validate();
 validate.addValidator(new BaseValidator());
 
@@ -113,10 +120,13 @@ const rowOf = <T extends object>(table: { _data: T[] }, hash: Ref): T =>
 
 /** Returns the assignments of a layer, merged with those of its base */
 const assignmentsOf = (layer: Layer): Record<string, Ref> => {
+  // Resolve the base first, if there is one
   const baseLayer = layer.base && rowOf(colorLayers, layer.base);
   const base = baseLayer ? assignmentsOf(baseLayer) : {};
+  // The assignments of the layer win over those of the base
   const assignments = { ...base, ...layer.add };
 
+  // Drop the assignments that the layer removes
   for (const sliceId of Object.keys(layer.remove ?? {})) {
     delete assignments[sliceId];
   }
@@ -125,6 +135,7 @@ const assignmentsOf = (layer: Layer): Record<string, Ref> => {
   return assignments;
 };
 
+// Print the color of each car, one line per model year
 for (const layer of colorLayers._data) {
   const lines = Object.entries(assignmentsOf(layer)).map(([car, colorRef]) => {
     const { name } = rowOf(colors, colorRef);
@@ -144,14 +155,6 @@ describe('Layers tutorial', () => {
     expect(colors._data).toHaveLength(3);
     expect(colors2025.add.taycan).toBe(colors2025.add.ex30); // both white
     expect(colors2026.add.ex90).toBe(ref(silver));
-  });
-
-  it('derives slice ids from a base', async () => {
-    await writeGolden('cars.json', cars);
-
-    expect(cars2026.base).toBe(ref(cars2025));
-    expect(cars2026.add).toEqual(['ex90']);
-    expect(cars2026.remove).toEqual(['macan']);
   });
 
   it('assigns components to slice ids', async () => {

@@ -36,6 +36,7 @@ const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 // #region app
 // #region manufacturers-cfg
+// Describes the table "manufacturers" and its columns
 const manufacturersCfg = hip<TableCfg>({
   key: 'manufacturers',
   type: 'components',
@@ -65,10 +66,12 @@ const manufacturersCfg = hip<TableCfg>({
   isShared: true,
 });
 
+// Fail early if the configuration itself is invalid
 throwOnInvalidTableCfg(manufacturersCfg);
 // #endregion manufacturers-cfg
 
 // #region cars-cfg
+// Describes the table "cars"; manufacturersRef refers to a manufacturer
 const carsCfg = hip<TableCfg>({
   key: 'cars',
   type: 'components',
@@ -98,6 +101,7 @@ throwOnInvalidTableCfg(carsCfg);
 // #endregion cars-cfg
 
 // #region table-cfgs
+// All configurations live in the table "tableCfgs"
 const tableCfgs = hip<TablesCfgTable>({
   _type: 'tableCfgs',
   _data: [manufacturersCfg, carsCfg],
@@ -110,6 +114,7 @@ type Manufacturer = { name: string; country: string; founded: number };
 /** Returns the reference to a row: the hash that hip wrote into it */
 const ref = (row: object): Ref => (row as { _hash: Ref })._hash;
 
+// _tableCfg links the table to its configuration
 const manufacturers = hip<ComponentsTable<Manufacturer>>({
   _type: 'components',
   _tableCfg: ref(manufacturersCfg),
@@ -133,6 +138,7 @@ const delivery: Row[] = [
   { id: 'ex90', body: 'suv' },
 ];
 
+// Check each row on its own and keep only the valid ones
 const accepted: Row[] = [];
 for (const row of delivery) {
   const problems = validateRljsonAgainstTableCfg([row], carsCfg);
@@ -147,6 +153,7 @@ for (const row of delivery) {
 // #endregion check-rows
 
 // #region cars
+// The cars table gets only the accepted rows
 const cars = hip<ComponentsTable<Row>>({
   _type: 'components',
   _tableCfg: ref(carsCfg),
@@ -157,6 +164,7 @@ const cars = hip<ComponentsTable<Row>>({
 // #region validate
 const catalog: Rljson = { tableCfgs, manufacturers, cars };
 
+// BaseValidator checks the tables against their configurations
 const validate = new Validate();
 validate.addValidator(new BaseValidator());
 

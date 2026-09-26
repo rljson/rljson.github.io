@@ -13,12 +13,13 @@ import Snippet from '../../../../components/Snippet.astro';
   aria-label="A layer cut into slices"
 />
 
-To allow an efficient processing of thousands of objects we are introducing
+To efficiently process huge collections of objects we are introducing
 the concept **layer**:
 
 - Layers separate the data of complex objects into meaningful concerns
 - Layers can be loaded and processed independently
 - Layers can be updated using differences only
+- Layers allow mass edit on certain aspects
 
 Examples:
 
@@ -26,11 +27,8 @@ Examples:
 - An engine layer stores the engines of cars
 - A color layer stores the colors of cars
 
-A single object in a layer is called a **slice**:
-
-- A **slice** describes properties of a single object, e.g. a car
-- A **layer** describes certain aspects of multiple slice, e.g. the price of multipe cars
-- A **slice id** identifies a slice in a layer, e.g. the name of the car
+A layer covers the [slices](/guides/data_types/slices/) of a catalog,
+e.g. the cars. It assigns a component, e.g. a color, to each slice id.
 
 In this tutorial you build the color layer of a car catalog. You describe the
 colors of the cars of 2025, and then derive the catalog of 2026, which adds
@@ -38,9 +36,8 @@ the EX90 and drops the Macan.
 
 You will learn how to:
 
-- list slice ids in a `sliceIds` table
 - create a layer that assigns components to slice ids
-- derive slice ids and layers from a base, with `add` and `remove`
+- derive a layer from a base, with `add` and `remove`
 - resolve the assignments of a derived layer
 
 ## 1. Set up the project
@@ -78,25 +75,13 @@ components tables are new to you, start with [Components](/guides/data_types/com
 ## 3. List the slice ids
 
 The slice ids are the cars of the catalog. List the cars of 2025 in a row of
-type `SliceIds`:
+type `SliceIds`, as described in [Slices](/guides/data_types/slices/):
 
 <Snippet
   file="layers.spec.ts"
   region="slice-ids"
   title="colors.ts"
 />
-
-A row of slice ids has three fields:
-
-| Field    | Meaning                                      |
-| -------- | -------------------------------------------- |
-| `base`   | The hash of a layer that this layer extends  |
-| `add`    | The slice ids that are added to the base     |
-| `remove` | The slice ids that are removed from the base |
-
-Keeping the slice ids apart from the data pays off with large layers: a
-client can fetch the slice ids first and load the components only for the
-slices it needs.
 
 ## 4. Create a layer
 
@@ -147,13 +132,6 @@ in a table of type `layers`, and put all tables into an Rljson object:
   file="layers.spec.ts"
   region="tables"
   title="colors.ts"
-/>
-
-The table of slice ids shows how the rows build on each other:
-
-<Snippet
-  file="cars.json"
-  title="Output"
 />
 
 The layers table:
@@ -242,8 +220,6 @@ node colors.ts
 ## What you have learned
 
 - A layer describes one aspect of a catalog, like the colors of the cars.
-- A row of type `SliceIds` lists slice ids in `add`. It can extend a base row
-  and remove slice ids from it.
 - A layer names its table of slice ids, its row of slice ids and its
   components table, and assigns a component to each slice id in `add`.
 - A derived layer extends a base layer with `add` and `remove` and stores

@@ -13,10 +13,10 @@ import Snippet from '../../../../components/Snippet.astro';
   aria-label="A cake: layers stacked over the same slices"
 />
 
-A cake stacks layers into a complete catalog. All layers of a cake cover
+A cake stacks layers. All layers of a cake cover
 the same slice ids, and each of them describes one aspect: in a car catalog,
-the slices are the cars, and the layers give their colors, engines and
-prices.
+the slices are the cars, and the layers assign colors, engines and
+prices to each car.
 
 In this tutorial you build a car catalog for Germany with two cars, the
 Taycan and the EX30, and three layers: colors, engines and prices. Then you
@@ -70,8 +70,8 @@ The catalog has two slices, its cars. List their ids in a table of type
 
 ## 4. Create a layer for each aspect
 
-Each layer assigns a component to both cars. The three layers take their
-components from different components tables, but they all use the same row
+Each layer assigns properties to both cars. The three layers take their
+properties from different component tables, but they all use the same row
 of slice ids, `models`. The helper `createLayer` makes sure of that:
 
 <Snippet
@@ -84,10 +84,13 @@ The Taycan is white with 300 kW, the EX30 black with 200 kW.
 [Layers](/guides/data_types/layers/) explains the fields of a layer in
 detail.
 
-## 5. Stack the layers into a catalog
+## 5. Stack the layers into a cake
 
-A cake names its slice ids and maps the name of each layers table to the hash
-of one layer in it:
+A cake organizes a releated set of layers:
+
+- All layers of a cake share the same slice ids, i.e. the same cars
+- A cake refers to a `sliceIdsRow` in a `sliceIdsTable`, identifying the cakes slices
+- It lists all layers by referencing to the layer table
 
 <Snippet
   file="cake.spec.ts"
@@ -213,12 +216,12 @@ node catalog.ts
 
 ## What you have learned
 
-- A cake names a row of slice ids and one layer from each of several layers
-  tables.
-- All layers of a cake assign their components to the same slice ids, and
-  each of them describes one aspect of the catalog.
-- A cake refers to its layers by hash, so another cake can reuse them.
-- To read what a cake says about a slice, follow each layer of the cake to
-  the component it assigns to that slice.
+- A cake is a collection of layers
+- A cake is also a collection of slices
+- A slice describes a single object
+- A layer describes multiple objects
+- Each slice has a slice id
+- A layer assigns properties to slices
+- Different cakes can share the same layers
 
 Next, a [Tree](/guides/data_types/tree/) stores hierarchical data.

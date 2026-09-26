@@ -2,7 +2,7 @@
   "_type": "tableCfgs",
   "_data": [
     {
-      "key": "nutritionalValues",
+      "key": "manufacturers",
       "type": "components",
       "columns": [
         {
@@ -13,41 +13,34 @@
           "_hash": "Np5O9L6tfUaUFTAYyx6g5E"
         },
         {
-          "key": "energy",
-          "type": "number",
-          "titleLong": "Energy in kcal per 100 g",
-          "titleShort": "Energy",
-          "_hash": "UehrE56a7gtsQigT8wAGdN"
+          "key": "name",
+          "type": "string",
+          "titleLong": "Manufacturer",
+          "titleShort": "Name",
+          "_hash": "MJSlmIw2K4LgAtPrf3lJs4"
         },
         {
-          "key": "fat",
-          "type": "number",
-          "titleLong": "Fat in g per 100 g",
-          "titleShort": "Fat",
-          "_hash": "9sprIiedAeYefx6-iYH3CE"
+          "key": "country",
+          "type": "string",
+          "titleLong": "Country",
+          "titleShort": "Country",
+          "_hash": "TntUQvq6yMGz8VmjA2hNSi"
         },
         {
-          "key": "protein",
+          "key": "founded",
           "type": "number",
-          "titleLong": "Protein in g per 100 g",
-          "titleShort": "Protein",
-          "_hash": "8y4kRczWXmxgWDwOZJMoeO"
-        },
-        {
-          "key": "carbohydrates",
-          "type": "number",
-          "titleLong": "Carbohydrates in g per 100 g",
-          "titleShort": "Carbs",
-          "_hash": "NJcVRPTslfCgNUSzNKY3is"
+          "titleLong": "Year of foundation",
+          "titleShort": "Founded",
+          "_hash": "ClKUhI5vwDWYxPwn3uWYoe"
         }
       ],
       "isHead": false,
       "isRoot": false,
       "isShared": true,
-      "_hash": "ZavzatXbwf6chOi1OkQ5jf"
+      "_hash": "PxMRWNieD8EMi7Ut1-svPL"
     },
     {
-      "key": "ingredients",
+      "key": "cars",
       "type": "components",
       "columns": [
         {
@@ -60,35 +53,35 @@
         {
           "key": "id",
           "type": "string",
-          "titleLong": "Ingredient",
+          "titleLong": "Model",
           "titleShort": "Id",
-          "_hash": "lkbT7BPDanJ5A83ZHWoUK1"
+          "_hash": "aT8iRRsDToF3deCdSpRWJs"
         },
         {
-          "key": "amountUnit",
+          "key": "bodyStyle",
           "type": "string",
-          "titleLong": "Amount unit",
-          "titleShort": "Unit",
-          "_hash": "v9mX_6HhTKlRWlIWuLf7WF"
+          "titleLong": "Body style",
+          "titleShort": "Body",
+          "_hash": "RYhSZAmcuGvb-dZLA-nDaH"
         },
         {
-          "key": "nutritionalValuesRef",
+          "key": "manufacturersRef",
           "type": "string",
-          "titleLong": "Nutritional values",
-          "titleShort": "Nutrition",
+          "titleLong": "Manufacturer",
+          "titleShort": "Maker",
           "ref": {
-            "tableKey": "nutritionalValues",
+            "tableKey": "manufacturers",
             "type": "components",
-            "_hash": "EAHb2YtjGsrOiupkaFsBaV"
+            "_hash": "x9Qe_fJ-wtSkLQzIOBSezk"
           },
-          "_hash": "kx1cKDOJzwnd3VN70lb277"
+          "_hash": "uTQ3WaeYpGb7K_KMpXeojk"
         }
       ],
       "isHead": true,
       "isRoot": true,
       "isShared": false,
-      "_hash": "i4-R_5GvCGvoeo1ZJIUhWD"
+      "_hash": "xLeU6HGYM7LEnKnaPgOQ6z"
     }
   ],
-  "_hash": "U82WGUkrqE-ymVqIl1hGDx"
+  "_hash": "dOs3aSyjVnTgp55bSYI3Wz"
 }

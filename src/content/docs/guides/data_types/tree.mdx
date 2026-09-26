@@ -1,25 +1,33 @@
 ---
 title: Tree
-description: Build a bakery menu as a tree of hashed nodes, walk it from the root and change a price without copying the tree.
+description: Build a car from nested parts as a tree of hashed nodes, walk it from the root and replace a part without copying the tree.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
+import Tree from '../../../../assets/figures/tree.svg';
 import Snippet from '../../../../components/Snippet.astro';
 
-Trees store hierarchical data: a menu, a file system or an organization
-chart. Every node of a tree is a row of a table of type `trees`. A parent
-refers to its children by their hashes, so the hash of the root covers the
-whole tree.
+<Tree
+  width={160}
+  role="img"
+  aria-label="A tree drawn top down: the root at the top branches into nodes, down to the leaves"
+/>
 
-In this tutorial you build the menu of a bakery. It has two categories,
-cakes and breads, with two products each. You print the menu, change a price
-and see that the change adds only the nodes on the path from the product to
-the root.
+Trees store hierarchical data like nested components, file systems or
+organization charts. Every node of a tree is a row of a table of type
+`trees`. A parent refers to its children by their hashes, so the hash of the
+root covers the whole tree.
+
+In this tutorial you build a car from nested parts. Every part has a name
+and can consist of sub parts: the Taycan consists of a body and a
+drivetrain, the body of a door and a roof, the drivetrain of a battery and a
+motor. You print the parts, replace the battery and see that the change adds
+only the parts on the path from the battery to the root.
 
 You will learn how to:
 
-- create leaves and parents with `hip`
-- store the nodes of a tree in a trees table
+- create parts with and without sub parts with `hip`
+- store the parts of a tree in a trees table
 - walk a tree from its root
 - change a tree without copying it
 - build a tree from a plain object with `treeFromObject`
@@ -29,26 +37,27 @@ You will learn how to:
 Create a project and install the core package and the hashing package:
 
 ```bash
-mkdir bakery-menu
-cd bakery-menu
+mkdir car-parts
+cd car-parts
 echo '{ "type": "module" }' > package.json
 pnpm add @rljson/rljson @rljson/hash
 ```
 
 `"type": "module"` lets the application use ES modules and top-level `await`.
-Now create the file `menu.ts`. Each of the following steps adds code to it:
+Now create the file `parts.ts`. Each of the following steps adds code to it:
 put the imports of a step at the top of the file, and its code below the code
 of the previous step. The complete file is shown at the end.
 
 ## 2. Create the leaves
 
-The products are the leaves of the tree. A leaf carries its data in `meta`
-and has no children:
+A part is a node of the tree. Its `meta` holds the `Part` with its name, its
+`children` hold the hashes of its sub parts. Parts without sub parts are the
+leaves of the tree:
 
 <Snippet
   file="tree.spec.ts"
-  region="products"
-  title="menu.ts"
+  region="leaves"
+  title="parts.ts"
 />
 
 Every node of a tree has four fields:
@@ -60,44 +69,46 @@ Every node of a tree has four fields:
 | `meta`     | Any JSON data of the node, or `null`                      |
 | `children` | The hashes of the children, or `null` for a leaf          |
 
+The parts carry their name in `meta`, so they leave out `id`.
+
 ## 3. Create the parents
 
-A parent refers to its children by their hashes. The categories are the
-parents of the products, and the root is the parent of the categories:
+Parts that consist of sub parts are the parents. The body and the drivetrain
+are the parents of the leaves, and the Taycan is the root above them:
 
 <Snippet
   file="tree.spec.ts"
-  region="categories"
-  title="menu.ts"
+  region="parents"
+  title="parts.ts"
 />
 
 The hash of a parent includes the hashes of its children. That is why you
-build a tree from the bottom up: first the children, then their parents. It
-also rules out cycles: a node in a cycle would have to include its own hash.
-The validator reports such data as invalid hashes.
+build a tree from the bottom up: first the sub parts, then the parts they
+belong to. It also rules out cycles: a part that contains itself would have
+to include its own hash. The validator reports such data as invalid hashes.
 
-## 4. Store the nodes in a table
+## 4. Store the parts in a table
 
-The nodes are rows of a trees table. Their order does not matter; the
+The parts are rows of a trees table. Their order does not matter; the
 references hold the tree together:
 
 <Snippet
   file="tree.spec.ts"
   region="table"
-  title="menu.ts"
+  title="parts.ts"
 />
 
 <Snippet
-  file="menu.json"
+  file="parts.json"
   title="Output"
 />
 
-## 5. Validate the menu
+## 5. Validate the parts
 
 <Snippet
   file="tree.spec.ts"
   region="validate"
-  title="menu.ts"
+  title="parts.ts"
 />
 
 For every node of a trees table, `BaseValidator` checks that:
@@ -106,45 +117,45 @@ For every node of a trees table, `BaseValidator` checks that:
 - a node with children is a parent: `isParent` is `true`
 - no child appears twice among the children of a parent
 
-## 6. Print the menu
+## 6. Print the parts
 
-To print the menu, the application starts at the root, looks up each child
+To print the car, the application starts at the root, looks up each sub part
 by its hash and descends:
 
 <Snippet
   file="tree.spec.ts"
   region="print"
-  title="menu.ts"
+  title="parts.ts"
 />
 
-## 7. Change a price
+## 7. Replace a part
 
-The cheesecake gets cheaper. Its node is immutable, so the new price needs a
-new leaf. The new leaf has a new hash, so its parent `cakes` needs a new
-node, and so does the root. The breads are not touched:
+The Taycan gets a larger battery. The battery node is immutable, so the new
+battery needs a new leaf. The new leaf has a new hash, so its parent, the
+drivetrain, needs a new node, and so does the Taycan. The body is not
+touched:
 
 <Snippet
   file="tree.spec.ts"
   region="change"
-  title="menu.ts"
+  title="parts.ts"
 />
 
-The new menu consists of three new nodes and four nodes of the old menu. The
-old root still describes the old menu, so both versions of the menu live in
-the same table, without a copy.
+The new car consists of three new parts and four parts of the old car. The
+old root still describes the old car, so both versions live in the same
+table, without a copy.
 
 ## 8. Build a tree from a plain object
 
 `treeFromObject` turns a plain JavaScript object into hashed tree nodes. This
-object describes the same menu:
+object describes the same car:
 
 <Snippet
   file="tree.spec.ts"
   region="from-object"
 />
 
-The nodes have the same content as the ones you built by hand, so they have
-the same hashes, down to the root. `treeFromObject` follows these rules:
+`treeFromObject` follows these rules:
 
 - An object becomes a parent. Its keys are the ids of the children.
 - An object with a `meta` key becomes a leaf with that `meta`.
@@ -156,16 +167,21 @@ the same hashes, down to the root. `treeFromObject` follows these rules:
 - A node with the id `root` is added on top, unless you pass `true` as the
   second argument.
 
+Only leaves get a `meta`: the parents carry their name as `id`, and their
+`meta` is `null`. So the nodes have the same structure as the parts you
+built by hand, but different hashes. Use `treeFromObject` when only the
+leaves carry data.
+
 ## 9. See what the validator catches
 
-Leave out the node of the baguette:
+Leave out the electric motor:
 
 <Snippet
   file="tree.spec.ts"
   region="missing-child"
 />
 
-The breads refer to a child that the table does not contain:
+The drivetrain refers to a sub part that the table does not contain:
 
 <Snippet
   file="missing-child.json"
@@ -174,19 +190,19 @@ The breads refer to a child that the table does not contain:
 
 ## 10. Run the application
 
-Here is the complete `menu.ts`:
+Here is the complete `parts.ts`:
 
 <Snippet
   file="tree.spec.ts"
   region="app"
-  title="menu.ts"
+  title="parts.ts"
 />
 
 Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
-or with `npx tsx menu.ts`:
+or with `npx tsx parts.ts`:
 
 ```bash
-node menu.ts
+node parts.ts
 ```
 
 <Snippet
@@ -203,6 +219,7 @@ node menu.ts
 ## What you have learned
 
 - Every node of a tree is a row with `id`, `isParent`, `meta` and
+  `children`. A part keeps its name in `meta` and its sub parts in
   `children`.
 - A parent refers to its children by hash, so a tree is built from the
   leaves up, and the root hash covers the whole tree.

@@ -10,10 +10,10 @@
 // vitest imports this file. The tests below check what it has built.
 
 // #region app
-// #region products
+// #region leaves
 import { hip } from '@rljson/hash';
 import type { Ref, Tree } from '@rljson/rljson';
-// #endregion products
+// #endregion leaves
 // #region table
 import type { TreesTable } from '@rljson/rljson';
 // #endregion table
@@ -33,79 +33,90 @@ import { describe, expect, it, vi } from 'vitest';
 const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 // #region app
-// #region products
+// #region leaves
+/** A part of a car. Every part has a name */
+type Part = { name: string };
+
 /** Returns the reference to a node: the hash that hip wrote into it */
 const ref = (node: object): Ref => (node as { _hash: Ref })._hash;
 
-/** Creates a leaf: a product and its price */
-const product = (id: string, price: number) =>
-  hip<Tree>({ id, isParent: false, meta: { price }, children: null });
+/** Creates a part. It references its sub parts by their hashes */
+const part = (name: string, subParts: Tree[] = []) =>
+  hip<Tree>({
+    isParent: subParts.length > 0,
+    meta: { name } satisfies Part,
+    children: subParts.length > 0 ? subParts.map(ref) : null,
+  });
 
-const cheesecake = product('cheesecake', 4.2);
-const carrotCake = product('carrotCake', 3.8);
-const sourdough = product('sourdough', 5.5);
-const baguette = product('baguette', 2.5);
-// #endregion products
+// The leaves: parts without sub parts
+const door = part('Door');
+const roof = part('Roof');
+const battery = part('Performance Battery');
+const motor = part('Electric Motor');
+// #endregion leaves
 
-// #region categories
-/** Creates a parent that references its children by their hashes */
-const category = (id: string, children: Tree[]) =>
-  hip<Tree>({ id, isParent: true, meta: null, children: children.map(ref) });
-
-const cakes = category('cakes', [cheesecake, carrotCake]);
-const breads = category('breads', [sourdough, baguette]);
-const root = category('root', [cakes, breads]);
-// #endregion categories
+// #region parents
+// The parents: parts that consist of sub parts
+const body = part('Body', [door, roof]);
+const drivetrain = part('Drivetrain', [battery, motor]);
+const taycan = part('Taycan', [body, drivetrain]);
+// #endregion parents
 
 // #region table
-const menu = hip<TreesTable>({
+// All parts of the car live in one trees table
+const parts = hip<TreesTable>({
   _type: 'trees',
-  _data: [root, cakes, breads, cheesecake, carrotCake, sourdough, baguette],
+  _data: [taycan, body, drivetrain, door, roof, battery, motor],
 });
 // #endregion table
 
 // #region validate
+// BaseValidator checks that every sub part exists
 const validate = new Validate();
 validate.addValidator(new BaseValidator());
 
-const errors = await validate.run({ menu });
+const errors = await validate.run({ parts });
 if (Object.keys(errors).length > 0) {
   throw new Error(JSON.stringify(errors, null, 2));
 }
 // #endregion validate
 
 // #region print
-/** Prints a node and, indented below it, all of its descendants */
+/** Prints a part and, indented below it, all of its sub parts */
 const print = (table: TreesTable, hash: Ref, indent = '') => {
   const node = table._data.find((row) => ref(row) === hash)!;
-  const price = node.meta ? ` ${(node.meta.price as number).toFixed(2)} €` : '';
-  console.log(`${indent}${node.id}${price}`);
+  console.log(`${indent}${(node.meta as Part).name}`);
 
   for (const child of node.children ?? []) {
     print(table, child, indent + '  ');
   }
 };
 
-print(menu, ref(root));
+// Print the whole car, starting at the root
+print(parts, ref(taycan));
 // #endregion print
 
 // #region change
-// The cheesecake gets cheaper
-const cheaperCheesecake = product('cheesecake', 3.9);
-const newCakes = category('cakes', [cheaperCheesecake, carrotCake]);
-const newRoot = category('root', [newCakes, breads]);
+// The Taycan gets a larger battery
+const batteryPlus = part('Performance Battery Plus');
+// A new sub part has a new hash, so every parent up to the root changes
+const newDrivetrain = part('Drivetrain', [batteryPlus, motor]);
+const newTaycan = part('Taycan', [body, newDrivetrain]);
 
-const newMenu = hip<TreesTable>({
+// Add the new parts; the old ones stay as they are
+const newParts = hip<TreesTable>({
   _type: 'trees',
-  _data: [...menu._data, newRoot, newCakes, cheaperCheesecake],
+  _data: [...parts._data, newTaycan, newDrivetrain, batteryPlus],
 });
 
-console.log('\nAfter the price change:');
-print(newMenu, ref(newRoot));
+console.log('\nAfter the battery upgrade:');
+print(newParts, ref(newTaycan));
 
-const known = new Set(menu._data.map(ref));
-const added = newMenu._data.filter((node) => !known.has(ref(node)));
-console.log(`\nNew nodes: ${added.map((node) => node.id).join(', ')}`);
+// Only the changed path is new: the body is reused
+const known = new Set(parts._data.map(ref));
+const added = newParts._data.filter((node) => !known.has(ref(node)));
+const names = added.map((node) => (node.meta as Part).name);
+console.log(`\nNew parts: ${names.join(', ')}`);
 // #endregion change
 // #endregion app
 
@@ -113,73 +124,76 @@ const output = log.mock.calls.map((args) => args.join(' ')).join('\n');
 log.mockRestore();
 
 describe('Tree tutorial', () => {
-  it('references the children by their hashes', () => {
-    expect(root.children).toEqual([ref(cakes), ref(breads)]);
-    expect(cheesecake.children).toBeNull();
+  it('references the sub parts by their hashes', () => {
+    expect(taycan.children).toEqual([ref(body), ref(drivetrain)]);
+    expect(door.children).toBeNull();
   });
 
-  it('stores the nodes as rows of a trees table', async () => {
-    await writeGolden('menu.json', menu);
+  it('stores the parts as rows of a trees table', async () => {
+    await writeGolden('parts.json', parts);
   });
 
-  it('validates the menu', async () => {
+  it('validates the parts', async () => {
     expect(errors).toEqual({});
-    expect(await validate.run({ menu: newMenu })).toEqual({});
+    expect(await validate.run({ parts: newParts })).toEqual({});
   });
 
-  it('prints the menu and replaces the changed path only', async () => {
+  it('prints the parts and replaces the changed path only', async () => {
     await writeGolden('output.txt', output);
 
     expect(output).toBe(
       [
-        'root',
-        '  cakes',
-        '    cheesecake 4.20 €',
-        '    carrotCake 3.80 €',
-        '  breads',
-        '    sourdough 5.50 €',
-        '    baguette 2.50 €',
-        '\nAfter the price change:',
-        'root',
-        '  cakes',
-        '    cheesecake 3.90 €',
-        '    carrotCake 3.80 €',
-        '  breads',
-        '    sourdough 5.50 €',
-        '    baguette 2.50 €',
-        '\nNew nodes: root, cakes, cheesecake',
+        'Taycan',
+        '  Body',
+        '    Door',
+        '    Roof',
+        '  Drivetrain',
+        '    Performance Battery',
+        '    Electric Motor',
+        '\nAfter the battery upgrade:',
+        'Taycan',
+        '  Body',
+        '    Door',
+        '    Roof',
+        '  Drivetrain',
+        '    Performance Battery Plus',
+        '    Electric Motor',
+        '\nNew parts: Taycan, Drivetrain, Performance Battery Plus',
       ].join('\n'),
     );
   });
 
-  it('builds the same tree from a plain object', () => {
+  it('builds a tree from a plain object', () => {
     // #region from-object
     const nodes = treeFromObject({
-      cakes: {
-        cheesecake: { meta: { price: 4.2 } },
-        carrotCake: { meta: { price: 3.8 } },
-      },
-      breads: {
-        sourdough: { meta: { price: 5.5 } },
-        baguette: { meta: { price: 2.5 } },
+      taycan: {
+        body: {
+          door: { meta: { name: 'Door' } },
+          roof: { meta: { name: 'Roof' } },
+        },
+        drivetrain: {
+          battery: { meta: { name: 'Performance Battery' } },
+          motor: { meta: { name: 'Electric Motor' } },
+        },
       },
     });
-
-    const rootNode = nodes.find((node) => node.id === 'root')!;
-    expect(rootNode._hash).toBe(ref(root)); // same tree, same root hash
     // #endregion from-object
 
-    expect(nodes).toHaveLength(menu._data.length);
+    // 7 parts and a root on top
+    expect(nodes).toHaveLength(parts._data.length + 1);
+    const drivetrainNode = nodes.find((node) => node.id === 'drivetrain')!;
+    expect(drivetrainNode.meta).toBeNull();
+    expect(drivetrainNode.children).toHaveLength(2);
   });
 
-  it('detects a missing child', async () => {
+  it('detects a missing sub part', async () => {
     // #region missing-child
     const incomplete = hip<TreesTable>({
       _type: 'trees',
-      _data: [root, cakes, breads, cheesecake, carrotCake, sourdough],
+      _data: [taycan, body, drivetrain, door, roof, battery],
     });
 
-    const result = await validate.run({ menu: incomplete });
+    const result = await validate.run({ parts: incomplete });
     // #endregion missing-child
 
     await writeGolden('missing-child.json', result);
@@ -187,9 +201,9 @@ describe('Tree tutorial', () => {
       error: 'Child nodes are missing',
       brokenTrees: [
         {
-          treesTable: 'menu',
-          brokenTree: ref(breads),
-          missingChildNode: ref(baguette),
+          treesTable: 'parts',
+          brokenTree: ref(drivetrain),
+          missingChildNode: ref(motor),
         },
       ],
     });
@@ -197,16 +211,15 @@ describe('Tree tutorial', () => {
 
   it('detects a leaf with children', async () => {
     const leafWithChildren = hip<Tree>({
-      id: 'cakes',
       isParent: false,
-      meta: null,
-      children: [ref(cheesecake)],
+      meta: { name: 'Body' },
+      children: [ref(door)],
     });
 
     const result = await validate.run({
-      menu: hip<TreesTable>({
+      parts: hip<TreesTable>({
         _type: 'trees',
-        _data: [leafWithChildren, cheesecake],
+        _data: [leafWithChildren, door],
       }),
     });
 

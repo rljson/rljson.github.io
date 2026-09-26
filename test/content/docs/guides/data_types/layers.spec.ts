@@ -10,10 +10,10 @@
 // vitest imports this file. The tests below check what it has built.
 
 // #region app
-// #region amounts
+// #region colors
 import { hip } from '@rljson/hash';
 import type { ComponentsTable, Ref } from '@rljson/rljson';
-// #endregion amounts
+// #endregion colors
 // #region slice-ids
 import type { SliceIds } from '@rljson/rljson';
 // #endregion slice-ids
@@ -35,91 +35,79 @@ import { describe, expect, it, vi } from 'vitest';
 const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 // #region app
-// #region amounts
-type Amount = { quantity: number; unit: 'g' | 'ml' };
+// #region colors
+// The components of the color layer
+type Color = { name: string };
 
-const amounts = hip<ComponentsTable<Amount>>({
+// Equal colors have equal hashes, so each color is stored once
+const colors = hip<ComponentsTable<Color>>({
   _type: 'components',
-  _data: [
-    { quantity: 250, unit: 'g' },
-    { quantity: 200, unit: 'g' },
-    { quantity: 200, unit: 'ml' },
-  ],
+  _data: [{ name: 'white' }, { name: 'black' }, { name: 'silver' }],
 });
 
 /** Returns the reference to a row: the hash that hip wrote into it */
 const ref = (row: object): Ref => (row as { _hash: Ref })._hash;
 
-const [g250, g200, ml200] = amounts._data;
-// #endregion amounts
+const [white, black, silver] = colors._data;
+// #endregion colors
 
 // #region slice-ids
-const spongeIngredients = hip<SliceIds>({ add: ['flour', 'sugar', 'milk'] });
+// The cars of 2025: the slice ids of the layer
+const cars2025 = hip<SliceIds>({ add: ['taycan', 'macan', 'ex30'] });
 // #endregion slice-ids
 
 // #region layer
-const sponge = hip<Layer>({
-  id: 'sponge',
-  sliceIdsTable: 'ingredientTypes',
-  sliceIdsTableRow: ref(spongeIngredients),
-  componentsTable: 'amounts',
-  add: { flour: ref(g250), sugar: ref(g200), milk: ref(ml200) },
+// Assigns a color to each car of 2025
+const colors2025 = hip<Layer>({
+  id: 'colors2025',
+  sliceIdsTable: 'cars',
+  sliceIdsTableRow: ref(cars2025),
+  componentsTable: 'colors',
+  add: { taycan: ref(white), macan: ref(black), ex30: ref(white) },
 });
 // #endregion layer
 
 // #region variants
-// A butter cake: the sponge plus butter
-const butterIngredients = hip<SliceIds>({
-  base: ref(spongeIngredients),
-  add: ['butter'],
+// The cars of 2026: the EX90 is new, the Macan is gone
+const cars2026 = hip<SliceIds>({
+  base: ref(cars2025),
+  add: ['ex90'],
+  remove: ['macan'],
 });
 
-const butterCake = hip<Layer>({
-  id: 'butterCake',
-  base: ref(sponge),
-  sliceIdsTable: 'ingredientTypes',
-  sliceIdsTableRow: ref(butterIngredients),
-  componentsTable: 'amounts',
-  add: { butter: ref(g200) },
-});
-
-// A gluten-free sponge: ground almonds instead of flour
-const glutenFreeIngredients = hip<SliceIds>({
-  base: ref(spongeIngredients),
-  add: ['almonds'],
-  remove: ['flour'],
-});
-
-const glutenFree = hip<Layer>({
-  id: 'glutenFree',
-  base: ref(sponge),
-  sliceIdsTable: 'ingredientTypes',
-  sliceIdsTableRow: ref(glutenFreeIngredients),
-  componentsTable: 'amounts',
-  add: { almonds: ref(g250) },
-  remove: { flour: ref(g250) },
+// Stores only the difference to the colors of 2025
+const colors2026 = hip<Layer>({
+  id: 'colors2026',
+  base: ref(colors2025),
+  sliceIdsTable: 'cars',
+  sliceIdsTableRow: ref(cars2026),
+  componentsTable: 'colors',
+  add: { ex90: ref(silver) },
+  remove: { macan: ref(black) },
 });
 // #endregion variants
 
 // #region tables
-const ingredientTypes = hip<SliceIdsTable>({
+// The layers refer to these tables by their keys in the Rljson object
+const cars = hip<SliceIdsTable>({
   _type: 'sliceIds',
-  _data: [spongeIngredients, butterIngredients, glutenFreeIngredients],
+  _data: [cars2025, cars2026],
 });
 
-const recipes = hip<LayersTable>({
+const colorLayers = hip<LayersTable>({
   _type: 'layers',
-  _data: [sponge, butterCake, glutenFree],
+  _data: [colors2025, colors2026],
 });
 
-const recipeBook: Rljson = { amounts, ingredientTypes, recipes };
+const carCatalog: Rljson = { colors, cars, colorLayers };
 // #endregion tables
 
 // #region validate
+// BaseValidator also checks that every car has a color
 const validate = new Validate();
 validate.addValidator(new BaseValidator());
 
-const errors = await validate.run(recipeBook);
+const errors = await validate.run(carCatalog);
 if (Object.keys(errors).length > 0) {
   throw new Error(JSON.stringify(errors, null, 2));
 }
@@ -132,9 +120,13 @@ const rowOf = <T extends object>(table: { _data: T[] }, hash: Ref): T =>
 
 /** Returns the assignments of a layer, merged with those of its base */
 const assignmentsOf = (layer: Layer): Record<string, Ref> => {
-  const base = layer.base ? assignmentsOf(rowOf(recipes, layer.base)) : {};
+  // Resolve the base first, if there is one
+  const baseLayer = layer.base && rowOf(colorLayers, layer.base);
+  const base = baseLayer ? assignmentsOf(baseLayer) : {};
+  // The assignments of the layer win over those of the base
   const assignments = { ...base, ...layer.add };
 
+  // Drop the assignments that the layer removes
   for (const sliceId of Object.keys(layer.remove ?? {})) {
     delete assignments[sliceId];
   }
@@ -143,15 +135,14 @@ const assignmentsOf = (layer: Layer): Record<string, Ref> => {
   return assignments;
 };
 
-for (const recipe of recipes._data) {
-  const lines = Object.entries(assignmentsOf(recipe)).map(
-    ([ingredient, amountRef]) => {
-      const { quantity, unit } = rowOf(amounts, amountRef);
-      return `${quantity} ${unit} ${ingredient}`;
-    },
-  );
+// Print the color of each car, one line per model year
+for (const layer of colorLayers._data) {
+  const lines = Object.entries(assignmentsOf(layer)).map(([car, colorRef]) => {
+    const { name } = rowOf(colors, colorRef);
+    return `${car} ${name}`;
+  });
 
-  console.log(`${recipe.id}: ${lines.join(', ')}`);
+  console.log(`${layer.id}: ${lines.join(', ')}`);
 }
 // #endregion resolve
 // #endregion app
@@ -160,42 +151,35 @@ const output = log.mock.calls.map((args) => args.join(' ')).join('\n');
 log.mockRestore();
 
 describe('Layers tutorial', () => {
-  it('stores each amount once', () => {
-    expect(amounts._data).toHaveLength(3);
-    expect(butterCake.add.butter).toBe(sponge.add.sugar); // both 200 g
-    expect(glutenFree.add.almonds).toBe(sponge.add.flour); // both 250 g
-  });
-
-  it('derives slice ids from a base', async () => {
-    await writeGolden('ingredient-types.json', ingredientTypes);
-
-    expect(butterIngredients.base).toBe(ref(spongeIngredients));
-    expect(glutenFreeIngredients.remove).toEqual(['flour']);
+  it('stores each color once', () => {
+    expect(colors._data).toHaveLength(3);
+    expect(colors2025.add.taycan).toBe(colors2025.add.ex30); // both white
+    expect(colors2026.add.ex90).toBe(ref(silver));
   });
 
   it('assigns components to slice ids', async () => {
-    await writeGolden('recipes.json', recipes);
+    await writeGolden('color-layers.json', colorLayers);
 
-    expect(Object.keys(sponge.add)).toEqual([
-      'flour',
-      'sugar',
-      'milk',
+    expect(Object.keys(colors2025.add)).toEqual([
+      'taycan',
+      'macan',
+      'ex30',
       '_hash',
     ]);
+    expect(colors2026.base).toBe(ref(colors2025));
   });
 
-  it('validates the recipe book', () => {
+  it('validates the car catalog', () => {
     expect(errors).toEqual({});
   });
 
-  it('resolves the ingredients of each recipe', async () => {
+  it('resolves the colors of each model year', async () => {
     await writeGolden('output.txt', output);
 
     expect(output).toBe(
       [
-        'sponge: 250 g flour, 200 g sugar, 200 ml milk',
-        'butterCake: 250 g flour, 200 g sugar, 200 ml milk, 200 g butter',
-        'glutenFree: 200 g sugar, 200 ml milk, 250 g almonds',
+        'colors2025: taycan white, macan black, ex30 white',
+        'colors2026: taycan white, ex30 white, ex90 silver',
       ].join('\n'),
     );
   });
@@ -203,19 +187,20 @@ describe('Layers tutorial', () => {
   it('detects a slice id without a component', async () => {
     // #region missing-assignment
     const forgetful = hip<Layer>({
-      id: 'butterCake',
-      base: ref(sponge),
-      sliceIdsTable: 'ingredientTypes',
-      sliceIdsTableRow: ref(butterIngredients),
-      componentsTable: 'amounts',
-      add: {}, // no amount for butter
+      id: 'colors2026',
+      base: ref(colors2025),
+      sliceIdsTable: 'cars',
+      sliceIdsTableRow: ref(cars2026),
+      componentsTable: 'colors',
+      add: {}, // no color for the EX90
+      remove: { macan: ref(black) },
     });
 
     const result = await validate.run({
-      ...recipeBook,
-      recipes: hip<LayersTable>({
+      ...carCatalog,
+      colorLayers: hip<LayersTable>({
         _type: 'layers',
-        _data: [sponge, forgetful],
+        _data: [colors2025, forgetful],
       }),
     });
     // #endregion missing-assignment
@@ -226,8 +211,8 @@ describe('Layers tutorial', () => {
       layers: [
         {
           brokenLayer: ref(forgetful),
-          layersTable: 'recipes',
-          unassignedSliceIds: ['butter'],
+          layersTable: 'colorLayers',
+          unassignedSliceIds: ['ex90'],
         },
       ],
     });

@@ -1,0 +1,25 @@
+{
+  "_type": "components",
+  "_tableCfg": "xLeU6HGYM7LEnKnaPgOQ6z",
+  "_data": [
+    {
+      "id": "taycan",
+      "bodyStyle": "sedan",
+      "manufacturersRef": "4_CfXvpH2v9_Vv8iS8UURd",
+      "_hash": "WPZdI_UOAPgGxUVqTLc9jl"
+    },
+    {
+      "id": "ex30",
+      "bodyStyle": "suv",
+      "manufacturersRef": "MC4NgBPGIX988j6d47R8bN",
+      "_hash": "mNZCmEpzHg_RfccjMgcVDz"
+    },
+    {
+      "id": "macan",
+      "bodyStyle": "suv",
+      "manufacturersRef": "4_CfXvpH2v9_Vv8iS8UURd",
+      "_hash": "4EAqVKQHa5baqAQVTg2Llr"
+    }
+  ],
+  "_hash": "IpY_SDyi6EFCyWAc0BqlH4"
+}

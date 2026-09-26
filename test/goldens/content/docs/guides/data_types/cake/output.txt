@@ -1,6 +1,6 @@
-berryCake:
-  left: vanilla sponge, vanilla cream, strawberries
-  right: chocolate sponge, chocolate cream, raspberries
-chocolateCake:
-  left: vanilla sponge, vanilla cream, chocolate flakes
-  right: chocolate sponge, chocolate cream, chocolate flakes
+germany:
+  taycan: white, 300 kW electric, 101,000 EUR
+  ex30: black, 200 kW electric, 36,000 EUR
+switzerland:
+  taycan: white, 300 kW electric, 108,000 CHF
+  ex30: black, 200 kW electric, 38,000 CHF

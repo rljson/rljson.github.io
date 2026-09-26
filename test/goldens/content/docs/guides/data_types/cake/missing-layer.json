@@ -5,10 +5,10 @@
       "error": "Layer layers of cakes are missing",
       "brokenCakes": [
         {
-          "cakeTable": "cakes",
-          "brokenCake": "LaZo-_SvwnZpuphFKI4pTv",
-          "layersTable": "toppingLayers",
-          "missingLayer": "c5eIVIr4REtVjJmifrVmDM"
+          "cakeTable": "catalogs",
+          "brokenCake": "KIAne7BHMKXIaRo4cu9EKE",
+          "layersTable": "priceLayers",
+          "missingLayer": "fuKywvtTs4xdj_UqjGd7pu"
         }
       ]
     }

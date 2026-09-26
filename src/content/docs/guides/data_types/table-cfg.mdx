@@ -15,9 +15,9 @@ With a configuration, the validator checks more than the format. It checks
 that every column of a row is configured, that every value has the
 configured type, and that every reference points to an existing row.
 
-In this tutorial you build an ingredient catalog with a schema. You describe
-two tables, check a delivery of new ingredients against the schema, and let
-the validator enforce types and references.
+In this tutorial you build a car catalog with a schema. You describe two
+tables, check a delivery of new cars against the schema, and let the
+validator enforce types and references.
 
 You will learn how to:
 
@@ -32,8 +32,8 @@ You will learn how to:
 Create a project and install the core package and the hashing package:
 
 ```bash
-mkdir ingredient-catalog
-cd ingredient-catalog
+mkdir car-catalog
+cd car-catalog
 echo '{ "type": "module" }' > package.json
 pnpm add @rljson/rljson @rljson/hash
 ```
@@ -45,11 +45,11 @@ of the previous step. The complete file is shown at the end.
 
 ## 2. Describe a table
 
-The first table holds nutritional values. Describe it and its columns:
+The first table holds the manufacturers. Describe it and its columns:
 
 <Snippet
   file="table-cfg.spec.ts"
-  region="nutritional-values-cfg"
+  region="manufacturers-cfg"
   title="catalog.ts"
 />
 
@@ -81,12 +81,12 @@ of type `string`, and every column has a valid type.
 
 ## 3. Describe a table with a reference
 
-The second table holds the ingredients. Its column `nutritionalValuesRef`
-refers to the table of nutritional values:
+The second table holds the cars. Its column `manufacturersRef` refers to the
+table of manufacturers:
 
 <Snippet
   file="table-cfg.spec.ts"
-  region="ingredients-cfg"
+  region="cars-cfg"
   title="catalog.ts"
 />
 
@@ -100,10 +100,9 @@ a database. The validator accepts three combinations:
 | `false`  | `false`  | `true`     | shared: its rows are used by several parents                       |
 
 Head and root tables need an `id` column: a row with the same id is the same
-object, in every version. The ingredients are the root of the catalog, so
-they are identified by their id. The nutritional values are shared: several
-ingredients may use the same row, like the sugar and the powdered sugar in
-step 6.
+object, in every version. The cars are the root of the catalog, so they are
+identified by their id. The manufacturers are shared: several cars may use
+the same row, like the Taycan and the Macan in step 6.
 
 ## 4. Store the configurations
 
@@ -129,13 +128,13 @@ A table names its configuration in `_tableCfg`, by hash:
 
 <Snippet
   file="table-cfg.spec.ts"
-  region="nutritional-values"
+  region="manufacturers"
   title="catalog.ts"
 />
 
 ## 6. Check new rows
 
-A supplier delivers new ingredients. Before the application adds them, it
+An importer delivers new cars. Before the application adds them, it
 checks each row against the configuration with
 `validateRljsonAgainstTableCfg`. The function returns a list of problems,
 which is empty for a valid row:
@@ -146,9 +145,9 @@ which is empty for a valid row:
   title="catalog.ts"
 />
 
-The powdered sugar refers to the same nutritional values as the sugar. The
-butter uses the column `unit`, which the configuration does not know, so the
-application rejects it.
+The Macan refers to the same manufacturer as the Taycan. The EX90 uses the
+column `body`, which the configuration does not know, so the application
+rejects it.
 
 <Aside type="note">
   `validateRljsonAgainstTableCfg` checks the columns and types of the rows you
@@ -156,18 +155,18 @@ application rejects it.
   validator in step 8 does.
 </Aside>
 
-## 7. Create the ingredients table
+## 7. Create the cars table
 
-Create the ingredients table from the accepted rows:
+Create the cars table from the accepted rows:
 
 <Snippet
   file="table-cfg.spec.ts"
-  region="ingredients"
+  region="cars"
   title="catalog.ts"
 />
 
 <Snippet
-  file="ingredients.json"
+  file="cars.json"
   title="Output"
 />
 
@@ -190,7 +189,7 @@ For a table with a `_tableCfg`, `BaseValidator` checks that:
 
 ## 9. See what the validator catches
 
-A delivery from a CSV file carries the energy as text:
+A delivery from a CSV file carries the year of foundation as text:
 
 <Snippet
   file="table-cfg.spec.ts"
@@ -202,7 +201,7 @@ A delivery from a CSV file carries the energy as text:
   title="Output"
 />
 
-An ingredient refers to nutritional values that do not exist:
+A car refers to a manufacturer that does not exist:
 
 <Snippet
   file="table-cfg.spec.ts"

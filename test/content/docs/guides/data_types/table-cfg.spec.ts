@@ -10,16 +10,16 @@
 // vitest imports this file. The tests below check what it has built.
 
 // #region app
-// #region nutritional-values-cfg
+// #region manufacturers-cfg
 import { hip } from '@rljson/hash';
 import { type TableCfg, throwOnInvalidTableCfg } from '@rljson/rljson';
-// #endregion nutritional-values-cfg
+// #endregion manufacturers-cfg
 // #region table-cfgs
 import type { TablesCfgTable } from '@rljson/rljson';
 // #endregion table-cfgs
-// #region nutritional-values
+// #region manufacturers
 import type { ComponentsTable, Ref } from '@rljson/rljson';
-// #endregion nutritional-values
+// #endregion manufacturers
 // #region check-rows
 import { validateRljsonAgainstTableCfg } from '@rljson/rljson';
 // #endregion check-rows
@@ -35,35 +35,30 @@ import { describe, expect, it, vi } from 'vitest';
 const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 // #region app
-// #region nutritional-values-cfg
-const nutritionalValuesCfg = hip<TableCfg>({
-  key: 'nutritionalValues',
+// #region manufacturers-cfg
+// Describes the table "manufacturers" and its columns
+const manufacturersCfg = hip<TableCfg>({
+  key: 'manufacturers',
   type: 'components',
   columns: [
     { key: '_hash', type: 'string', titleLong: 'Hash', titleShort: 'Hash' },
     {
-      key: 'energy',
-      type: 'number',
-      titleLong: 'Energy in kcal per 100 g',
-      titleShort: 'Energy',
+      key: 'name',
+      type: 'string',
+      titleLong: 'Manufacturer',
+      titleShort: 'Name',
     },
     {
-      key: 'fat',
-      type: 'number',
-      titleLong: 'Fat in g per 100 g',
-      titleShort: 'Fat',
+      key: 'country',
+      type: 'string',
+      titleLong: 'Country',
+      titleShort: 'Country',
     },
     {
-      key: 'protein',
+      key: 'founded',
       type: 'number',
-      titleLong: 'Protein in g per 100 g',
-      titleShort: 'Protein',
-    },
-    {
-      key: 'carbohydrates',
-      type: 'number',
-      titleLong: 'Carbohydrates in g per 100 g',
-      titleShort: 'Carbs',
+      titleLong: 'Year of foundation',
+      titleShort: 'Founded',
     },
   ],
   isHead: false,
@@ -71,28 +66,30 @@ const nutritionalValuesCfg = hip<TableCfg>({
   isShared: true,
 });
 
-throwOnInvalidTableCfg(nutritionalValuesCfg);
-// #endregion nutritional-values-cfg
+// Fail early if the configuration itself is invalid
+throwOnInvalidTableCfg(manufacturersCfg);
+// #endregion manufacturers-cfg
 
-// #region ingredients-cfg
-const ingredientsCfg = hip<TableCfg>({
-  key: 'ingredients',
+// #region cars-cfg
+// Describes the table "cars"; manufacturersRef refers to a manufacturer
+const carsCfg = hip<TableCfg>({
+  key: 'cars',
   type: 'components',
   columns: [
     { key: '_hash', type: 'string', titleLong: 'Hash', titleShort: 'Hash' },
-    { key: 'id', type: 'string', titleLong: 'Ingredient', titleShort: 'Id' },
+    { key: 'id', type: 'string', titleLong: 'Model', titleShort: 'Id' },
     {
-      key: 'amountUnit',
+      key: 'bodyStyle',
       type: 'string',
-      titleLong: 'Amount unit',
-      titleShort: 'Unit',
+      titleLong: 'Body style',
+      titleShort: 'Body',
     },
     {
-      key: 'nutritionalValuesRef',
+      key: 'manufacturersRef',
       type: 'string',
-      titleLong: 'Nutritional values',
-      titleShort: 'Nutrition',
-      ref: { tableKey: 'nutritionalValues', type: 'components' },
+      titleLong: 'Manufacturer',
+      titleShort: 'Maker',
+      ref: { tableKey: 'manufacturers', type: 'components' },
     },
   ],
   isHead: true,
@@ -100,57 +97,51 @@ const ingredientsCfg = hip<TableCfg>({
   isShared: false,
 });
 
-throwOnInvalidTableCfg(ingredientsCfg);
-// #endregion ingredients-cfg
+throwOnInvalidTableCfg(carsCfg);
+// #endregion cars-cfg
 
 // #region table-cfgs
+// All configurations live in the table "tableCfgs"
 const tableCfgs = hip<TablesCfgTable>({
   _type: 'tableCfgs',
-  _data: [nutritionalValuesCfg, ingredientsCfg],
+  _data: [manufacturersCfg, carsCfg],
 });
 // #endregion table-cfgs
 
-// #region nutritional-values
-type NutritionalValues = {
-  energy: number;
-  fat: number;
-  protein: number;
-  carbohydrates: number;
-};
+// #region manufacturers
+type Manufacturer = { name: string; country: string; founded: number };
 
 /** Returns the reference to a row: the hash that hip wrote into it */
 const ref = (row: object): Ref => (row as { _hash: Ref })._hash;
 
-const nutritionalValues = hip<ComponentsTable<NutritionalValues>>({
+// _tableCfg links the table to its configuration
+const manufacturers = hip<ComponentsTable<Manufacturer>>({
   _type: 'components',
-  _tableCfg: ref(nutritionalValuesCfg),
+  _tableCfg: ref(manufacturersCfg),
   _data: [
-    { energy: 364, fat: 0.98, protein: 10.33, carbohydrates: 76.31 }, // flour
-    { energy: 387, fat: 0, protein: 0, carbohydrates: 100 }, // sugar
+    { name: 'Porsche', country: 'Germany', founded: 1931 },
+    { name: 'Volvo', country: 'Sweden', founded: 1927 },
   ],
 });
 
-const [flourValues, sugarValues] = nutritionalValues._data;
-// #endregion nutritional-values
+const [porsche, volvo] = manufacturers._data;
+// #endregion manufacturers
 
 // #region check-rows
 type Row = Record<string, string>;
 
-// Rows delivered by a supplier, e.g. read from a JSON file
+// Rows delivered by an importer, e.g. read from a JSON file
 const delivery: Row[] = [
-  { id: 'flour', amountUnit: 'g', nutritionalValuesRef: ref(flourValues) },
-  { id: 'sugar', amountUnit: 'g', nutritionalValuesRef: ref(sugarValues) },
-  {
-    id: 'powderedSugar',
-    amountUnit: 'g',
-    nutritionalValuesRef: ref(sugarValues),
-  },
-  { id: 'butter', unit: 'g' },
+  { id: 'taycan', bodyStyle: 'sedan', manufacturersRef: ref(porsche) },
+  { id: 'ex30', bodyStyle: 'suv', manufacturersRef: ref(volvo) },
+  { id: 'macan', bodyStyle: 'suv', manufacturersRef: ref(porsche) },
+  { id: 'ex90', body: 'suv' },
 ];
 
+// Check each row on its own and keep only the valid ones
 const accepted: Row[] = [];
 for (const row of delivery) {
-  const problems = validateRljsonAgainstTableCfg([row], ingredientsCfg);
+  const problems = validateRljsonAgainstTableCfg([row], carsCfg);
 
   if (problems.length > 0) {
     console.log(`✗ ${row.id}: ${problems.join(' ')}`);
@@ -161,17 +152,19 @@ for (const row of delivery) {
 }
 // #endregion check-rows
 
-// #region ingredients
-const ingredients = hip<ComponentsTable<Row>>({
+// #region cars
+// The cars table gets only the accepted rows
+const cars = hip<ComponentsTable<Row>>({
   _type: 'components',
-  _tableCfg: ref(ingredientsCfg),
+  _tableCfg: ref(carsCfg),
   _data: accepted,
 });
-// #endregion ingredients
+// #endregion cars
 
 // #region validate
-const catalog: Rljson = { tableCfgs, nutritionalValues, ingredients };
+const catalog: Rljson = { tableCfgs, manufacturers, cars };
 
+// BaseValidator checks the tables against their configurations
 const validate = new Validate();
 validate.addValidator(new BaseValidator());
 
@@ -189,16 +182,16 @@ describe('TableCfg tutorial', () => {
   it('describes the tables', async () => {
     await writeGolden('table-cfgs.json', tableCfgs);
 
-    expect(() =>
-      throwOnInvalidTableCfg({ ...ingredientsCfg, columns: [] }),
-    ).toThrow('must have at least a _hash and a second column');
+    expect(() => throwOnInvalidTableCfg({ ...carsCfg, columns: [] })).toThrow(
+      'must have at least a _hash and a second column',
+    );
   });
 
   it('links each table to its config', async () => {
-    await writeGolden('ingredients.json', ingredients);
+    await writeGolden('cars.json', cars);
 
-    expect(nutritionalValues._tableCfg).toBe(ref(nutritionalValuesCfg));
-    expect(ingredients._tableCfg).toBe(ref(ingredientsCfg));
+    expect(manufacturers._tableCfg).toBe(ref(manufacturersCfg));
+    expect(cars._tableCfg).toBe(ref(carsCfg));
   });
 
   it('checks rows before they are added', async () => {
@@ -206,17 +199,13 @@ describe('TableCfg tutorial', () => {
 
     expect(output).toBe(
       [
-        '✓ flour',
-        '✓ sugar',
-        '✓ powderedSugar',
-        '✗ butter: Column "unit" in row 0 of table "ingredients" does not exist.',
+        '✓ taycan',
+        '✓ ex30',
+        '✓ macan',
+        '✗ ex90: Column "body" in row 0 of table "cars" does not exist.',
       ].join('\n'),
     );
-    expect(accepted.map((row) => row.id)).toEqual([
-      'flour',
-      'sugar',
-      'powderedSugar',
-    ]);
+    expect(accepted.map((row) => row.id)).toEqual(['taycan', 'ex30', 'macan']);
   });
 
   it('validates the catalog', () => {
@@ -227,16 +216,11 @@ describe('TableCfg tutorial', () => {
     // #region wrong-type
     const fromCsv = hip<ComponentsTable<Record<string, string | number>>>({
       _type: 'components',
-      _tableCfg: ref(nutritionalValuesCfg),
-      _data: [
-        { energy: '364', fat: 0.98, protein: 10.33, carbohydrates: 76.31 },
-      ],
+      _tableCfg: ref(manufacturersCfg),
+      _data: [{ name: 'Porsche', country: 'Germany', founded: '1931' }],
     });
 
-    const result = await validate.run({
-      ...catalog,
-      nutritionalValues: fromCsv,
-    });
+    const result = await validate.run({ ...catalog, manufacturers: fromCsv });
     // #endregion wrong-type
 
     await writeGolden('wrong-type.json', result);
@@ -244,10 +228,10 @@ describe('TableCfg tutorial', () => {
       error: 'Table values have wrong types',
       brokenValues: [
         {
-          table: 'nutritionalValues',
+          table: 'manufacturers',
           row: ref(fromCsv._data[0]),
-          column: 'energy',
-          tableCfg: ref(nutritionalValuesCfg),
+          column: 'founded',
+          tableCfg: ref(manufacturersCfg),
         },
       ],
     });
@@ -255,13 +239,15 @@ describe('TableCfg tutorial', () => {
 
   it('detects a broken reference', async () => {
     // #region broken-ref
-    const honey = hip<ComponentsTable<Row>>({
+    const orphan = hip<ComponentsTable<Row>>({
       _type: 'components',
-      _tableCfg: ref(ingredientsCfg),
-      _data: [{ id: 'honey', amountUnit: 'g', nutritionalValuesRef: 'noHash' }],
+      _tableCfg: ref(carsCfg),
+      _data: [
+        { id: 'golf', bodyStyle: 'hatchback', manufacturersRef: 'noHash' },
+      ],
     });
 
-    const result = await validate.run({ ...catalog, ingredients: honey });
+    const result = await validate.run({ ...catalog, cars: orphan });
     // #endregion broken-ref
 
     await writeGolden('broken-ref.json', result);
@@ -269,11 +255,11 @@ describe('TableCfg tutorial', () => {
       error: 'Broken references',
       missingRefs: [
         {
-          error: 'Table "nutritionalValues" has no item with hash "noHash"',
-          sourceTable: 'ingredients',
-          sourceItemHash: ref(honey._data[0]),
-          sourceKey: 'nutritionalValuesRef',
-          targetTable: 'nutritionalValues',
+          error: 'Table "manufacturers" has no item with hash "noHash"',
+          sourceTable: 'cars',
+          sourceItemHash: ref(orphan._data[0]),
+          sourceKey: 'manufacturersRef',
+          targetTable: 'manufacturers',
           targetItemHash: 'noHash',
         },
       ],
@@ -282,9 +268,9 @@ describe('TableCfg tutorial', () => {
 
   it('requires an id column in head and root tables', async () => {
     const withoutId = hip<TableCfg>({
-      ...ingredientsCfg,
+      ...carsCfg,
       _hash: '',
-      columns: ingredientsCfg.columns.filter((column) => column.key !== 'id'),
+      columns: carsCfg.columns.filter((column) => column.key !== 'id'),
     });
 
     const result = new BaseValidator().validateSync({
@@ -292,10 +278,10 @@ describe('TableCfg tutorial', () => {
         _type: 'tableCfgs',
         _data: [withoutId],
       }),
-      ingredients: hip<ComponentsTable<Row>>({
+      cars: hip<ComponentsTable<Row>>({
         _type: 'components',
         _tableCfg: ref(withoutId),
-        _data: [{ amountUnit: 'g' }],
+        _data: [{ bodyStyle: 'suv' }],
       }),
     });
 
@@ -304,19 +290,17 @@ describe('TableCfg tutorial', () => {
 
   it('rejects inconsistent head, root and shared flags', () => {
     const neither = hip<TableCfg>({
-      ...nutritionalValuesCfg,
+      ...manufacturersCfg,
       _hash: '',
       isShared: false,
     });
 
     const result = new BaseValidator().validateSync({
       tableCfgs: hip<TablesCfgTable>({ _type: 'tableCfgs', _data: [neither] }),
-      nutritionalValues: hip<ComponentsTable<NutritionalValues>>({
+      manufacturers: hip<ComponentsTable<Manufacturer>>({
         _type: 'components',
         _tableCfg: ref(neither),
-        _data: [
-          { energy: 364, fat: 0.98, protein: 10.33, carbohydrates: 76.31 },
-        ],
+        _data: [{ name: 'Porsche', country: 'Germany', founded: 1931 }],
       }),
     });
 
@@ -325,7 +309,7 @@ describe('TableCfg tutorial', () => {
       tables: [
         {
           error: 'Tables must be either root, root+head or shared',
-          table: 'nutritionalValues',
+          table: 'manufacturers',
           tableCfg: ref(neither),
         },
       ],

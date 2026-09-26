@@ -39,69 +39,66 @@ const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 // #region app
 // #region first-version
-type NutritionalValues = {
+type Car = {
   id: string;
-  energy: number;
-  fat: number;
-  protein: number;
-  carbohydrates: number;
+  power: number; // kW
+  range: number; // km
+  weight: number; // kg
 };
 
 /** Returns the reference to a row: the hash that hip wrote into it */
 const ref = (row: object): Ref => (row as { _hash: Ref })._hash;
 
-const flourV1 = hip<NutritionalValues>({
-  id: 'flour',
-  energy: 364,
-  fat: 0.98,
-  protein: 10.33,
-  carbohydrates: 76.31,
+// The first version of each car
+const taycanV1 = hip<Car>({
+  id: 'taycan',
+  power: 300,
+  range: 503,
+  weight: 2140,
 });
 
-const sugarV1 = hip<NutritionalValues>({
-  id: 'sugar',
-  energy: 387,
-  fat: 0,
-  protein: 0,
-  carbohydrates: 100,
+const ex30V1 = hip<Car>({
+  id: 'ex30',
+  power: 200,
+  range: 476,
+  weight: 1850,
 });
 // #endregion first-version
 
 // #region second-version
-// A lab has measured more precise values
-const flourV2 = hip<NutritionalValues>({
-  id: 'flour',
-  energy: 364.1,
-  fat: 0.981,
-  protein: 10.331,
-  carbohydrates: 76.311,
+// The manufacturers have published new values after a software update
+const taycanV2 = hip<Car>({
+  id: 'taycan',
+  power: 320,
+  range: 520,
+  weight: 2140,
 });
 
-const sugarV2 = hip<NutritionalValues>({
-  id: 'sugar',
-  energy: 387,
-  fat: 0,
-  protein: 0,
-  carbohydrates: 99.98,
+const ex30V2 = hip<Car>({
+  id: 'ex30',
+  power: 200,
+  range: 480,
+  weight: 1850,
 });
 // #endregion second-version
 
 // #region revisions
+// Each revision links the old version of a car to the new one
 const revisions = hip<RevisionsTable>({
   _type: 'revisions',
   _data: [
     {
-      table: 'nutritionalValues',
-      id: 'flour',
-      predecessor: ref(flourV1),
-      successor: ref(flourV2),
+      table: 'cars',
+      id: 'taycan',
+      predecessor: ref(taycanV1),
+      successor: ref(taycanV2),
       timestamp: Date.UTC(2025, 3, 2), // April 2, 2025
     },
     {
-      table: 'nutritionalValues',
-      id: 'sugar',
-      predecessor: ref(sugarV1),
-      successor: ref(sugarV2),
+      table: 'cars',
+      id: 'ex30',
+      predecessor: ref(ex30V1),
+      successor: ref(ex30V2),
       timestamp: Date.UTC(2025, 4, 12), // May 12, 2025
     },
   ],
@@ -109,12 +106,13 @@ const revisions = hip<RevisionsTable>({
 // #endregion revisions
 
 // #region tables
-const nutritionalValues = hip<ComponentsTable<NutritionalValues>>({
+// The table keeps both versions: the revisions point to them
+const cars = hip<ComponentsTable<Car>>({
   _type: 'components',
-  _data: [flourV1, sugarV1, flourV2, sugarV2], // old and new versions
+  _data: [taycanV1, ex30V1, taycanV2, ex30V2], // old and new versions
 });
 
-const bakery: Rljson = { nutritionalValues, revisions };
+const garage: Rljson = { cars, revisions };
 // #endregion tables
 
 // #region validator
@@ -143,9 +141,10 @@ const revisionsValidator: Validator = {
 // #region validate
 const validate = new Validate();
 validate.addValidator(new BaseValidator());
+// Also check the rows that the revisions link
 validate.addValidator(revisionsValidator);
 
-const errors = await validate.run(bakery);
+const errors = await validate.run(garage);
 if (Object.keys(errors).length > 0) {
   throw new Error(JSON.stringify(errors, null, 2));
 }
@@ -153,20 +152,20 @@ if (Object.keys(errors).length > 0) {
 
 // #region history
 /** Finds the row with the given hash */
-const rowOf = (hash: Ref) =>
-  nutritionalValues._data.find((row) => ref(row) === hash)!;
+const rowOf = (hash: Ref) => cars._data.find((row) => ref(row) === hash)!;
 
 /** Lists the values a revision has changed */
 const changesOf = (revision: Revision) => {
   const before = rowOf(revision.predecessor);
   const after = rowOf(revision.successor);
 
-  return (['energy', 'fat', 'protein', 'carbohydrates'] as const)
+  return (['power', 'range', 'weight'] as const)
     .filter((key) => before[key] !== after[key])
     .map((key) => `${key} ${before[key]} → ${after[key]}`);
 };
 
-for (const id of ['flour', 'sugar']) {
+// Print the history of each car, oldest change first
+for (const id of ['taycan', 'ex30']) {
   console.log(id);
 
   const history = revisions._data
@@ -186,31 +185,30 @@ log.mockRestore();
 
 describe('Revision tutorial', () => {
   it('keeps each version as a row of its own', () => {
-    expect(ref(flourV1)).not.toBe(ref(flourV2));
-    expect(nutritionalValues._data).toHaveLength(4);
+    expect(ref(taycanV1)).not.toBe(ref(taycanV2));
+    expect(cars._data).toHaveLength(4);
   });
 
   it('links predecessor and successor', async () => {
     await writeGolden('revisions.json', revisions);
 
-    expect(revisions._data[0].predecessor).toBe(ref(flourV1));
-    expect(revisions._data[0].successor).toBe(ref(flourV2));
+    expect(revisions._data[0].predecessor).toBe(ref(taycanV1));
+    expect(revisions._data[0].successor).toBe(ref(taycanV2));
   });
 
-  it('validates the bakery with both validators', () => {
+  it('validates the garage with both validators', () => {
     expect(errors).toEqual({});
   });
 
-  it('prints the history of each ingredient', async () => {
+  it('prints the history of each car', async () => {
     await writeGolden('output.txt', output);
 
     expect(output).toBe(
       [
-        'flour',
-        '  2025-04-02: energy 364 → 364.1, fat 0.98 → 0.981, ' +
-          'protein 10.33 → 10.331, carbohydrates 76.31 → 76.311',
-        'sugar',
-        '  2025-05-12: carbohydrates 100 → 99.98',
+        'taycan',
+        '  2025-04-02: power 300 → 320, range 503 → 520',
+        'ex30',
+        '  2025-05-12: range 476 → 480',
       ].join('\n'),
     );
   });
@@ -223,14 +221,14 @@ describe('Revision tutorial', () => {
       return next ? latest(next.successor) : hash;
     };
 
-    expect(latest(ref(flourV1))).toBe(ref(flourV2));
-    expect(latest(ref(flourV2))).toBe(ref(flourV2)); // already the newest
+    expect(latest(ref(taycanV1))).toBe(ref(taycanV2));
+    expect(latest(ref(taycanV2))).toBe(ref(taycanV2)); // already the newest
     // #endregion latest
   });
 
   it('detects revisions of rows that do not exist', async () => {
     // #region missing-rows
-    const result = await validate.run({ revisions }); // nutritionalValues is missing
+    const result = await validate.run({ revisions }); // cars is missing
     // #endregion missing-rows
 
     await writeGolden('missing-rows.json', result);
@@ -238,10 +236,10 @@ describe('Revision tutorial', () => {
       revisions: {
         hasErrors: true,
         missingRows: [
-          { table: 'nutritionalValues', row: ref(flourV1) },
-          { table: 'nutritionalValues', row: ref(flourV2) },
-          { table: 'nutritionalValues', row: ref(sugarV1) },
-          { table: 'nutritionalValues', row: ref(sugarV2) },
+          { table: 'cars', row: ref(taycanV1) },
+          { table: 'cars', row: ref(taycanV2) },
+          { table: 'cars', row: ref(ex30V1) },
+          { table: 'cars', row: ref(ex30V2) },
         ],
       },
     });

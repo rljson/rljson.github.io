@@ -5,12 +5,12 @@
       "error": "Broken references",
       "missingRefs": [
         {
-          "sourceTable": "ingredients",
-          "sourceItemHash": "pAHce-ygFxoRLkNqjusuAK",
-          "sourceKey": "nutritionalValuesRef",
+          "sourceTable": "cars",
+          "sourceItemHash": "8AwUzq2o8LoVY-nMbW85WP",
+          "sourceKey": "manufacturersRef",
           "targetItemHash": "noHash",
-          "targetTable": "nutritionalValues",
-          "error": "Table \"nutritionalValues\" has no item with hash \"noHash\""
+          "targetTable": "manufacturers",
+          "error": "Table \"manufacturers\" has no item with hash \"noHash\""
         }
       ]
     }

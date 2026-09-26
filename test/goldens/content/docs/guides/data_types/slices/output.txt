@@ -1,0 +1,2 @@
+taycan, macan, ex30
+taycan, ex30, ex90

@@ -48,3 +48,18 @@ packages implement this for SQLite, MSSQL, the file system and IndexedDB.
 
 Rljson hashes can be created without a server, which makes the format
 well-suited for local-first and Web 3.0 applications.
+
+## Revisioned
+
+Change histories are managed automatically. Every change produces a new
+revision, so earlier states of the data remain available.
+
+## Realtime sync
+
+Rljson data can be edited collaboratively. Changes are synchronized between
+clients in realtime.
+
+## Stateful
+
+Data lives on the client as well as on the server. Clients keep their own
+copy of the data instead of fetching it from the server on every access.

@@ -11,10 +11,10 @@ hash, and every reference to the old row stays as it is. A revision records
 such a change. It names the table, the old row, the new row and the time of
 the change. Revisions are rows of a table of type `revisions`.
 
-In this tutorial you correct the nutritional values of flour and sugar. You
-keep both versions, record the corrections as revisions and print the
-history of each ingredient. Along the way you write a validator of your own,
-which checks that the rows a revision links exist.
+In this tutorial you correct the technical data of two cars, the Taycan and
+the EX30. You keep both versions, record the corrections as revisions and
+print the history of each car. Along the way you write a validator of your
+own, which checks that the rows a revision links exist.
 
 You will learn how to:
 
@@ -28,8 +28,8 @@ You will learn how to:
 Create a project and install the core package and the hashing package:
 
 ```bash
-mkdir nutrition-history
-cd nutrition-history
+mkdir car-history
+cd car-history
 echo '{ "type": "module" }' > package.json
 pnpm add @rljson/rljson @rljson/hash
 ```
@@ -41,8 +41,8 @@ of the previous step. The complete file is shown at the end.
 
 ## 2. Create the first version
 
-Start with the nutritional values you know. `hip` hashes each row on its
-own, and `ref` reads the hash of a row:
+Start with the technical data you know. `hip` hashes each row on its own,
+and `ref` reads the hash of a row:
 
 <Snippet
   file="revision.spec.ts"
@@ -52,9 +52,9 @@ own, and `ref` reads the hash of a row:
 
 ## 3. Add the corrected version
 
-A lab has measured the values more precisely. Do not change the old rows:
-create new ones. They get new hashes, while the old rows and their hashes
-stay valid:
+The manufacturers have published new values after a software update. Do
+not change the old rows: create new ones. They get new hashes, while the old
+rows and their hashes stay valid:
 
 <Snippet
   file="revision.spec.ts"
@@ -89,7 +89,7 @@ A revision has these fields:
 
 ## 5. Put the rows into tables
 
-The table of nutritional values keeps the old and the new versions:
+The table of cars keeps the old and the new versions:
 
 <Snippet
   file="revision.spec.ts"
@@ -97,7 +97,7 @@ The table of nutritional values keeps the old and the new versions:
   title="history.ts"
 />
 
-Anything that refers to the old flour row still sees the old values. The
+Anything that refers to the old Taycan row still sees the old values. The
 revisions tell an application that a newer version exists.
 
 <Aside type="note">
@@ -132,8 +132,8 @@ some, under their names:
 
 ## 8. Print the history
 
-The application lists the revisions of each ingredient by their `id`, in the
-order of their timestamps. For each revision it compares the old row with
+The application lists the revisions of each car by their `id`, in the order
+of their timestamps. For each revision it compares the old row with
 the new one:
 
 <Snippet

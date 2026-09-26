@@ -13,10 +13,10 @@
 // #region types
 import type { Ref } from '@rljson/rljson';
 // #endregion types
-// #region nutritional-values
+// #region manufacturers
 import { hip } from '@rljson/hash';
 import type { ComponentsTable } from '@rljson/rljson';
-// #endregion nutritional-values
+// #endregion manufacturers
 // #region validate
 import { BaseValidator, type Rljson, Validate } from '@rljson/rljson';
 // #endregion validate
@@ -30,100 +30,99 @@ const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 // #region app
 // #region types
-/** Nutritional values per 100 g */
-type NutritionalValues = {
+// The rows of the three tables
+type Manufacturer = {
   id: string;
-  energy: number; // kcal
-  fat: number; // g
-  protein: number; // g
-  carbohydrates: number; // g
+  country: string;
+  founded: number;
 };
 
-type Ingredient = {
+type Car = {
   id: string;
-  amountUnit: 'g' | 'ml';
-  nutritionalValuesRef: Ref;
+  seats: number;
+  manufacturersRef: Ref;
 };
 
-type RecipeIngredient = {
-  ingredientsRef: Ref;
-  quantity: number;
+type Wheel = {
+  carsRef: Ref;
+  position: 'front' | 'rear';
+  diameter: number; // inch
+  width: number; // mm
 };
 // #endregion types
 
-// #region nutritional-values
-const nutritionalValues = hip<ComponentsTable<NutritionalValues>>({
+// #region manufacturers
+// hip writes a hash into every row and into the table
+const manufacturers = hip<ComponentsTable<Manufacturer>>({
   _type: 'components',
   _data: [
-    {
-      id: 'flour',
-      energy: 364,
-      fat: 0.98,
-      protein: 10.33,
-      carbohydrates: 76.31,
-    },
-    { id: 'sugar', energy: 387, fat: 0, protein: 0, carbohydrates: 100 },
+    { id: 'porsche', country: 'Germany', founded: 1931 },
+    { id: 'volvo', country: 'Sweden', founded: 1927 },
   ],
 });
 
 /** Returns the reference to a row: the hash that hip wrote into it */
 const ref = (row: object): Ref => (row as { _hash: Ref })._hash;
 
-const [flourValues, sugarValues] = nutritionalValues._data;
-// #endregion nutritional-values
+const [porsche, volvo] = manufacturers._data;
+// #endregion manufacturers
 
-// #region ingredients
-const ingredients = hip<ComponentsTable<Ingredient>>({
+// #region cars
+// Each car refers to its manufacturer by the manufacturer's hash
+const cars = hip<ComponentsTable<Car>>({
   _type: 'components',
   _data: [
-    { id: 'flour', amountUnit: 'g', nutritionalValuesRef: ref(flourValues) },
-    { id: 'sugar', amountUnit: 'g', nutritionalValuesRef: ref(sugarValues) },
+    { id: 'taycan', seats: 4, manufacturersRef: ref(porsche) },
+    { id: 'ex30', seats: 5, manufacturersRef: ref(volvo) },
   ],
 });
-// #endregion ingredients
+// #endregion cars
 
-// #region recipe
-const [flour, sugar] = ingredients._data;
+// #region wheels
+const [taycan, ex30] = cars._data;
 
-const recipeIngredients = hip<ComponentsTable<RecipeIngredient>>({
+// Each wheel refers to its car
+const wheels = hip<ComponentsTable<Wheel>>({
   _type: 'components',
   _data: [
-    { ingredientsRef: ref(flour), quantity: 500 },
-    { ingredientsRef: ref(sugar), quantity: 200 },
+    { carsRef: ref(taycan), position: 'front', diameter: 20, width: 245 },
+    { carsRef: ref(taycan), position: 'rear', diameter: 21, width: 285 },
+    { carsRef: ref(ex30), position: 'front', diameter: 19, width: 245 },
+    { carsRef: ref(ex30), position: 'rear', diameter: 19, width: 245 },
   ],
 });
-// #endregion recipe
+// #endregion wheels
 
 // #region validate
-const bakery: Rljson = { nutritionalValues, ingredients, recipeIngredients };
+// The keys are the table names, e.g. "cars" for carsRef
+const carCatalog: Rljson = { manufacturers, cars, wheels };
 
+// BaseValidator checks the hashes, the names and the references
 const validate = new Validate();
 validate.addValidator(new BaseValidator());
 
-const errors = await validate.run(bakery);
+const errors = await validate.run(carCatalog);
 if (Object.keys(errors).length > 0) {
   throw new Error(JSON.stringify(errors, null, 2));
 }
 // #endregion validate
 
-// #region calculate
+// #region list
 /** Follows a reference: finds the row with the given hash */
 const rowOf = <T extends object>(table: { _data: T[] }, hash: Ref): T =>
   table._data.find((row) => ref(row) === hash)!;
 
-let total = 0;
-for (const item of recipeIngredients._data) {
-  const ingredient = rowOf(ingredients, item.ingredientsRef);
-  const values = rowOf(nutritionalValues, ingredient.nutritionalValuesRef);
-  const energy = (values.energy * item.quantity) / 100;
-  total += energy;
+// Join the tables again: wheel → car → manufacturer
+for (const wheel of wheels._data) {
+  const car = rowOf(cars, wheel.carsRef);
+  const manufacturer = rowOf(manufacturers, car.manufacturersRef);
 
   console.log(
-    `${item.quantity} ${ingredient.amountUnit} ${ingredient.id}: ${energy} kcal`,
+    `${car.id} ${wheel.position}: ${wheel.diameter}″ × ${wheel.width} mm, ` +
+      `by ${manufacturer.id} (${manufacturer.country})`,
   );
 }
-console.log(`Total: ${total} kcal`);
-// #endregion calculate
+// #endregion list
 // #endregion app
 
 const output = log.mock.calls.map((args) => args.join(' ')).join('\n');
@@ -131,57 +130,56 @@ log.mockRestore();
 
 describe('Components tutorial', () => {
   it('hashes each row and the table', async () => {
-    await writeGolden('nutritional-values.json', nutritionalValues);
+    await writeGolden('manufacturers.json', manufacturers);
 
-    const hashes = nutritionalValues._data.map(ref);
+    const hashes = manufacturers._data.map(ref);
     expect(hashes.every((hash) => typeof hash === 'string')).toBe(true);
-    expect(ref(nutritionalValues)).toBeTypeOf('string');
+    expect(ref(manufacturers)).toBeTypeOf('string');
   });
 
   it('gives equal content an equal hash', () => {
     // #region same-content
-    const flourAgain = hip<NutritionalValues>({
-      carbohydrates: 76.31,
-      energy: 364,
-      fat: 0.98,
-      id: 'flour',
-      protein: 10.33,
+    const porscheAgain = hip<Manufacturer>({
+      founded: 1931,
+      country: 'Germany',
+      id: 'porsche',
     });
 
-    expect(ref(flourAgain)).toBe(ref(flourValues)); // same content, same hash
+    expect(ref(porscheAgain)).toBe(ref(porsche)); // same content, same hash
     // #endregion same-content
   });
 
   it('references rows by their hash', async () => {
-    await writeGolden('ingredients.json', ingredients);
+    await writeGolden('cars.json', cars);
 
-    expect(flour.nutritionalValuesRef).toBe(ref(flourValues));
-    expect(recipeIngredients._data[0].ingredientsRef).toBe(ref(flour));
+    expect(taycan.manufacturersRef).toBe(ref(porsche));
+    expect(wheels._data[0].carsRef).toBe(ref(taycan));
   });
 
-  it('validates the bakery', () => {
+  it('validates the car catalog', () => {
     expect(errors).toEqual({});
-    expect(new BaseValidator().validateSync(bakery)).toEqual({
+    expect(new BaseValidator().validateSync(carCatalog)).toEqual({
       hasErrors: false,
     });
   });
 
-  it('calculates the energy of the recipe', async () => {
+  it('lists every wheel with its car and manufacturer', async () => {
     await writeGolden('output.txt', output);
 
     expect(output).toBe(
       [
-        '500 g flour: 1820 kcal',
-        '200 g sugar: 774 kcal',
-        'Total: 2594 kcal',
+        'taycan front: 20″ × 245 mm, by porsche (Germany)',
+        'taycan rear: 21″ × 285 mm, by porsche (Germany)',
+        'ex30 front: 19″ × 245 mm, by volvo (Sweden)',
+        'ex30 rear: 19″ × 245 mm, by volvo (Sweden)',
       ].join('\n'),
     );
   });
 
   it('detects a row that was changed in place', async () => {
     // #region changed-in-place
-    const changed = structuredClone(bakery);
-    changed.nutritionalValues._data[0].energy = 400; // the hash stays the same
+    const changed = structuredClone(carCatalog);
+    changed.manufacturers._data[0].founded = 1948; // the hash stays the same
 
     const result = await validate.run(changed);
     // #endregion changed-in-place
@@ -191,8 +189,8 @@ describe('Components tutorial', () => {
   });
 
   it('does not check references without a TableCfg', async () => {
-    const brokenRef = structuredClone(bakery);
-    brokenRef.ingredients._data[0].nutritionalValuesRef = 'MISSING';
+    const brokenRef = structuredClone(carCatalog);
+    brokenRef.cars._data[0].manufacturersRef = 'MISSING';
     hip(brokenRef, { updateExistingHashes: true, throwOnWrongHashes: false });
 
     expect(await validate.run(brokenRef)).toEqual({});

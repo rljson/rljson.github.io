@@ -1,3 +1,2 @@
-sponge: 250 g flour, 200 g sugar, 200 ml milk
-butterCake: 250 g flour, 200 g sugar, 200 ml milk, 200 g butter
-glutenFree: 200 g sugar, 200 ml milk, 250 g almonds
+colors2025: taycan white, macan black, ex30 white
+colors2026: taycan white, ex30 white, ex90 silver

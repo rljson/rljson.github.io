@@ -5,10 +5,10 @@
       "error": "Layers have missing assignments",
       "layers": [
         {
-          "brokenLayer": "0hSNUXE7qgR-ZVdKtMAkYr",
-          "layersTable": "recipes",
+          "brokenLayer": "wMIXhZYMhzKAMZhAfmpEA2",
+          "layersTable": "colorLayers",
           "unassignedSliceIds": [
-            "butter"
+            "ex90"
           ]
         }
       ]

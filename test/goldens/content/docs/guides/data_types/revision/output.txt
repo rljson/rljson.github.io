@@ -1,4 +1,4 @@
-flour
-  2025-04-02: energy 364 → 364.1, fat 0.98 → 0.981, protein 10.33 → 10.331, carbohydrates 76.31 → 76.311
-sugar
-  2025-05-12: carbohydrates 100 → 99.98
+taycan
+  2025-04-02: power 300 → 320, range 503 → 520
+ex30
+  2025-05-12: range 476 → 480

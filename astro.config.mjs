@@ -72,6 +72,13 @@ export default defineConfig({
       },
       sidebar: [
         {
+          label: 'Start here',
+          items: [
+            { label: 'What is Rljson?', slug: 'guides/old/what-is-rljson' },
+            { label: 'Principles', slug: 'guides/old/principles' },
+          ],
+        },
+        {
           label: 'Data Types',
           items: [
             { label: 'Components', slug: 'guides/data_types/components' },
@@ -80,14 +87,6 @@ export default defineConfig({
             { label: 'Tree', slug: 'guides/data_types/tree' },
             { label: 'TableCfg', slug: 'guides/data_types/table-cfg' },
             { label: 'Revision', slug: 'guides/data_types/revision' },
-          ],
-        },
-        {
-          label: 'Start here',
-          items: [
-            { label: 'What is Rljson?', slug: 'guides/old/what-is-rljson' },
-            { label: 'Getting started', slug: 'guides/old/getting-started' },
-            { label: 'Principles', slug: 'guides/old/principles' },
           ],
         },
         {

@@ -4,7 +4,14 @@ description: Build a bakery menu as a tree of hashed nodes, walk it from the roo
 ---
 
 import { Aside } from '@astrojs/starlight/components';
+import Tree from '../../../../assets/figures/tree.svg';
 import Snippet from '../../../../components/Snippet.astro';
+
+<Tree
+  width={160}
+  role="img"
+  aria-label="A tree drawn top down: the root at the top branches into nodes, down to the leaves"
+/>
 
 Trees store hierarchical data: a menu, a file system or an organization
 chart. Every node of a tree is a row of a table of type `trees`. A parent

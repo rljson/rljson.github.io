@@ -1,0 +1,15 @@
+<svg width="160" height="96" viewBox="0 0 160 96" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M80 15C80 28.0 36 28.0 36 41" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M36 55C36 68.0 14 68.0 14 81" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M36 55C36 68.0 58 68.0 58 81" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M80 15C80 28.0 124 28.0 124 41" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M124 55C124 68.0 102 68.0 102 81" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<path d="M124 55C124 68.0 146 68.0 146 81" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="80" cy="8" r="7" fill="var(--sl-color-bg, #fff)" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="36" cy="48" r="7" fill="var(--sl-color-bg, #fff)" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="14" cy="88" r="7" fill="var(--sl-color-bg, #fff)" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="58" cy="88" r="7" fill="var(--sl-color-bg, #fff)" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="124" cy="48" r="7" fill="var(--sl-color-bg, #fff)" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="102" cy="88" r="7" fill="var(--sl-color-bg, #fff)" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+<circle cx="146" cy="88" r="7" fill="var(--sl-color-bg, #fff)" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>

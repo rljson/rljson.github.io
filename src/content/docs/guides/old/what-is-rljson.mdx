@@ -8,7 +8,7 @@ import Snippet from '../../../../components/Snippet.astro';
 Rljson is a JSON-based exchange format inspired by relational databases,
 designed for the efficient synchronization of large datasets across networks.
 
-It is built on four ideas that work together:
+It is built on seven ideas that work together:
 
 - **Relational** — data lives in normalized tables, not in deeply nested,
   duplicated object graphs.
@@ -18,6 +18,9 @@ It is built on four ideas that work together:
   a new version is simply a new row with a new hash.
 - **Decentralized** — hashes are computed locally, so no server is needed to
   assign identity to a piece of data.
+- **Revisioned** — change histories are managed automatically.
+- **Syncronized** — several users can edit the same data collaboratively.
+- **Stateful** — data lives on the client as well as on the server.
 
 ## The problem it solves
 
@@ -28,16 +31,6 @@ transmit only the difference.
 
 The same property makes caching, change detection and integrity checks fall
 out of the format rather than having to be bolted on.
-
-## A first look
-
-An Rljson file is a collection of tables. The table name is the key, the
-table data is the value:
-
-<Snippet file="first-look.json" />
-
-Each row carries a `_hash`, and so does the table itself. Change one value in
-one row and only that row's hash — and the hashes above it — change.
 
 ## Where to go next
 

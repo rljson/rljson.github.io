@@ -78,10 +78,14 @@ Validate the car catalog with `BaseValidator`:
   title="cake.ts"
 />
 
-`BaseValidator` checks that the table of slice ids and the referenced row
-exist, and that every layers table exists and contains the referenced layer.
-It does not check that the layers use the slice ids of the cake, so keep them
-in sync yourself.
+For every cake, `BaseValidator` checks that:
+
+- the table of slice ids and the referenced row exist
+- every layers table exists and contains the referenced layer
+- every layer uses the slice ids of the cake: the same `sliceIdsTable` and
+  the same row of slice ids
+
+## 5. Run the example
 
 Here is the complete `cake.ts`:
 

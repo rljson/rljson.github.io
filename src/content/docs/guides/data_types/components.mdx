@@ -96,7 +96,8 @@ _deeply hashed_. This has three consequences:
 - **Rows are immutable.** A changed row is a new row with a new hash.
 - **Hashes need no server.** Every machine calculates the same hash for the
   same content, without any coordination.
-  </Aside>
+
+</Aside>
 
 ### Wheels
 
@@ -142,7 +143,7 @@ once instead of four times. But the design assumes that all wheels of a car
 are equal. The Taycan has wider wheels at the rear, 285 mm instead of 245 mm,
 and `wheelsRef` has no room for them.
 
-## 3. Allow different kinds of wheels
+## 3. Work with references
 
 To give each wheel a reference of its own, replace `wheelCount` and
 `wheelsRef` by four references, `wheel0` to `wheel3`:
@@ -171,7 +172,7 @@ a three-wheeler or a truck with six wheels needs other columns. And an
 application that wants all wheels of a car has to read four columns one by
 one.
 
-## 4. Allow different wheel counts
+## 4. Use reference arrays
 
 Put the references into one array instead. `wheelsRef` holds one reference
 per wheel, in the order front left, front right, rear left and rear right.
@@ -228,7 +229,7 @@ It stops at the first rule that fails and reports the errors of that rule.
   `wheelsRef` are references. The next step adds one.
 </Aside>
 
-## 6. Ensure type safety
+## 6. Ensure type and ref safety
 
 A TableCfg describes the columns of a table. For a reference column, its field
 `ref` names the table that the column refers to. Add a TableCfg for the cars,
@@ -267,7 +268,7 @@ the column, and the hash that the wheels table does not contain:
 The wheels refer to their manufacturers, too. A TableCfg for the wheels would
 declare their `manufacturersRef` in the same way.
 
-## 7. List wheels
+## 7. Iterate Rljson objects
 
 Now the application uses its data. `rowOf` from `@rljson/rljson` follows a
 reference: it returns the row with the given hash. The loop takes each car and
@@ -284,7 +285,7 @@ Because `wheelsRef` is an array, one loop reaches every wheel, however many a
 car has. The tables store every piece of information once. The application
 joins them again as it needs them.
 
-## 8. See what the validator catches
+## 8. Analyze validation results
 
 Change a value of a row in place, as if someone had edited the data by hand,
 and validate again:

@@ -3,3 +3,5 @@ allowBuilds:
   sharp: true
 minimumReleaseAgeExclude:
   - '@rljson/rljson@0.0.82'
+overrides:
+  "@rljson\/rljson": link:./.gg/ts_links/@rljson/rljson

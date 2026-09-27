@@ -1,0 +1,19 @@
+{
+  "_type": "layers",
+  "_data": [
+    {
+      "sliceIdsTable": "carsTable",
+      "sliceIdsTableRow": "T2aadHKVxn567CWWDrTg4y",
+      "componentsTable": "colorsTable",
+      "add": {
+        "taycan": "gFdm09wOMfLMkhdlQCWWGr",
+        "macan": "YCdt62XOF9BIQ5ckj6PJAY",
+        "ex30": "gFdm09wOMfLMkhdlQCWWGr",
+        "xc40": "JzBMauAMTUdPkip9Q2hsNy",
+        "_hash": "TCVnPuQaXiukXMKP3v7g_m"
+      },
+      "_hash": "VFckrPXFWEZhpHvY5tENUE"
+    }
+  ],
+  "_hash": "KcQy56p5adGjakDegMqkX1"
+}

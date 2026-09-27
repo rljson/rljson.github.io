@@ -10,288 +10,172 @@
 // vitest imports this file. The tests below check what it has built.
 
 // #region app
-// #region components
-import { hip } from '@rljson/hash';
-import type { ComponentsTable } from '@rljson/rljson';
-// #endregion components
-// #region slices
-import type { SliceIdsTable } from '@rljson/rljson';
-// #endregion slices
 // #region layers
-import type { Layer, Ref } from '@rljson/rljson';
+import { hip } from '@rljson/hash';
+import type {
+  ComponentsTable,
+  Layer,
+  LayersTable,
+  SliceIds,
+  SliceIdsTable,
+} from '@rljson/rljson';
+import { ref } from '@rljson/rljson';
 // #endregion layers
 // #region cake
-import type { Cake } from '@rljson/rljson';
+import type { Cake, CakesTable, Rljson } from '@rljson/rljson';
 // #endregion cake
-// #region tables
-import type { CakesTable, LayersTable, Rljson } from '@rljson/rljson';
-// #endregion tables
 // #region validate
 import { BaseValidator, Validate } from '@rljson/rljson';
 // #endregion validate
 // #endregion app
 
 import { writeGolden } from '@tssuite/golden';
-import { describe, expect, it, vi } from 'vitest';
-
-// Record what the application prints
-const log = vi.spyOn(console, 'log').mockImplementation(() => {});
+import { describe, expect, it } from 'vitest';
 
 // #region app
-// #region components
-// The components of the three layers
+// #region layers
+// The interfaces of the three layers
 type Color = { name: string };
-type Engine = { power: number /* kW */; drive: 'electric' | 'combustion' };
-type Price = { amount: number; currency: 'EUR' | 'CHF' };
+type Brand = { name: string };
+type Price = { amount: number; currency: 'EUR' };
 
-const colors = hip<ComponentsTable<Color>>({
+// The tables hosting the colors, brands and prices
+const colorsTable = hip<ComponentsTable<Color>>({
   _type: 'components',
-  _data: [{ name: 'white' }, { name: 'black' }],
+  _data: [{ name: 'white' }, { name: 'black' }, { name: 'silver' }],
 });
 
-const engines = hip<ComponentsTable<Engine>>({
+const brandsTable = hip<ComponentsTable<Brand>>({
   _type: 'components',
-  _data: [
-    { power: 300, drive: 'electric' },
-    { power: 200, drive: 'electric' },
-  ],
+  _data: [{ name: 'Porsche' }, { name: 'Volvo' }],
 });
 
-const prices = hip<ComponentsTable<Price>>({
+const pricesTable = hip<ComponentsTable<Price>>({
   _type: 'components',
   _data: [
     { amount: 101000, currency: 'EUR' },
+    { amount: 84000, currency: 'EUR' },
     { amount: 36000, currency: 'EUR' },
-    { amount: 108000, currency: 'CHF' },
-    { amount: 38000, currency: 'CHF' },
+    { amount: 48000, currency: 'EUR' },
   ],
 });
-// #endregion components
 
-// #region slices
-// The cars of the catalog: the slice ids all layers share
-const cars = hip<SliceIdsTable>({
-  _type: 'sliceIds',
-  _data: [{ add: ['taycan', 'ex30'] }],
-});
+// The catalog: the ids of all cars, shared by all layers
+const cars = hip<SliceIds>({ add: ['taycan', 'macan', 'ex30', 'xc40'] });
+const carsTable = hip<SliceIdsTable>({ _type: 'sliceIds', _data: [cars] });
 
-const models = cars._data[0];
-// #endregion slices
-
-// #region layers
-/** Returns the reference to a row: the hash that hip wrote into it */
-const ref = (row: object): Ref => (row as { _hash: Ref })._hash;
-
-/** Creates a layer that assigns a component to each car of the catalog */
-const createLayer = (componentsTable: string, taycan: object, ex30: object) =>
-  hip<Layer>({
-    sliceIdsTable: 'cars',
-    sliceIdsTableRow: ref(models),
-    componentsTable,
-    add: { taycan: ref(taycan), ex30: ref(ex30) },
-  });
-
-// The components of each car: the Taycan first, then the EX30
-const [white, black] = colors._data;
-const [strongEngine, smallEngine] = engines._data;
-const [taycanEur, ex30Eur, taycanChf, ex30Chf] = prices._data;
+const [white, black, silver] = colorsTable._data;
+const [porsche, volvo] = brandsTable._data;
+const [taycanPrice, macanPrice, ex30Price, xc40Price] = pricesTable._data;
 
 // One layer per aspect of the cars
-const colorLayer = createLayer('colors', white, black);
-const engineLayer = createLayer('engines', strongEngine, smallEngine);
-const germanPrices = createLayer('prices', taycanEur, ex30Eur);
-// #endregion layers
-
-// #region cake
-// The German catalog stacks the three layers onto the cars
-const germany = hip<Cake>({
-  id: 'germany',
-  sliceIdsTable: 'cars',
-  sliceIdsRow: ref(models),
-  layers: {
-    colorLayers: ref(colorLayer),
-    engineLayers: ref(engineLayer),
-    priceLayers: ref(germanPrices),
+const colorLayer = hip<Layer>({
+  sliceIdsTable: 'carsTable',
+  sliceIdsTableRow: ref(cars),
+  componentsTable: 'colorsTable',
+  add: {
+    taycan: ref(white),
+    macan: ref(black),
+    ex30: ref(white),
+    xc40: ref(silver),
   },
 });
-// #endregion cake
 
-// #region variant
-// Switzerland differs only in its prices
-const swissPrices = createLayer('prices', taycanChf, ex30Chf);
-
-const switzerland = hip<Cake>({
-  id: 'switzerland',
-  sliceIdsTable: 'cars',
-  sliceIdsRow: ref(models),
-  layers: {
-    colorLayers: ref(colorLayer), // the same as in Germany
-    engineLayers: ref(engineLayer), // the same as in Germany
-    priceLayers: ref(swissPrices),
+const brandLayer = hip<Layer>({
+  sliceIdsTable: 'carsTable',
+  sliceIdsTableRow: ref(cars),
+  componentsTable: 'brandsTable',
+  add: {
+    taycan: ref(porsche),
+    macan: ref(porsche),
+    ex30: ref(volvo),
+    xc40: ref(volvo),
   },
 });
-// #endregion variant
 
-// #region tables
+const priceLayer = hip<Layer>({
+  sliceIdsTable: 'carsTable',
+  sliceIdsTableRow: ref(cars),
+  componentsTable: 'pricesTable',
+  add: {
+    taycan: ref(taycanPrice),
+    macan: ref(macanPrice),
+    ex30: ref(ex30Price),
+    xc40: ref(xc40Price),
+  },
+});
+
 // Each kind of layer lives in a layers table of its own
-const colorLayers = hip<LayersTable>({
+const colorLayersTable = hip<LayersTable>({
   _type: 'layers',
   _data: [colorLayer],
 });
 
-const engineLayers = hip<LayersTable>({
+const brandLayersTable = hip<LayersTable>({
   _type: 'layers',
-  _data: [engineLayer],
+  _data: [brandLayer],
 });
 
-const priceLayers = hip<LayersTable>({
+const priceLayersTable = hip<LayersTable>({
   _type: 'layers',
-  _data: [germanPrices, swissPrices],
+  _data: [priceLayer],
+});
+// #endregion layers
+
+// #region cake
+// The cake composes the three layers into one catalog
+const carCake = hip<Cake>({
+  sliceIdsTable: 'carsTable',
+  sliceIdsRow: ref(cars),
+  layers: {
+    colorLayersTable: ref(colorLayer),
+    brandLayersTable: ref(brandLayer),
+    priceLayersTable: ref(priceLayer),
+  },
 });
 
-// Both catalogs live in one cakes table
-const catalogs = hip<CakesTable>({
-  _type: 'cakes',
-  _data: [germany, switzerland],
-});
+// The table hosting the cake
+const carCakesTable = hip<CakesTable>({ _type: 'cakes', _data: [carCake] });
 
-// The keys are the table names that the layers and cakes refer to
-const carMarket: Rljson = {
-  colors,
-  engines,
-  prices,
-  cars,
-  colorLayers,
-  engineLayers,
-  priceLayers,
-  catalogs,
+// Layers and cakes refer to tables by their keys in the Rljson object
+const carCatalog: Rljson = {
+  colorsTable,
+  brandsTable,
+  pricesTable,
+  carsTable,
+  colorLayersTable,
+  brandLayersTable,
+  priceLayersTable,
+  carCakesTable,
 };
-// #endregion tables
+// #endregion cake
 
 // #region validate
-// BaseValidator also checks the layers and slice ids of every cake
+// BaseValidator checks the cake, its layers and its slice ids
 const validate = new Validate();
 validate.addValidator(new BaseValidator());
 
-const errors = await validate.run(carMarket);
+const errors = await validate.run(carCatalog);
 if (Object.keys(errors).length > 0) {
   throw new Error(JSON.stringify(errors, null, 2));
 }
+console.log('The car catalog is valid');
 // #endregion validate
-
-// #region read
-/** Finds the row with the given hash in a table of the car market */
-const rowOf = (tableKey: string, hash: Ref) =>
-  carMarket[tableKey]._data.find((row) => ref(row) === hash);
-
-/** Describes a component in words, one formatter per components table */
-const formats = {
-  colors: (color: Color) => color.name,
-  engines: (engine: Engine) => `${engine.power} kW ${engine.drive}`,
-  prices: (price: Price) =>
-    `${price.amount.toLocaleString('en-US')} ${price.currency}`,
-};
-
-/** Describes one car of a catalog: a component from each layer */
-const describeCar = (catalog: Cake, sliceId: string) =>
-  Object.entries(catalog.layers)
-    .filter(([layersTable]) => !layersTable.startsWith('_')) // skip _hash
-    .map(([layersTable, layerRef]) => {
-      const layer: Layer = rowOf(layersTable, layerRef);
-      const component = rowOf(layer.componentsTable, layer.add[sliceId]);
-      const format = formats[layer.componentsTable as keyof typeof formats];
-      return format(component);
-    });
-
-// Print every car of every catalog with its color, engine and price
-for (const catalog of catalogs._data) {
-  const { add: sliceIds } = rowOf(catalog.sliceIdsTable, catalog.sliceIdsRow);
-
-  console.log(`${catalog.id}:`);
-  for (const sliceId of sliceIds) {
-    console.log(`  ${sliceId}: ${describeCar(catalog, sliceId).join(', ')}`);
-  }
-}
-// #endregion read
 // #endregion app
 
-const output = log.mock.calls.map((args) => args.join(' ')).join('\n');
-log.mockRestore();
-
 describe('Cake tutorial', () => {
-  it('lets all layers share the slice ids of the catalog', () => {
-    for (const layer of [colorLayer, engineLayer, germanPrices, swissPrices]) {
-      expect(layer.sliceIdsTableRow).toBe(germany.sliceIdsRow);
+  it('lets all layers share the slice ids of the cake', () => {
+    for (const layer of [colorLayer, brandLayer, priceLayer]) {
+      expect(layer.sliceIdsTableRow).toBe(carCake.sliceIdsRow);
     }
-    expect(switzerland.sliceIdsRow).toBe(germany.sliceIdsRow);
   });
 
-  it('stacks layers into catalogs', async () => {
-    await writeGolden('catalogs.json', catalogs);
-
-    expect(switzerland.layers.colorLayers).toBe(germany.layers.colorLayers);
-    expect(switzerland.layers.engineLayers).toBe(germany.layers.engineLayers);
-    expect(switzerland.layers.priceLayers).not.toBe(germany.layers.priceLayers);
+  it('composes the layers into a cake', async () => {
+    await writeGolden('car-cakes-table.json', carCakesTable);
+    expect(carCake.layers.brandLayersTable).toBe(ref(brandLayer));
   });
 
-  it('validates the car market', () => {
+  it('validates the car catalog', () => {
     expect(errors).toEqual({});
-  });
-
-  it('reads the cars of each catalog', async () => {
-    await writeGolden('output.txt', output);
-
-    expect(output).toBe(
-      [
-        'germany:',
-        '  taycan: white, 300 kW electric, 101,000 EUR',
-        '  ex30: black, 200 kW electric, 36,000 EUR',
-        'switzerland:',
-        '  taycan: white, 300 kW electric, 108,000 CHF',
-        '  ex30: black, 200 kW electric, 38,000 CHF',
-      ].join('\n'),
-    );
-  });
-
-  it('detects a catalog with a missing layer', async () => {
-    // #region missing-layer
-    // Austria takes over the German prices with a layer of its own
-    const austrianPrices = hip<Layer>({
-      base: ref(germanPrices),
-      sliceIdsTable: 'cars',
-      sliceIdsTableRow: ref(models),
-      componentsTable: 'prices',
-      add: {},
-    });
-
-    const austria = hip<Cake>({
-      id: 'austria',
-      sliceIdsTable: 'cars',
-      sliceIdsRow: ref(models),
-      layers: {
-        colorLayers: ref(colorLayer),
-        engineLayers: ref(engineLayer),
-        priceLayers: ref(austrianPrices), // not added to priceLayers
-      },
-    });
-
-    const result = await validate.run({
-      ...carMarket,
-      catalogs: hip<CakesTable>({ _type: 'cakes', _data: [austria] }),
-    });
-    // #endregion missing-layer
-
-    await writeGolden('missing-layer.json', result);
-    expect(result.base.cakeLayersNotFound).toEqual({
-      error: 'Layer layers of cakes are missing',
-      brokenCakes: [
-        {
-          cakeTable: 'catalogs',
-          brokenCake: ref(austria),
-          layersTable: 'priceLayers',
-          missingLayer: ref(austrianPrices),
-        },
-      ],
-    });
   });
 });

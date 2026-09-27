@@ -15,11 +15,17 @@
 // #region app
 // #region manufacturers
 import { hip } from '@rljson/hash';
-import type { ComponentsTable, Ref } from '@rljson/rljson';
+import { type ComponentsTable, ref } from '@rljson/rljson';
 // #endregion manufacturers
+// #region wheels
+import type { Ref } from '@rljson/rljson';
+// #endregion wheels
 // #region validate
 import { BaseValidator, type Rljson, Validate } from '@rljson/rljson';
 // #endregion validate
+// #region list
+import { rowOf } from '@rljson/rljson';
+// #endregion list
 // #endregion app
 
 import type { TableCfg, TablesCfgTable } from '@rljson/rljson';
@@ -46,9 +52,6 @@ const manufacturers = hip<ComponentsTable<Manufacturer>>({
     { id: 'bbs', country: 'Germany', founded: 1970 },
   ],
 });
-
-/** Returns the reference to a row: the hash that hip wrote into it */
-const ref = (row: object): Ref => (row as { _hash: Ref })._hash;
 
 const [porsche, volvo, bbs] = manufacturers._data;
 // #endregion manufacturers
@@ -123,10 +126,6 @@ if (Object.keys(errors).length > 0) {
 // #endregion validate
 
 // #region list
-/** Follows a reference: finds the row with the given hash */
-const rowOf = <T extends object>(table: { _data: T[] }, hash: Ref): T =>
-  table._data.find((row) => ref(row) === hash)!;
-
 // Join the tables again: car → manufacturer, car → wheels → manufacturer
 for (const car of cars._data) {
   const manufacturer = rowOf(manufacturers, car.manufacturersRef);

@@ -44,7 +44,7 @@ references. You design in three steps how a car refers to its wheels:
 
 You will learn how to:
 
-- create a components table and hash it with `hip`
+- create a components table and hash it with `hip` (hash in place)
 - refer to a row of another table by its hash
 - refer to several rows with an array of references
 - validate an Rljson object with `Validate` and `BaseValidator`
@@ -105,8 +105,8 @@ the object you pass to it. Afterwards every row and the table carry a `_hash`:
 
 A hash is a SHA-256 hash of the content, encoded as base64url and shortened
 to 22 characters. The `id` of a row is a name for you and your application;
-Rljson itself identifies a row by its hash. The helper `ref` at the end of the
-step reads the hash that `hip` has written into a row.
+Rljson itself identifies a row by its hash. `ref` from `@rljson/rljson`
+returns this hash: the reference that other rows store to point to the row.
 
 ### Understand the hashes
 
@@ -261,10 +261,10 @@ It stops at the first rule that fails and reports the errors of that rule.
 
 ## 6. List the wheels
 
-Now the application uses its data. `rowOf` follows a reference: it finds the
-row with the given hash. The loop takes each car and looks up its
-manufacturer. Then it follows each reference in `wheelsRef` to the wheel and
-the wheel's manufacturer, and prints them:
+Now the application uses its data. `rowOf` from `@rljson/rljson` follows a
+reference: it returns the row with the given hash. The loop takes each car and
+looks up its manufacturer. Then it follows each reference in `wheelsRef` to
+the wheel and the wheel's manufacturer, and prints them:
 
 <Snippet
   file="components.spec.ts"

@@ -1,23 +1,52 @@
 ---
 title: Components
-description: Build a car catalog from components tables and learn how rows, hashes and references work.
+description: Build a car catalog from components tables, and refine in three steps how a car refers to its wheels.
 ---
 
 import { Aside } from '@astrojs/starlight/components';
+import ManufacturerCar from '../../../../assets/figures/manufacturer-car.svg';
 import Snippet from '../../../../components/Snippet.astro';
 
-Components are the basic data unit of Rljson. A components table holds rows
-of plain JSON values. Every row carries a hash of its content, and that hash
-is the row's primary key: other rows refer to it by its hash.
+## Example
 
-In this tutorial you build a car catalog. It stores manufacturers, cars and
-their wheels in three components tables, links them by references, validates
-them and lists every wheel with its car and manufacturer.
+<ManufacturerCar
+  width={368}
+  role="img"
+  aria-label="A manufacturer, drawn as a factory, produces a car, shown from the side. Labels name the manufacturer, the car and one of its wheels."
+/>
+
+- Manufactures produce cars and wheels
+- A car has four wheels
+- A wheel has a diameter and a width
+- Both cars and wheels have a manufacturer
+
+## Strategy
+
+- Use `Components` to model manufacturers, cars and wheels
+- Use `References` to connect cars & wheels and manufacturers
+- Use `Tables` to store cars, wheels and manufacturers
+- Split component properties accross multiple tables to save data
+- Use reference arrays to organize the wheels
+
+## Theory
+
+`Components` are the basic data unit of Rljson. A components `table` holds rows
+of plain JSON values. Every row carries a `hash` of its content, and that hash
+is the row's `primary key`: other rows refer to it by its hash.
+
+In this tutorial you build the car catalog of the example. It stores
+manufacturers, wheels and cars in three components tables and links them by
+references. You design in three steps how a car refers to its wheels:
+
+- First, a car refers to one kind of wheel and counts its wheels.
+- Then, a car refers to each of its four wheels.
+- Finally, a car refers to its wheels in an array.
 
 You will learn how to:
 
 - create a components table and hash it with `hip`
 - refer to a row of another table by its hash
+- refer to several rows with an array of references
 - validate an Rljson object with `Validate` and `BaseValidator`
 - follow references to join the tables again
 
@@ -35,27 +64,20 @@ pnpm add @rljson/rljson @rljson/hash
 `"type": "module"` lets the application use ES modules and top-level `await`.
 Now create the file `cars.ts`. Each of the following steps adds code to
 it: put the imports of a step at the top of the file, and its code below the
-code of the previous step. The complete file is shown at the end.
+code of the previous step. Steps 3 and 4 redesign the cars: they replace the
+type `Car` and the table `cars` of the step before. The complete file is
+shown at the end.
 
-## 2. Describe the rows
+## 2. Start with three object types
 
-A row is a flat or nested JSON object. Describe the rows of the three tables
-as TypeScript types:
+The example has three object types: manufacturers, wheels and cars. Each of
+them gets a components table. For the cars, this step starts with the
+simplest design.
 
-<Snippet
-  file="components.spec.ts"
-  region="types"
-  title="cars.ts"
-/>
+### Create the manufacturers
 
-Column names must be lower camel case, like `manufacturersRef`. A column
-that refers to a row of another table is, by convention, named after that
-table with the suffix `Ref`, like `carsRef`. `Ref` is the type of such a
-reference: a hash.
-
-## 3. Create a components table
-
-Create the table of manufacturers:
+Describe a manufacturer as a TypeScript type and create the table of
+manufacturers:
 
 <Snippet
   file="components.spec.ts"
@@ -63,7 +85,8 @@ Create the table of manufacturers:
   title="cars.ts"
 />
 
-A table is a JSON object with a few reserved fields:
+A row is a flat or nested JSON object. Column names must be lower camel case,
+like `founded`. A table is a JSON object with a few reserved fields:
 
 | Field       | Meaning                                                                          |
 | ----------- | -------------------------------------------------------------------------------- |
@@ -85,7 +108,7 @@ to 22 characters. The `id` of a row is a name for you and your application;
 Rljson itself identifies a row by its hash. The helper `ref` at the end of the
 step reads the hash that `hip` has written into a row.
 
-## 4. Understand the hashes
+### Understand the hashes
 
 A hash depends on nothing but the content. Hash the same values again, even
 with the keys in a different order, and you get the same hash:
@@ -105,30 +128,10 @@ _deeply hashed_. This has three consequences:
 - **Hashes need no server.** Every machine calculates the same hash for the
   same content, without any coordination.
 
-## 5. Refer to another table
+### Add the wheels
 
-A car points to its manufacturer: it stores the hash of its row in
-`manufacturersRef`:
-
-<Snippet
-  file="components.spec.ts"
-  region="cars"
-  title="cars.ts"
-/>
-
-<Snippet
-  file="cars.json"
-  title="Output"
-/>
-
-Since a reference is a hash of the content, it points to exactly one version
-of the manufacturer, and it means the same on every machine. The manufacturer
-is stored once, however many cars use it.
-
-## 6. Add the wheels
-
-A wheel refers to the car it belongs to in the same way and adds its position
-and size:
+A wheel refers to its manufacturer: it stores the hash of the manufacturer's
+row in `manufacturersRef`:
 
 <Snippet
   file="components.spec.ts"
@@ -136,7 +139,93 @@ and size:
   title="cars.ts"
 />
 
-## 7. Validate the tables
+A column that refers to a row of another table is, by convention, named after
+that table with the suffix `Ref`. `Ref` is the type of such a reference: a
+hash. Since a hash depends on nothing but the content, the reference points to
+exactly one version of the manufacturer, and it means the same on every
+machine. The manufacturer is stored once, however many wheels refer to it.
+
+A wheel needs no `id`. A row of the wheels table describes a kind of wheel,
+and its hash identifies it.
+
+### Add the cars
+
+A car refers to its manufacturer in the same way. For its wheels, the first
+design stores the number of wheels in `wheelCount` and a reference to one
+wheel in `wheelsRef`:
+
+<Snippet
+  file="components.spec.ts"
+  region="wheel-count"
+  title="cars.ts"
+/>
+
+The Taycan now looks like this:
+
+<Snippet
+  file="taycan-wheel-count.json"
+  title="Output"
+/>
+
+The four wheels share one row, so the wheels table stores their properties
+once instead of four times. But the design assumes that all wheels of a car
+are equal. The Taycan has wider wheels at the rear, 285 mm instead of 245 mm,
+and `wheelsRef` has no room for them.
+
+## 3. Allow different kinds of wheels
+
+To give each wheel a reference of its own, replace `wheelCount` and
+`wheelsRef` by four references, `wheel0` to `wheel3`:
+
+<Snippet
+  file="components.spec.ts"
+  region="four-wheels"
+  title="cars.ts"
+/>
+
+<Snippet
+  file="taycan-four-wheels.json"
+  title="Output"
+/>
+
+`wheel0` and `wheel1` hold the same hash: both front wheels refer to the same
+row of the wheels table. So each kind of wheel is still stored once, however
+many cars use it.
+
+The four columns do not end with `Ref`. The convention names a reference
+column after its table, which works for one reference per table only. Four
+references to the wheels need names of their own.
+
+This design has its limits too. The columns fix the number of wheels at four:
+a three-wheeler or a truck with six wheels needs other columns. And an
+application that wants all wheels of a car has to read four columns one by
+one.
+
+## 4. Put the wheels into an array
+
+Put the references into one array instead. `wheelsRef` holds one reference
+per wheel, in the order front left, front right, rear left and rear right.
+With one column for all wheels, its name follows the convention again:
+
+<Snippet
+  file="components.spec.ts"
+  region="wheel-array"
+  title="cars.ts"
+/>
+
+<Snippet
+  file="taycan-wheel-array.json"
+  title="Output"
+/>
+
+The array combines the first two designs. Its length is the number of wheels,
+like `wheelCount`, and each element can refer to a different wheel, like
+`wheel0` to `wheel3`. A three-wheeler simply gets three elements.
+
+The order of the elements is part of the content, and so of the hash: the
+same wheels in another order make another row.
+
+## 5. Validate the catalog
 
 Put the three tables into an Rljson object. Its keys are the names of the
 tables. Then validate it:
@@ -165,15 +254,17 @@ It stops at the first rule that fails and reports the errors of that rule.
 <Aside type="note">
   The base validator checks the references of a components table only for
   columns that a [TableCfg](/guides/data_types/table-cfg/) declares as
-  references. Without one, it cannot tell that `manufacturersRef` is a
-  reference.
+  references. Without one, it cannot tell that `manufacturersRef` and
+  `wheelsRef` are references. With one, it checks every element of an array like
+  `wheelsRef`.
 </Aside>
 
-## 8. List the wheels
+## 6. List the wheels
 
 Now the application uses its data. `rowOf` follows a reference: it finds the
-row with the given hash. The loop takes each wheel, looks up its car and the
-car's manufacturer, and prints them:
+row with the given hash. The loop takes each car and looks up its
+manufacturer. Then it follows each reference in `wheelsRef` to the wheel and
+the wheel's manufacturer, and prints them:
 
 <Snippet
   file="components.spec.ts"
@@ -181,10 +272,11 @@ car's manufacturer, and prints them:
   title="cars.ts"
 />
 
-The tables store every piece of information once. The application joins
-them again as it needs them.
+Because `wheelsRef` is an array, one loop reaches every wheel, however many a
+car has. The tables store every piece of information once. The application
+joins them again as it needs them.
 
-## 9. See what the validator catches
+## 7. See what the validator catches
 
 Change a value of a row in place, as if someone had edited the data by hand,
 and validate again:
@@ -206,7 +298,7 @@ So never change a row in place. Create a new row instead: it gets a new hash,
 and every reference to the old row keeps pointing to the old values.
 [Revision](/guides/data_types/revision/) shows how to record such a change.
 
-## 10. Run the application
+## 8. Run the application
 
 Here is the complete `cars.ts`:
 
@@ -235,8 +327,10 @@ node cars.ts
 - `hip` writes a hash into every row and into the table. The hash is the
   primary key of a row.
 - Equal content has an equal hash. A change creates a new row.
-- A row refers to a row of another table by its hash, in a column that ends
-  with `Ref`.
+- A row refers to a row of another table by its hash, in a column that is,
+  by convention, named after that table with the suffix `Ref`.
+- Rows that refer to the same row share its data, which is stored once.
+- An array of references refers to any number of rows, in a fixed order.
 - `Validate` with `BaseValidator` checks the hashes, the names and the
   structure of an Rljson object.
 

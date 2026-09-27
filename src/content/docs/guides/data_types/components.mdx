@@ -27,6 +27,7 @@ import Snippet from '../../../../components/Snippet.astro';
 - Use `Tables` to store cars, wheels and manufacturers
 - Split component properties accross multiple tables to save data
 - Use reference arrays to organize the wheels
+- Use a `TableCfg` for type safety and reference checking
 
 ## Theory
 
@@ -48,6 +49,7 @@ You will learn how to:
 - refer to a row of another table by its hash
 - refer to several rows with an array of references
 - validate an Rljson object with `Validate` and `BaseValidator`
+- declare references in a TableCfg, so that the validator checks them
 - follow references to join the tables again
 
 ## 1. Set up the project
@@ -255,11 +257,49 @@ It stops at the first rule that fails and reports the errors of that rule.
   The base validator checks the references of a components table only for
   columns that a [TableCfg](/guides/data_types/table-cfg/) declares as
   references. Without one, it cannot tell that `manufacturersRef` and
-  `wheelsRef` are references. With one, it checks every element of an array like
-  `wheelsRef`.
+  `wheelsRef` are references. The next step adds one.
 </Aside>
 
-## 6. List the wheels
+## 6. Check the references
+
+A TableCfg describes the columns of a table. For a reference column, its field
+`ref` names the table that the column refers to. Add a TableCfg for the cars,
+link the cars table to it, and validate the catalog again:
+
+<Snippet
+  file="components.spec.ts"
+  region="table-cfg"
+  title="cars.ts"
+/>
+
+The TableCfg declares every column of the cars. `manufacturersRef` holds one
+reference, so its type is `string`. `wheelsRef` holds several, so its type is
+`jsonArray`. Both name their target table in `ref`. The cars table names its
+TableCfg in `_tableCfg`, by hash, and the TableCfgs go into a table of their
+own, `tableCfgs`. [TableCfg](/guides/data_types/table-cfg/) explains the other
+fields, like `isHead`, `isRoot` and `isShared`.
+
+Now the validator checks every reference of the cars, down to each element of
+`wheelsRef`. To see it, let the Taycan refer to a wheel that is missing in the
+wheels table:
+
+<Snippet
+  file="components.spec.ts"
+  region="unknown-wheel"
+/>
+
+The validator reports the broken reference. It names the table, the row and
+the column, and the hash that the wheels table does not contain:
+
+<Snippet
+  file="unknown-wheel.json"
+  title="Output"
+/>
+
+The wheels refer to their manufacturers, too. A TableCfg for the wheels would
+declare their `manufacturersRef` in the same way.
+
+## 7. List the wheels
 
 Now the application uses its data. `rowOf` from `@rljson/rljson` follows a
 reference: it returns the row with the given hash. The loop takes each car and
@@ -276,7 +316,7 @@ Because `wheelsRef` is an array, one loop reaches every wheel, however many a
 car has. The tables store every piece of information once. The application
 joins them again as it needs them.
 
-## 7. See what the validator catches
+## 8. See what the validator catches
 
 Change a value of a row in place, as if someone had edited the data by hand,
 and validate again:
@@ -298,7 +338,7 @@ So never change a row in place. Create a new row instead: it gets a new hash,
 and every reference to the old row keeps pointing to the old values.
 [Revision](/guides/data_types/revision/) shows how to record such a change.
 
-## 8. Run the application
+## 9. Run the application
 
 Here is the complete `cars.ts`:
 
@@ -333,6 +373,8 @@ node cars.ts
 - An array of references refers to any number of rows, in a fixed order.
 - `Validate` with `BaseValidator` checks the hashes, the names and the
   structure of an Rljson object.
+- A TableCfg declares which columns are references. With it, the validator
+  checks every reference, down to each element of an array.
 
 Next, [Slices](/guides/data_types/slices/) identify the objects of a
 catalog by slice ids.

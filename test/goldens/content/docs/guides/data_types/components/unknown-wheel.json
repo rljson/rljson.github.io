@@ -1,0 +1,18 @@
+{
+  "base": {
+    "hasErrors": true,
+    "refsNotFound": {
+      "error": "Broken references",
+      "missingRefs": [
+        {
+          "sourceTable": "cars",
+          "sourceItemHash": "seHwlfUHShhuS3V5aJ18R5",
+          "sourceKey": "wheelsRef",
+          "targetItemHash": "MCxl2p54fiBudCjn9Y45Tz",
+          "targetTable": "wheels",
+          "error": "Table \"wheels\" has no item with hash \"MCxl2p54fiBudCjn9Y45Tz\""
+        }
+      ]
+    }
+  }
+}

@@ -23,12 +23,14 @@ import type { Ref } from '@rljson/rljson';
 // #region validate
 import { BaseValidator, type Rljson, Validate } from '@rljson/rljson';
 // #endregion validate
+// #region table-cfg
+import type { TableCfg, TablesCfgTable } from '@rljson/rljson';
+// #endregion table-cfg
 // #region list
 import { rowOf } from '@rljson/rljson';
 // #endregion list
 // #endregion app
 
-import type { TableCfg, TablesCfgTable } from '@rljson/rljson';
 import { writeGolden } from '@tssuite/golden';
 import { describe, expect, it, vi } from 'vitest';
 
@@ -124,6 +126,55 @@ if (Object.keys(errors).length > 0) {
   throw new Error(JSON.stringify(errors, null, 2));
 }
 // #endregion validate
+
+// #region table-cfg
+// The TableCfg declares the columns of the cars and their references
+const carsCfg = hip<TableCfg>({
+  key: 'cars',
+  type: 'components',
+  columns: [
+    { key: '_hash', type: 'string', titleLong: 'Hash', titleShort: 'Hash' },
+    { key: 'id', type: 'string', titleLong: 'Model', titleShort: 'Id' },
+    {
+      key: 'manufacturersRef',
+      type: 'string',
+      titleLong: 'Manufacturer',
+      titleShort: 'Maker',
+      ref: { tableKey: 'manufacturers', type: 'components' },
+    },
+    {
+      key: 'wheelsRef',
+      type: 'jsonArray',
+      titleLong: 'Wheels',
+      titleShort: 'Wheels',
+      ref: { tableKey: 'wheels', type: 'components' },
+    },
+  ],
+  isHead: true,
+  isRoot: true,
+  isShared: false,
+});
+
+// The cars table refers to its TableCfg by hash
+const checkedCars = hip<ComponentsTable<Car>>({
+  _type: 'components',
+  _tableCfg: ref(carsCfg),
+  _data: cars._data,
+});
+
+// The TableCfgs are rows, too: they go into the table tableCfgs
+const checkedCatalog: Rljson = {
+  tableCfgs: hip<TablesCfgTable>({ _type: 'tableCfgs', _data: [carsCfg] }),
+  manufacturers,
+  wheels,
+  cars: checkedCars,
+};
+
+const referenceErrors = await validate.run(checkedCatalog);
+if (Object.keys(referenceErrors).length > 0) {
+  throw new Error(JSON.stringify(referenceErrors, null, 2));
+}
+// #endregion table-cfg
 
 // #region list
 // Join the tables again: car → manufacturer, car → wheels → manufacturer
@@ -325,64 +376,50 @@ describe('Components tutorial', () => {
     ).toEqual({});
   });
 
-  it('checks every element of a reference array a TableCfg declares', async () => {
-    const carsCfg = hip<TableCfg>({
-      key: 'cars',
-      type: 'components',
-      columns: [
-        { key: '_hash', type: 'string', titleLong: 'Hash', titleShort: 'Hash' },
-        { key: 'id', type: 'string', titleLong: 'Model', titleShort: 'Id' },
+  it('checks the references that the TableCfg declares', () => {
+    expect(checkedCars._tableCfg).toBe(ref(carsCfg));
+    expect(referenceErrors).toEqual({});
+  });
+
+  it('reports a reference in an array that points to no row', async () => {
+    // #region unknown-wheel
+    // A wheel that was never added to the wheels table
+    const unknownWheel = hip<Wheel>({
+      manufacturersRef: ref(porsche),
+      diameter: 21,
+      width: 305,
+    });
+
+    const brokenCars = hip<ComponentsTable<Car>>({
+      _type: 'components',
+      _tableCfg: ref(carsCfg),
+      _data: [
         {
-          key: 'manufacturersRef',
-          type: 'string',
-          titleLong: 'Manufacturer',
-          titleShort: 'Maker',
-          ref: { tableKey: 'manufacturers', type: 'components' },
-        },
-        {
-          key: 'wheelsRef',
-          type: 'jsonArray',
-          titleLong: 'Wheels',
-          titleShort: 'Wheels',
-          ref: { tableKey: 'wheels', type: 'components' },
+          id: 'taycan',
+          manufacturersRef: ref(porsche),
+          wheelsRef: [
+            ref(taycanFront),
+            ref(taycanFront),
+            ref(taycanRear),
+            ref(unknownWheel), // not in the wheels table
+          ],
         },
       ],
-      isHead: false,
-      isRoot: false,
-      isShared: true,
     });
 
-    const tableCfgs = hip<TablesCfgTable>({
-      _type: 'tableCfgs',
-      _data: [carsCfg],
-    });
+    const result = await validate.run({ ...checkedCatalog, cars: brokenCars });
+    // #endregion unknown-wheel
 
-    /** The catalog with a TableCfg for the cars and the given Taycan wheels */
-    const catalogWith = (taycanWheels: Ref[]): Rljson => {
-      const configured = structuredClone(cars);
-      configured._tableCfg = ref(carsCfg);
-      configured._data[0].wheelsRef = taycanWheels;
-      hip(configured, {
-        updateExistingHashes: true,
-        throwOnWrongHashes: false,
-      });
-      return { tableCfgs, manufacturers, wheels, cars: configured };
-    };
-
-    const [front, , rear] = cars._data[0].wheelsRef;
-    expect(await validate.run(catalogWith([front, front, rear, rear]))).toEqual(
-      {},
-    );
-
-    const broken = catalogWith([front, front, rear, 'MISSING']);
-    expect(await validate.run(broken)).toMatchObject({
+    await writeGolden('unknown-wheel.json', result);
+    expect(result).toMatchObject({
       base: {
         refsNotFound: {
           missingRefs: [
             {
+              sourceTable: 'cars',
               sourceKey: 'wheelsRef',
               targetTable: 'wheels',
-              targetItemHash: 'MISSING',
+              targetItemHash: ref(unknownWheel),
             },
           ],
         },

@@ -10,13 +10,19 @@
 // vitest imports this file. The tests below check what it has built.
 
 // #region app
-// #region slice-ids
+// #region catalog-2025
 import { hip } from '@rljson/hash';
-import type { Ref, SliceIds } from '@rljson/rljson';
-// #endregion slice-ids
+import type { SliceIds } from '@rljson/rljson';
+// #endregion catalog-2025
+// #region derive
+import { ref } from '@rljson/rljson';
+// #endregion derive
 // #region tables
 import type { Rljson, SliceIdsTable } from '@rljson/rljson';
 // #endregion tables
+// #region resolve
+import { resolveSliceIds } from '@rljson/rljson';
+// #endregion resolve
 // #region validate
 import { BaseValidator, Validate } from '@rljson/rljson';
 // #endregion validate
@@ -29,33 +35,38 @@ import { describe, expect, it, vi } from 'vitest';
 const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 // #region app
-// #region slice-ids
-// The cars of 2025: the slice ids of the catalog
-const cars2025 = hip<SliceIds>({ add: ['taycan', 'macan', 'ex30'] });
-
-/** Returns the reference to a row: the hash that hip wrote into it */
-const ref = (row: object): Ref => (row as { _hash: Ref })._hash;
-// #endregion slice-ids
+// #region catalog-2025
+// The catalog of 2025 lists four cars by their slice ids
+const catalog2025 = hip<SliceIds>({
+  add: ['taycan', 'macan', 'ex30', 'xc40'],
+});
+// #endregion catalog-2025
 
 // #region derive
-// The cars of 2026: the EX90 is new, the Macan is gone
-const cars2026 = hip<SliceIds>({
-  base: ref(cars2025),
+// The catalog of 2026: the EX90 is new, the Macan is gone
+const catalog2026 = hip<SliceIds>({
+  base: ref(catalog2025),
   add: ['ex90'],
   remove: ['macan'],
 });
 // #endregion derive
 
 // #region tables
-// One table holds the base row and the rows derived from it
-const cars = hip<SliceIdsTable>({
+// One table holds the base catalog and the catalogs derived from it
+const catalogs = hip<SliceIdsTable>({
   _type: 'sliceIds',
-  _data: [cars2025, cars2026],
+  _data: [catalog2025, catalog2026],
 });
 
-// The key "cars" is the name other tables use to refer to the table
-const carCatalog: Rljson = { cars };
+// The key "catalogs" is the name other tables use to refer to the table
+const carCatalog: Rljson = { catalogs };
 // #endregion tables
+
+// #region resolve
+// Follow the base of each catalog and apply its changes
+console.log('2025:', resolveSliceIds(catalogs, catalog2025).join(', '));
+console.log('2026:', resolveSliceIds(catalogs, catalog2026).join(', '));
+// #endregion resolve
 
 // #region validate
 // BaseValidator checks the hashes and the structure of the table
@@ -67,49 +78,39 @@ if (Object.keys(errors).length > 0) {
   throw new Error(JSON.stringify(errors, null, 2));
 }
 // #endregion validate
-
-// #region resolve
-/** Follows a reference: finds the row with the given hash */
-const rowOf = <T extends object>(table: { _data: T[] }, hash: Ref): T =>
-  table._data.find((row) => ref(row) === hash)!;
-
-/** Returns the slice ids of a row, merged with those of its base */
-const sliceIdsOf = (row: SliceIds): string[] => {
-  // Start with the slice ids of the base, if there is one
-  const base = row.base ? sliceIdsOf(rowOf(cars, row.base)) : [];
-  const removed = row.remove ?? [];
-  // Add the own slice ids and drop the removed ones
-  return [...base, ...row.add].filter((id) => !removed.includes(id));
-};
-
-// Print the cars of each model year
-for (const row of cars._data) {
-  console.log(sliceIdsOf(row).join(', '));
-}
-// #endregion resolve
 // #endregion app
 
 const output = log.mock.calls.map((args) => args.join(' ')).join('\n');
 log.mockRestore();
 
 describe('Slices tutorial', () => {
-  it('derives slice ids from a base', async () => {
-    await writeGolden('cars.json', cars);
+  it('derives the catalog of 2026 from 2025', async () => {
+    await writeGolden('catalogs.json', catalogs);
 
-    expect(cars2026.base).toBe(ref(cars2025));
-    expect(cars2026.add).toEqual(['ex90']);
-    expect(cars2026.remove).toEqual(['macan']);
+    expect(catalog2025.add).toHaveLength(4);
+    expect(catalog2026.base).toBe(ref(catalog2025));
+    expect(catalog2026.add).toEqual(['ex90']);
+    expect(catalog2026.remove).toEqual(['macan']);
   });
 
   it('validates the car catalog', () => {
     expect(errors).toEqual({});
   });
 
-  it('resolves the slice ids of each model year', async () => {
+  it('resolves the cars of each catalog', async () => {
+    // The lines that step "Resolve the catalogs" logs
+    const resolved = output
+      .split('\n')
+      .filter((line) => /^20\d\d:/.test(line))
+      .join('\n');
+    await writeGolden('resolved.txt', resolved);
     await writeGolden('output.txt', output);
 
     expect(output).toBe(
-      ['taycan, macan, ex30', 'taycan, ex30, ex90'].join('\n'),
+      [
+        '2025: taycan, macan, ex30, xc40',
+        '2026: taycan, ex30, xc40, ex90',
+      ].join('\n'),
     );
   });
 });

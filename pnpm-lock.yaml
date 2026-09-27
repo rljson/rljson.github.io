@@ -31,8 +31,8 @@ importers:
         specifier: 0.0.19
         version: 0.0.19
       '@rljson/rljson':
-        specifier: 0.0.82
-        version: 0.0.82
+        specifier: ^0.0.83
+        version: 0.0.83
       '@tssuite/golden':
         specifier: ^1.0.1
         version: 1.0.1(@rljson/json@0.0.21)(@tssuite/project-root@0.0.17)
@@ -52,7 +52,7 @@ importers:
         specifier: ^1.1.0
         version: 1.1.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(prettier@3.9.9)
       typescript:
-        specifier: ^6.0.3
+        specifier: ~6.0.3
         version: 6.0.3
       vite:
         specifier: ^8.3.1
@@ -806,8 +806,8 @@ packages:
     resolution: {integrity: sha512-ViYo8zx0z/SomjpS2f+xK+tS7HTwZI1HzRarHpXO3spVjpaF+GKCa7HgDXoV/Wc+zsliDzo8wz7S5NFb0yZaow==}
     engines: {node: '>=22.14.0'}
 
-  '@rljson/rljson@0.0.82':
-    resolution: {integrity: sha512-Yz/kuAUeaV4aWT6PkubggMlQLT9/24b+x27Dv+iX7P6c7bXYrbTX+AVlWlkTqcFHdpQmdrgARnONGvd1oI/zTw==}
+  '@rljson/rljson@0.0.83':
+    resolution: {integrity: sha512-/JVC8yEtbWP/lnQbmYTlEAqGBJN/6LoKJSYoxyn8IUTouBIylPNhBmSy9kxYnRlCfgL7pkXlRL/DXQn8jzTOQw==}
     engines: {node: '>=22.14.0'}
 
   '@rolldown/binding-android-arm-eabi@1.2.11':
@@ -2985,7 +2985,7 @@ snapshots:
 
   '@rljson/json@0.0.23': {}
 
-  '@rljson/rljson@0.0.82':
+  '@rljson/rljson@0.0.83':
     dependencies:
       '@rljson/hash': 0.0.19
       '@rljson/json': 0.0.23

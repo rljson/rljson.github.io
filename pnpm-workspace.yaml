@@ -2,4 +2,4 @@ allowBuilds:
   esbuild: true
   sharp: true
 minimumReleaseAgeExclude:
-  - '@rljson/rljson@0.0.82'
+  - '@rljson/rljson@0.0.82 || 0.0.83'

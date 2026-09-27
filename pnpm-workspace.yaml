@@ -1,3 +1,5 @@
 allowBuilds:
   esbuild: true
   sharp: true
+overrides:
+  "@rljson\/rljson": link:./.gg/ts_links/@rljson/rljson

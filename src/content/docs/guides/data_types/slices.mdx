@@ -92,7 +92,29 @@ The table shows how the catalog of 2026 builds on 2025:
   title="Output"
 />
 
-## 5. Validate the catalog
+## 5. Resolve the catalogs
+
+The row of 2026 lists only its changes. To get all of its cars, resolve it:
+`resolveSliceIds` from `@rljson/rljson` follows `base` to the catalog of 2025,
+adds the slice ids in `add` and drops those in `remove`:
+
+<Snippet
+  file="slices.spec.ts"
+  region="resolve"
+  title="slices.ts"
+/>
+
+It logs the cars of each catalog:
+
+<Snippet
+  file="resolved.txt"
+  title="Output"
+/>
+
+A catalog can build on a catalog that is derived itself. `resolveSliceIds`
+follows the whole chain of bases.
+
+## 6. Validate the catalog
 
 <Snippet
   file="slices.spec.ts"
@@ -102,7 +124,7 @@ The table shows how the catalog of 2026 builds on 2025:
 
 `BaseValidator` checks the hashes and the structure of the table.
 
-## 6. Run the application
+## 7. Run the application
 
 Here is the complete `slices.ts`:
 
@@ -119,8 +141,10 @@ or with `npx tsx slices.ts`:
 node slices.ts
 ```
 
-The application prints nothing. It throws an error only if the validation
-fails.
+<Snippet
+  file="output.txt"
+  title="Output"
+/>
 
 ## What you have learned
 

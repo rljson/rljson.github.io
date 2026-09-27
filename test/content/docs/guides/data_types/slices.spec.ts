@@ -20,13 +20,19 @@ import { ref } from '@rljson/rljson';
 // #region tables
 import type { Rljson, SliceIdsTable } from '@rljson/rljson';
 // #endregion tables
+// #region resolve
+import { resolveSliceIds } from '@rljson/rljson';
+// #endregion resolve
 // #region validate
 import { BaseValidator, Validate } from '@rljson/rljson';
 // #endregion validate
 // #endregion app
 
 import { writeGolden } from '@tssuite/golden';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
+
+// Record what the application prints
+const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 // #region app
 // #region catalog-2025
@@ -56,6 +62,12 @@ const catalogs = hip<SliceIdsTable>({
 const carCatalog: Rljson = { catalogs };
 // #endregion tables
 
+// #region resolve
+// Follow the base of each catalog and apply its changes
+console.log('2025:', resolveSliceIds(catalogs, catalog2025).join(', '));
+console.log('2026:', resolveSliceIds(catalogs, catalog2026).join(', '));
+// #endregion resolve
+
 // #region validate
 // BaseValidator checks the hashes and the structure of the table
 const validate = new Validate();
@@ -66,8 +78,10 @@ if (Object.keys(errors).length > 0) {
   throw new Error(JSON.stringify(errors, null, 2));
 }
 // #endregion validate
-
 // #endregion app
+
+const output = log.mock.calls.map((args) => args.join(' ')).join('\n');
+log.mockRestore();
 
 describe('Slices tutorial', () => {
   it('derives the catalog of 2026 from 2025', async () => {
@@ -81,5 +95,22 @@ describe('Slices tutorial', () => {
 
   it('validates the car catalog', () => {
     expect(errors).toEqual({});
+  });
+
+  it('resolves the cars of each catalog', async () => {
+    // The lines that step "Resolve the catalogs" logs
+    const resolved = output
+      .split('\n')
+      .filter((line) => /^20\d\d:/.test(line))
+      .join('\n');
+    await writeGolden('resolved.txt', resolved);
+    await writeGolden('output.txt', output);
+
+    expect(output).toBe(
+      [
+        '2025: taycan, macan, ex30, xc40',
+        '2026: taycan, ex30, xc40, ex90',
+      ].join('\n'),
+    );
   });
 });

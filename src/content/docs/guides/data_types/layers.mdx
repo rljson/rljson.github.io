@@ -1,44 +1,19 @@
 ---
 title: Layers
-description: 'Describe one aspect of a car catalog with a layer: assign a color to every car, and derive the next model year from a base layer.'
+description: 'Describe one aspect of a car catalog with a layer: assign a color to every car.'
 ---
 
-import { Aside } from '@astrojs/starlight/components';
-import Layer from '../../../../assets/figures/layer.svg';
+import CarColors from '../../../../assets/figures/car-colors.svg';
 import Snippet from '../../../../components/Snippet.astro';
 
-<Layer
-  width={120}
+Now let's add a color layer to the car catalog, i.e. a color is assigned to
+each car.
+
+<CarColors
+  width={420}
   role="img"
-  aria-label="A layer cut into slices"
+  aria-label="The color layer: a table with one column per car. Each column shows the car drawn in its color, its id and its color name: taycan white, macan black, ex30 white and xc40 silver."
 />
-
-To efficiently process huge collections of objects we are introducing
-the concept **layer**:
-
-- Layers separate the data of complex objects into meaningful concerns
-- Layers can be loaded and processed independently
-- Layers can be updated using differences only
-- Layers allow mass edit on certain aspects
-
-Examples:
-
-- A price layer stores the prices of cars
-- An engine layer stores the engines of cars
-- A color layer stores the colors of cars
-
-A layer covers the [slices](/guides/data_types/slices/) of a catalog,
-e.g. the cars. It assigns a component, e.g. a color, to each slice id.
-
-In this tutorial you build the color layer of a car catalog. You describe the
-colors of the cars of 2025, and then derive the catalog of 2026, which adds
-the EX90 and drops the Macan.
-
-You will learn how to:
-
-- create a layer that assigns components to slice ids
-- derive a layer from a base, with `add` and `remove`
-- resolve the assignments of a derived layer
 
 ## 1. Set up the project
 
@@ -51,15 +26,12 @@ echo '{ "type": "module" }' > package.json
 pnpm add @rljson/rljson @rljson/hash
 ```
 
-`"type": "module"` lets the application use ES modules and top-level `await`.
-Now create the file `colors.ts`. Each of the following steps adds code to it:
-put the imports of a step at the top of the file, and its code below the code
-of the previous step. The complete file is shown at the end.
+Now create the file `colors.ts`. Each of the following steps adds code to it.
 
-## 2. Create the components
+## 2. Define color objects
 
-The components of the color layer are colors. Store them in a components
-table:
+Create a `Color` object describing the colors. Create a table hosting all
+colors:
 
 <Snippet
   file="layers.spec.ts"
@@ -67,15 +39,14 @@ table:
   title="colors.ts"
 />
 
-The helper `ref` reads the hash that `hip` has written into a row. Several
-cars share a color: the Taycan and the EX30, for example, are both white.
-Since equal rows have equal hashes, the table stores each color once. If
-components tables are new to you, start with [Components](/guides/data_types/components/).
+`ref` from `@rljson/rljson` returns the hash of a row. If
+components tables are new to you, start with
+[Components](/guides/data_types/components/).
 
-## 3. List the slice ids
+## 3. Define SliceIds
 
-The slice ids are the cars of the catalog. List the cars of 2025 in a row of
-type `SliceIds`, as described in [SliceIds](/guides/data_types/slices/):
+Define a catalog by defining a `SliceIds` object containing the ids of all
+cars. A `SliceIdsTable` hosts it:
 
 <Snippet
   file="layers.spec.ts"
@@ -83,9 +54,9 @@ type `SliceIds`, as described in [SliceIds](/guides/data_types/slices/):
   title="colors.ts"
 />
 
-## 4. Create a layer
+## 4. Define a Layer
 
-The colors of 2025 are a layer. It assigns a color to each car:
+Assign a color to each car by creating a `carColorLayer`:
 
 <Snippet
   file="layers.spec.ts"
@@ -97,55 +68,28 @@ The colors of 2025 are a layer. It assigns a color to each car:
 | ------------------ | ---------------------------------------------------------- |
 | `sliceIdsTable`    | The name of the table with the slice ids                   |
 | `sliceIdsTableRow` | The hash of the row in that table that lists the slice ids |
-| `componentsTable`  | The name of the table with the slice properties            |
-| `add`              | The slices that are added to the layer                     |
-| `base`             | Optional: the hash of a layer that this layer extends      |
-| `remove`           | Optional: assignments of the base that this layer drops    |
+| `componentsTable`  | The name of the table with the components                  |
+| `add`              | Assigns a component to each slice id                       |
 
-A layer refers to tables by name
-and to rows by their hashes. Like other rows, a layer may have an `id`; here
-it names the model year.
+## 5. Define a LayersTable
 
-## 5. Derive the next model year
-
-In 2026 the EX90 is new and the Macan is gone. Instead of repeating the cars
-of 2025, derive them: a new row of slice ids extends the cars of 2025 with
-`ex90` and removes `macan`. A new layer extends the colors of 2025 with a
-color for the EX90 and drops the Macan's color:
+Create a `carLayersTable` hosting the car color layer, and put all tables
+into an Rljson object:
 
 <Snippet
   file="layers.spec.ts"
-  region="variants"
-  title="colors.ts"
-/>
-
-The 2026 layer stores only what differs from its base. It follows one rule:
-it assigns a component to every slice id that its own row of slice ids adds.
-The row of 2026 adds `ex90`, so the layer assigns a color to `ex90`.
-
-## 6. Put the rows into tables
-
-Collect the rows of slice ids in a table of type `sliceIds` and the layers
-in a table of type `layers`, and put all tables into an Rljson object:
-
-<Snippet
-  file="layers.spec.ts"
-  region="tables"
+  region="layers-table"
   title="colors.ts"
 />
 
 The layers table:
 
 <Snippet
-  file="color-layers.json"
+  file="car-layers-table.json"
   title="Output"
 />
 
-`hip` has also hashed the objects in `add` and `remove`, so they carry a
-`_hash` of their own. Keep that in mind when you iterate over them: keys that
-start with an underscore are not slice ids.
-
-## 7. Validate the catalog
+## 6. Validate the Layer
 
 <Snippet
   file="layers.spec.ts"
@@ -159,43 +103,6 @@ For every layer, `BaseValidator` checks that:
 - the components table exists
 - every assignment points to an existing component
 - every slice id of the row has an assignment
-- the base layer exists in the same table, if there is one
-
-## 8. Resolve the colors
-
-To show the colors of a model year, the application resolves its layer: it
-starts with the assignments of the base, adds the assignments of the layer
-and drops the removed ones. Then it looks up the color of each car:
-
-<Snippet
-  file="layers.spec.ts"
-  region="resolve"
-  title="colors.ts"
-/>
-
-## 9. See what the validator catches
-
-Create the 2026 layer again, but forget the color of the EX90:
-
-<Snippet
-  file="layers.spec.ts"
-  region="missing-assignment"
-/>
-
-Its row of slice ids adds `ex90`, but the layer assigns nothing to it:
-
-<Snippet
-  file="missing-assignment.json"
-  title="Output"
-/>
-
-<Aside type="note">
-  The validator compares a layer with the `add` list of its own row of slice
-  ids. So a derived layer either uses a derived row of slice ids, as in step 5,
-  or it uses the row of its base and assigns all of its slice ids again.
-</Aside>
-
-## 10. Run the application
 
 Here is the complete `colors.ts`:
 
@@ -205,26 +112,18 @@ Here is the complete `colors.ts`:
   title="colors.ts"
 />
 
-Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
-or with `npx tsx colors.ts`:
+Run it with Node.js 24 or with `npx tsx colors.ts`:
 
 ```bash
 node colors.ts
 ```
 
-<Snippet
-  file="output.txt"
-  title="Output"
-/>
+## 7. Learnings
 
-## What you have learned
-
-- A layer describes one aspect of a catalog, like the colors of the cars.
-- A layer names its table of slice ids, its row of slice ids and its
-  components table, and assigns a component to each slice id in `add`.
-- A derived layer extends a base layer with `add` and `remove` and stores
-  only the difference.
-- Equal components are stored once, however many slices use them.
+- Create a catalog by creating a `SliceIds` object
+- Assign properties to catalog objects using layers
+- A layer refers to tables by name and to rows by their hashes
+- Host layers in a `LayersTable` and put all tables into an Rljson object
 
 Next, a [Cake](/guides/data_types/cake/) stacks the color, engine and price
 layers into a complete catalog.

@@ -7,7 +7,7 @@ import { Aside } from '@astrojs/starlight/components';
 import ManufacturerCar from '../../../../assets/figures/manufacturer-car.svg';
 import Snippet from '../../../../components/Snippet.astro';
 
-## Example
+Let's build the following example:
 
 <ManufacturerCar
   width={368}
@@ -19,38 +19,6 @@ import Snippet from '../../../../components/Snippet.astro';
 - A car has four wheels
 - A wheel has a diameter and a width
 - Both cars and wheels have a manufacturer
-
-## Strategy
-
-- Use `Components` to model manufacturers, cars and wheels
-- Use `References` to connect cars & wheels and manufacturers
-- Use `Tables` to store cars, wheels and manufacturers
-- Split component properties accross multiple tables to save data
-- Use reference arrays to organize the wheels
-- Use a `TableCfg` for type safety and reference checking
-
-## Theory
-
-`Components` are the basic data unit of Rljson. A components `table` holds rows
-of plain JSON values. Every row carries a `hash` of its content, and that hash
-is the row's `primary key`: other rows refer to it by its hash.
-
-In this tutorial you build the car catalog of the example. It stores
-manufacturers, wheels and cars in three components tables and links them by
-references. You design in three steps how a car refers to its wheels:
-
-- First, a car refers to one kind of wheel and counts its wheels.
-- Then, a car refers to each of its four wheels.
-- Finally, a car refers to its wheels in an array.
-
-You will learn how to:
-
-- create a components table and hash it with `hip` (hash in place)
-- refer to a row of another table by its hash
-- refer to several rows with an array of references
-- validate an Rljson object with `Validate` and `BaseValidator`
-- declare references in a TableCfg, so that the validator checks them
-- follow references to join the tables again
 
 ## 1. Set up the project
 
@@ -70,13 +38,13 @@ code of the previous step. Steps 3 and 4 redesign the cars: they replace the
 type `Car` and the table `cars` of the step before. The complete file is
 shown at the end.
 
-## 2. Start with three object types
+## 2. Create components
 
-The example has three object types: manufacturers, wheels and cars. Each of
+The example has three component types: manufacturers, wheels and cars. Each of
 them gets a components table. For the cars, this step starts with the
 simplest design.
 
-### Create the manufacturers
+### Manufacturers
 
 Describe a manufacturer as a TypeScript type and create the table of
 manufacturers:
@@ -110,9 +78,8 @@ to 22 characters. The `id` of a row is a name for you and your application;
 Rljson itself identifies a row by its hash. `ref` from `@rljson/rljson`
 returns this hash: the reference that other rows store to point to the row.
 
-### Understand the hashes
-
-A hash depends on nothing but the content. Hash the same values again, even
+<Aside type="note">
+  A hash depends on nothing but the content. Hash the same values again, even
 with the keys in a different order, and you get the same hash:
 
 <Snippet
@@ -129,8 +96,9 @@ _deeply hashed_. This has three consequences:
 - **Rows are immutable.** A changed row is a new row with a new hash.
 - **Hashes need no server.** Every machine calculates the same hash for the
   same content, without any coordination.
+  </Aside>
 
-### Add the wheels
+### Wheels
 
 A wheel refers to its manufacturer: it stores the hash of the manufacturer's
 row in `manufacturersRef`:
@@ -150,7 +118,7 @@ machine. The manufacturer is stored once, however many wheels refer to it.
 A wheel needs no `id`. A row of the wheels table describes a kind of wheel,
 and its hash identifies it.
 
-### Add the cars
+### Cars
 
 A car refers to its manufacturer in the same way. For its wheels, the first
 design stores the number of wheels in `wheelCount` and a reference to one
@@ -203,7 +171,7 @@ a three-wheeler or a truck with six wheels needs other columns. And an
 application that wants all wheels of a car has to read four columns one by
 one.
 
-## 4. Put the wheels into an array
+## 4. Allow different wheel counts
 
 Put the references into one array instead. `wheelsRef` holds one reference
 per wheel, in the order front left, front right, rear left and rear right.
@@ -227,7 +195,7 @@ like `wheelCount`, and each element can refer to a different wheel, like
 The order of the elements is part of the content, and so of the hash: the
 same wheels in another order make another row.
 
-## 5. Validate the catalog
+## 5. Validate components
 
 Put the three tables into an Rljson object. Its keys are the names of the
 tables. Then validate it:
@@ -260,7 +228,7 @@ It stops at the first rule that fails and reports the errors of that rule.
   `wheelsRef` are references. The next step adds one.
 </Aside>
 
-## 6. Check the references
+## 6. Ensure type safety
 
 A TableCfg describes the columns of a table. For a reference column, its field
 `ref` names the table that the column refers to. Add a TableCfg for the cars,
@@ -299,7 +267,7 @@ the column, and the hash that the wheels table does not contain:
 The wheels refer to their manufacturers, too. A TableCfg for the wheels would
 declare their `manufacturersRef` in the same way.
 
-## 7. List the wheels
+## 7. List wheels
 
 Now the application uses its data. `rowOf` from `@rljson/rljson` follows a
 reference: it returns the row with the given hash. The loop takes each car and

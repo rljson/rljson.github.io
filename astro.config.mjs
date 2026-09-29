@@ -71,13 +71,13 @@ export default defineConfig({
         baseUrl: 'https://github.com/rljson/rljson.github.io/edit/main/',
       },
       sidebar: [
-        {
+        /*{
           label: 'Start here',
           items: [
             { label: 'What is Rljson?', slug: 'guides/old/what-is-rljson' },
             { label: 'Principles', slug: 'guides/old/principles' },
           ],
-        },
+        },*/
         {
           label: 'Data Types',
           items: [
@@ -85,12 +85,12 @@ export default defineConfig({
             { label: 'SliceIds', slug: 'guides/data_types/slices' },
             { label: 'Layers', slug: 'guides/data_types/layers' },
             { label: 'Cake', slug: 'guides/data_types/cake' },
-            { label: 'Tree', slug: 'guides/data_types/tree' },
-            { label: 'TableCfg', slug: 'guides/data_types/table-cfg' },
-            { label: 'Revision', slug: 'guides/data_types/revision' },
+            // { label: 'Tree', slug: 'guides/data_types/tree' },
+            // { label: 'TableCfg', slug: 'guides/data_types/table-cfg' },
+            // { label: 'Revision', slug: 'guides/data_types/revision' },
           ],
         },
-        {
+        /* {
           label: 'Format',
           items: [
             { label: 'Tables, rows and hashes', slug: 'guides/old/tables' },
@@ -109,7 +109,7 @@ export default defineConfig({
         {
           label: 'Reference',
           items: [{ autogenerate: { directory: 'reference' } }],
-        },
+        },*/
       ],
     }),
   ],

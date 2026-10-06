@@ -1,0 +1,199 @@
+---
+title: Your first dataset
+description: Generate a small car world with @rljson/generator, list its tables, validate it and reproduce it from its seed.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+`@rljson/generator` creates test data for Rljson applications: a car world
+with manufacturers, their catalogs and cars. Every car has a price, a brand,
+a workshop, a bill of materials and a CAD scene. The world uses every data
+type of the [Data Types](/guides/data_types/components/) tutorials, so one
+generated world exercises components, slice ids, layers, cakes, trees,
+revisions and table configurations at once:
+
+```text
+Manufacturers            components   manufacturers
+└─ Catalogs              jsonArray    manufacturers.catalogsRef
+   └─ Catalog            cakes        catalogs, its slices are cars
+      ├─ Prices          layers       carPrices    → components  prices
+      ├─ Brands          layers       carBrands    → components  brands
+      ├─ Workshops       layers       carWorkshops → components  workshops
+      ├─ Parts           layers       carParts     → components  parts
+      └─ CAD             layers       carCad       → trees       cadScenes
+```
+
+In this tutorial you generate the smallest world, list its tables, validate
+it and generate it a second time to see that a seed makes the data
+reproducible.
+
+You will learn how to:
+
+- generate a world from a preset with `Generator.preset`
+- read the tables of a generated world
+- validate generated data with `BaseValidator`
+- read the statistics of a run
+- reproduce a dataset from its seed
+
+## 1. Set up the project
+
+Create a project and install the generator and the core package:
+
+```bash
+mkdir car-world
+cd car-world
+echo '{ "type": "module" }' > package.json
+pnpm add @rljson/generator @rljson/rljson
+```
+
+`"type": "module"` lets the application use ES modules and top-level `await`.
+Now create the file `first.ts`. Each of the following steps adds code to it:
+put the imports of a step at the top of the file, and its code below the code
+of the previous step. The complete file is shown at the end.
+
+## 2. Generate a world
+
+A preset is a complete configuration. `tiny` describes one manufacturer with
+one catalog of five cars. The second argument overrides any part of it, here
+the seed:
+
+<Snippet
+  file="first-dataset.spec.ts"
+  region="generate"
+  title="first.ts"
+/>
+
+`generate` builds the world in memory and returns it together with the
+statistics of the run. The world is an Rljson object: its keys are the
+names of the tables.
+
+| Preset   | Manufacturers | Catalogs each | Cars each | For                        |
+| -------- | ------------- | ------------- | --------- | -------------------------- |
+| `tiny`   | 1             | 1             | 5         | Unit tests, this tutorial  |
+| `small`  | 2             | 2             | 100       | Component tests            |
+| `medium` | 5             | 4             | 5 000     | Integration tests          |
+| `large`  | 10            | 10            | 1 000     | 20 million rows, load tests |
+| `xl`     | 20            | 20            | 50 000    | 20 million cars            |
+
+<Aside type="note">
+  `generate` keeps the whole world in memory. That is fine up to `medium`.
+  For `large` and `xl`, [Generate large
+  datasets](/guides/generate/large-datasets/) hands the rows to a callback instead.
+</Aside>
+
+## 3. List the tables
+
+`iterateTablesSync` from `@rljson/rljson` calls back for every table of an
+Rljson object. Print the name, the content type and the number of rows of
+each table:
+
+<Snippet
+  file="first-dataset.spec.ts"
+  region="tables"
+  title="first.ts"
+/>
+
+The cake, the slice ids and the layers have one row each: one catalog, the
+list of its cars, and one layer per aspect of the cars. The components
+tables hold the values the layers refer to. The manufacturers table is the
+entry point of the world, one row per manufacturer:
+
+<Snippet
+  file="manufacturers.json"
+  title="Output"
+/>
+
+All names, addresses and part numbers are made up. The generator composes
+them from syllables, so no real company appears in the data.
+
+## 4. Read the statistics
+
+The statistics count what the run produced:
+
+<Snippet
+  file="first-dataset.spec.ts"
+  region="stats"
+  title="first.ts"
+/>
+
+| Field          | Meaning                                                 |
+| -------------- | ------------------------------------------------------- |
+| `cars`         | The number of cars in all catalogs                      |
+| `rowsTotal`    | The number of rows in all tables                        |
+| `rowsPerTable` | The number of rows of each table                        |
+| `dedupRatio`   | The share of rows that equal content folded into one    |
+| `durationMs`   | How long the run took                                   |
+
+## 5. Validate the world
+
+Generated data is ordinary Rljson data. Validate it like data of your own:
+
+<Snippet
+  file="first-dataset.spec.ts"
+  region="validate"
+  title="first.ts"
+/>
+
+`BaseValidator` checks the hashes, the references, the layers, the cake and
+the trees, as the Data Types tutorials describe. The generator
+writes a [TableCfg](/guides/data_types/table-cfg/) for every table into
+`tableCfgs`, so the validator checks the types of all columns and every
+reference, too.
+
+## 6. Reproduce the data
+
+The generator draws every value from a random number generator that starts
+from the seed. The same seed and the same configuration yield the same rows,
+and so the same hashes:
+
+<Snippet
+  file="first-dataset.spec.ts"
+  region="reproduce"
+  title="first.ts"
+/>
+
+The hash of the catalogs table covers every catalog, and through the
+references every layer and every component. If it is equal, the worlds are
+equal. Another seed yields another world.
+
+<Aside type="tip">
+  Fix the seed in your tests. A test that fails on a generated world then
+  fails on the same world every time, and a golden file of the world stays
+  stable until you change the configuration.
+</Aside>
+
+## 7. Run the application
+
+Here is the complete `first.ts`:
+
+<Snippet
+  file="first-dataset.spec.ts"
+  region="app"
+  title="first.ts"
+/>
+
+Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
+or with `npx tsx first.ts`:
+
+```bash
+node first.ts
+```
+
+<Snippet
+  file="output.txt"
+  title="Output"
+/>
+
+## What you have learned
+
+- `Generator.preset` creates a generator from a preset, and the second
+  argument overrides parts of it.
+- `generate` returns the world as an Rljson object and the statistics of the
+  run.
+- A generated world is ordinary Rljson data, with a TableCfg for every
+  table, and `BaseValidator` validates it.
+- The same seed yields the same data and the same hashes.
+
+Next, [Walk the car world](/guides/generate/car-world/) follows the
+references from the world down to a single car.

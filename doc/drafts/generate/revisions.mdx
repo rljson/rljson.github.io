@@ -1,0 +1,172 @@
+---
+title: Catalog revisions
+description: Generate the model years of a catalog as derived slice ids, derived layers and revisions, and resolve what each year contains.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+A catalog changes every year: cars come, cars go, prices move. Rljson does
+not edit rows; it derives new ones. In a generated world, every model year
+of a catalog is a cake of its own. Its slice ids build on the year before,
+as in the [SliceIds](/guides/data_types/slices/) tutorial, its layers build
+on the layers of the year before, and a [revision](/guides/data_types/revision/)
+links each year to the next.
+
+In this tutorial you generate three model years of one catalog, read what
+each year adds and removes, resolve a derived layer, and follow the
+revisions from the first year to the last.
+
+You will learn how to:
+
+- configure revisions of a catalog
+- find the versions of a catalog in its manufacturer
+- read derived slice ids
+- resolve a derived layer with `base`, `add` and `remove`
+- follow the revisions table
+
+## 1. Set up the project
+
+Create a project and install the generator and the core package:
+
+```bash
+mkdir car-world
+cd car-world
+echo '{ "type": "module" }' > package.json
+pnpm add @rljson/generator @rljson/rljson
+```
+
+`"type": "module"` lets the application use ES modules and top-level `await`.
+Now create the file `revisions.ts`. Each of the following steps adds code to
+it: put the imports of a step at the top of the file, and its code below the
+code of the previous step. The complete file is shown at the end.
+
+## 2. Configure the revisions
+
+One catalog of six cars, starting in 2026, with two revisions: the model
+years 2027 and 2028. Each revision adds about a third of the cars, removes
+a fifth and changes the price of a fifth:
+
+<Snippet
+  file="revisions.spec.ts"
+  region="config"
+  title="revisions.ts"
+/>
+
+| Setting       | Meaning                                                   |
+| ------------- | --------------------------------------------------------- |
+| `startYear`   | The model year of the first version                       |
+| `count`       | How many revisions follow it                              |
+| `addRatio`    | The share of cars a revision adds                         |
+| `removeRatio` | The share of cars a revision removes                      |
+| `changeRatio` | The share of cars whose components a revision changes     |
+
+## 3. Find the versions
+
+Every version is a cake in `catalogs`, named after the manufacturer, the
+segment and the year. The manufacturer's `catalogsRef` lists all versions,
+oldest first:
+
+<Snippet
+  file="revisions.spec.ts"
+  region="versions"
+  title="revisions.ts"
+/>
+
+## 4. Read the derived slice ids
+
+The slice ids of the first year list every car in `add`. The slice ids of
+a later year name the year before in `base` and store only what changed.
+`resolveSliceIds` follows the chain and yields the cars of each year:
+
+<Snippet
+  file="revisions.spec.ts"
+  region="slice-ids"
+  title="revisions.ts"
+/>
+
+A car keeps its slice id across the years. That is what lets a layer of
+2027 build on a layer of 2026.
+
+## 5. Resolve a derived layer
+
+A layer of a later year names the layer of the year before in `base`. Its
+`add` holds the assignments of the cars that are new or changed, its
+`remove` the assignments of the cars that are gone. The core package has
+no function to resolve a layer yet, so write one that works like
+`resolveSliceIds`:
+
+<Snippet
+  file="revisions.spec.ts"
+  region="layers"
+  title="revisions.ts"
+/>
+
+The resolved layer assigns a price to every car of its year, and `add`
+shows how few rows a year adds. The prices of the cars that did not change
+are not copied: the later layer refers to the earlier one.
+
+<Aside type="note">
+  Every layer of a cake uses the slice ids of its cake. So the layer of
+  2027 names the slice ids row of 2027, and `BaseValidator` checks that it
+  does, while `base` names the layer of 2026.
+</Aside>
+
+## 6. Follow the revisions
+
+The revisions table links each version to the next. `predecessor` and
+`successor` are the hashes of two cakes, `table` names their table, and
+`timestamp` is the first day of the model year:
+
+<Snippet
+  file="revisions.spec.ts"
+  region="revisions"
+  title="revisions.ts"
+/>
+
+An application that holds the hash of a catalog finds its newest version by
+following the successors, as the [Revision](/guides/data_types/revision/)
+tutorial shows.
+
+## 7. Validate the world
+
+<Snippet
+  file="revisions.spec.ts"
+  region="validate"
+  title="revisions.ts"
+/>
+
+## 8. Run the application
+
+Here is the complete `revisions.ts`:
+
+<Snippet
+  file="revisions.spec.ts"
+  region="app"
+  title="revisions.ts"
+/>
+
+Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
+or with `npx tsx revisions.ts`:
+
+```bash
+node revisions.ts
+```
+
+<Snippet
+  file="output.txt"
+  title="Output"
+/>
+
+## What you have learned
+
+- Every model year of a catalog is a cake of its own, and the manufacturer
+  lists them all in `catalogsRef`.
+- The slice ids of a year build on the year before, with `base`, `add` and
+  `remove`.
+- A derived layer stores only the assignments that changed, and resolving
+  it follows `base` like `resolveSliceIds`.
+- The revisions table links the versions by their hashes.
+
+Next, [Generate large datasets](/guides/generate/large-datasets/) streams
+millions of rows to files.

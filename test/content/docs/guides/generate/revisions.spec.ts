@@ -11,7 +11,7 @@
 
 // #region app
 // #region config
-import { Generator } from '@rljson/generator';
+import { Edge } from '@rljson/edge';
 // #endregion config
 // #region versions
 import { rowOf } from '@rljson/rljson';
@@ -36,12 +36,11 @@ const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 // #region app
 // #region config
 // One catalog of six cars and two revisions: the model years 2027 and 2028
-const generator = new Generator({
-  seed: 'revisions',
+const generator = new Edge({
   catalogs: {
     carsPerCatalog: 6,
     startYear: 2026,
-    revisions: { count: 2, addRatio: 0.3, removeRatio: 0.2, changeRatio: 0.2 },
+    revisions: { count: 2, addShare: 0.3, removeShare: 0.2, changeShare: 0.2 },
   },
   layers: { workshops: false, parts: false, cad: false },
 });
@@ -165,9 +164,9 @@ describe('Revisions tutorial', () => {
     expect(world.revisions._data[0].predecessor).toBe(first._hash);
     expect(world.revisions._data[0].successor).toBe(second._hash);
     expect(world.revisions._data[1].successor).toBe(third._hash);
-    expect(
-      new Date(world.revisions._data[0].timestamp).toISOString(),
-    ).toBe('2027-01-01T00:00:00.000Z');
+    expect(new Date(world.revisions._data[0].timestamp).toISOString()).toBe(
+      '2027-01-01T00:00:00.000Z',
+    );
   });
 
   it('validates the world', () => {

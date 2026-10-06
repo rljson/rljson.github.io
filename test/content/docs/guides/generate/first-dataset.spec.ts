@@ -11,7 +11,7 @@
 
 // #region app
 // #region generate
-import { Generator } from '@rljson/generator';
+import { Edge } from '@rljson/edge';
 // #endregion generate
 // #region tables
 import { iterateTablesSync } from '@rljson/rljson';
@@ -29,9 +29,8 @@ const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 // #region app
 // #region generate
-// The smallest preset: one manufacturer with one catalog of five cars.
-// The seed makes the data reproducible.
-const generator = Generator.preset('tiny', { seed: 'first-dataset' });
+// The smallest preset: one manufacturer with one catalog of five cars
+const generator = Edge.preset('tiny');
 const { world, stats } = await generator.generate();
 // #endregion generate
 
@@ -61,15 +60,13 @@ console.log('The car world is valid');
 // #endregion validate
 
 // #region reproduce
-// The same seed yields the same rows, and so the same hashes
-const again = Generator.preset('tiny', { seed: 'first-dataset' });
-const other = Generator.preset('tiny', { seed: 'another-seed' });
+// Nothing is random: the same configuration yields the same hashes
+const again = (await Edge.preset('tiny').generate()).world;
+const smaller = Edge.preset('tiny', { catalogs: { carsPerCatalog: 4 } });
+const other = (await smaller.generate()).world;
 
-const sameSeed = (await again.generate()).world;
-const otherSeed = (await other.generate()).world;
-
-console.log('same seed:', sameSeed.catalogs._hash === world.catalogs._hash);
-console.log('other seed:', otherSeed.catalogs._hash === world.catalogs._hash);
+console.log('same config:', again.catalogs._hash === world.catalogs._hash);
+console.log('other config:', other.catalogs._hash === world.catalogs._hash);
 // #endregion reproduce
 // #endregion app
 
@@ -90,9 +87,8 @@ describe('First dataset tutorial', () => {
     expect(errors).toEqual({});
   });
 
-  it('reproduces the data from the seed', () => {
-    expect(sameSeed.catalogs._hash).toBe(world.catalogs._hash);
-    expect(otherSeed.catalogs._hash).not.toBe(world.catalogs._hash);
+  it('reproduces the data from the configuration', () => {
+    expect(again.catalogs._hash).toBe(world.catalogs._hash);
   });
 
   it('prints the tables, the statistics and the comparison', async () => {
@@ -101,7 +97,7 @@ describe('First dataset tutorial', () => {
     expect(output).toContain('catalogs           cakes       1');
     expect(output).toContain('5 cars,');
     expect(output).toContain('The car world is valid');
-    expect(output).toContain('same seed: true');
-    expect(output).toContain('other seed: false');
+    expect(output).toContain('same config: true');
+    expect(output).toContain('other config: false');
   });
 });

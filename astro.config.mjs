@@ -90,6 +90,29 @@ export default defineConfig({
             // { label: 'Revision', slug: 'guides/data_types/revision' },
           ],
         },
+        {
+          label: 'Generate Rljson',
+          items: [
+            {
+              label: 'Your first dataset',
+              slug: 'guides/generate/first-dataset',
+            },
+            { label: 'Walk the car world', slug: 'guides/generate/car-world' },
+            {
+              label: 'Configure the generator',
+              slug: 'guides/generate/configure',
+            },
+            {
+              label: 'Parts and CAD scenes',
+              slug: 'guides/generate/parts-and-cad',
+            },
+            { label: 'Catalog revisions', slug: 'guides/generate/revisions' },
+            {
+              label: 'Generate large datasets',
+              slug: 'guides/generate/large-datasets',
+            },
+          ],
+        },
         /* {
           label: 'Format',
           items: [

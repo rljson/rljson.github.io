@@ -45,7 +45,7 @@ Create a project and install the generator and the core package:
 mkdir car-world
 cd car-world
 echo '{ "type": "module" }' > package.json
-pnpm add @rljson/generator @rljson/rljson
+pnpm add @rljson/edge @rljson/rljson
 ```
 
 `"type": "module"` lets the application use ES modules and top-level `await`.
@@ -55,7 +55,7 @@ of the previous step. The complete file is shown at the end.
 
 ## 2. Configure the trees
 
-Keep the world small: one catalog of three cars, parts three levels deep
+Keep the world small: one catalog of three cars, parts four levels deep
 with two sub parts each, scenes two levels deep with three children each:
 
 <Snippet
@@ -64,17 +64,17 @@ with two sub parts each, scenes two levels deep with three children each:
   title="parts.ts"
 />
 
-| Setting             | Meaning                                                          |
-| ------------------- | ---------------------------------------------------------------- |
-| `depth`             | Levels below the root, 1 to 4                                    |
-| `fanOut`            | Sub parts or children per node, a number or a range              |
-| `sharing`           | Who gets the same tree: `perCar`, `perModel` or `perCatalog`     |
-| `standardPartsPool` | How many distinct parts the lowest level draws from              |
-| `linkToParts`       | Whether a mesh refers to the part it shows                       |
+| Setting             | Meaning                                                      |
+| ------------------- | ------------------------------------------------------------ |
+| `depth`             | Levels below the root, 1 to 4                                |
+| `fanOut`            | Sub parts or children per node, 1 to 6                       |
+| `sharing`           | Who gets the same tree: `perCar`, `perModel` or `perCatalog` |
+| `standardPartsPool` | How many distinct parts the lowest level draws from          |
+| `linkToParts`       | Whether a mesh refers to the part it shows                   |
 
 With `perModel`, every car of a model gets the same bill of materials, so
 its rows are stored once per model. With `perCar`, every car gets a tree of
-its own; that is how the `large` preset reaches 20 million rows.
+its own; that is how the `large` preset reaches 25 million rows.
 
 ## 3. Find the bill of materials of a car
 
@@ -90,16 +90,16 @@ bill of materials. Like every part, it lists its sub parts in
 
 A part has these columns:
 
-| Column        | Meaning                                                   |
-| ------------- | --------------------------------------------------------- |
-| `name`        | The name of the part                                      |
-| `partNumber`  | A number that is unique per manufacturer                  |
+| Column        | Meaning                                                    |
+| ------------- | ---------------------------------------------------------- |
+| `name`        | The name of the part                                       |
+| `partNumber`  | A number that is unique per manufacturer                   |
 | `category`    | `bom`, `engine`, `chassis`, `body`, `interior`, `standard` |
-| `level`       | 0 for the bill of materials, up to 4 for a standard part  |
-| `quantity`    | How many of it the parent contains                        |
-| `weightKg`    | The weight of one                                         |
-| `material`    | The material, or `null`                                   |
-| `subPartRefs` | The hashes of the sub parts, empty for a leaf             |
+| `level`       | 0 for the bill of materials, up to 4 for a standard part   |
+| `quantity`    | How many of it the parent contains                         |
+| `weightKg`    | The weight of one                                          |
+| `material`    | The material, or `null`                                    |
+| `subPartRefs` | The hashes of the sub parts, empty for a leaf              |
 
 The table configuration declares `subPartRefs` as a reference column of
 type `jsonArray`, so the validator checks every element.
@@ -135,10 +135,9 @@ draws from a pool of six standard parts, which every tree shares. A part
 that is equal in every column has the same hash, wherever it is used.
 
 <Aside type="tip">
-  The same is true of the subtrees. If two bills of materials contain the
-  same engine, down to the last screw, they refer to the same engine row.
-  That is what `sharing` controls, and what `dedupRatio` in the statistics
-  measures.
+  The same is true of the subtrees. If two bills of materials contain the same
+  engine, down to the last screw, they refer to the same engine row. That is
+  what `sharing` controls, and what `dedupRatio` in the statistics measures.
 </Aside>
 
 ## 6. Walk the CAD scene
@@ -156,16 +155,17 @@ it is a group or a mesh, and a mesh carries its vertex count and, with
 
 The scene is a tree as the [Tree](/guides/data_types/tree/) tutorial
 builds it: `children` holds the hashes of the child nodes, `meta` holds the
-data. `CadMeta` from `@rljson/generator` types the data:
+data. `ECadMeta` from `@rljson/edge` types the data:
 
-| Field       | Meaning                                                  |
-| ----------- | -------------------------------------------------------- |
-| `type`      | `group` or `mesh`                                        |
-| `transform` | `position`, `rotation` and `scale`, three numbers each   |
-| `material`  | The material of a mesh                                   |
-| `vertices`  | The vertex count of a mesh                               |
-| `boundsM`   | Width, height and depth in meters                        |
-| `partRef`   | The hash of the part the mesh shows, or `null`           |
+| Field       | Meaning                                                 |
+| ----------- | ------------------------------------------------------- |
+| `type`      | `group` or `mesh`                                       |
+| `variant`   | What the scene shows: the model, the car or the catalog |
+| `transform` | `position`, `rotation` and `scale`, three numbers each  |
+| `material`  | The material of a mesh                                  |
+| `vertices`  | The vertex count of a mesh                              |
+| `boundsM`   | Width, height and depth in meters                       |
+| `partRef`   | The hash of the part the mesh shows, or `null`          |
 
 The layer points at a trees table instead of a components table. A layer
 only needs a table whose rows have hashes, so a tree root serves as a

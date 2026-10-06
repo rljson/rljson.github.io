@@ -11,7 +11,7 @@
 
 // #region app
 // #region presets
-import { Generator, presetNames } from '@rljson/generator';
+import { Edge, edgePresetNames } from '@rljson/edge';
 // #endregion presets
 // #region ndjson
 import { once } from 'node:events';
@@ -31,8 +31,8 @@ const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 // #region app
 // #region presets
 // An estimate costs nothing: no row is generated
-for (const name of presetNames) {
-  const { cars, rowsTotal, approxBytes } = Generator.preset(name).estimate();
+for (const name of edgePresetNames) {
+  const { cars, rowsTotal, approxBytes } = Edge.preset(name).estimate();
   const megabytes = Math.round(approxBytes / 1e6);
   console.log(
     `${name.padEnd(7)} ${String(cars).padStart(10)} cars ` +
@@ -43,11 +43,14 @@ for (const name of presetNames) {
 
 // #region target
 // Name the size you want. The generator scales the cars per catalog.
-const generator = new Generator({
-  seed: 'large-datasets',
+// With sharing per car, every car adds rows of its own.
+const generator = new Edge({
   manufacturers: { count: 4, catalogsPerManufacturer: 2 },
   scale: { targetRows: 20000 },
-  layers: { parts: { depth: 2, fanOut: 2 }, cad: { depth: 2, fanOut: 2 } },
+  layers: {
+    parts: { depth: 2, fanOut: 2, sharing: 'perCar' },
+    cad: { depth: 2, fanOut: 2, sharing: 'perCar' },
+  },
 });
 console.log(`cars per catalog: ${generator.config.catalogs.carsPerCatalog}`);
 console.log(`estimated rows: ${generator.estimate().rowsTotal}`);
@@ -63,7 +66,9 @@ const stats = await generator.run({
 });
 const received = Object.values(rows).reduce((sum, count) => sum + count, 0);
 console.log(`received ${received} of ${stats.rowsTotal} rows`);
-console.log(`${rows.parts} parts, ${rows.cadScenes} nodes, ${rows.prices} prices`);
+console.log(
+  `${rows.parts} parts, ${rows.cadScenes} nodes, ${rows.prices} prices`,
+);
 // #endregion callback
 
 // #region ndjson
@@ -99,15 +104,14 @@ console.log(`first line: ${lines[0]}`);
 // #endregion ndjson
 
 // #region progress
-// progress reports every new phase and every progressEvery rows
-let phase = '';
-const reporter = new Generator({
+// progress reports every new phase without a table, and every
+// progressEvery rows with the table of the last row
+const reporter = new Edge({
   ...generator.config,
   progressEvery: 5000,
   progress: (p) => {
-    if (p.phase !== phase) {
-      phase = p.phase;
-      console.log(`phase ${phase}, ${p.rowsDone} of ${p.rowsTotal} rows`);
+    if (p.table) {
+      console.log(`${p.rowsDone} of ${p.rowsTotal} rows, ${p.table}`);
     }
   },
 });
@@ -117,7 +121,7 @@ await reporter.run();
 // #region abort
 // An AbortSignal stops a run after the current row
 const controller = new AbortController();
-const stoppable = new Generator({
+const stoppable = new Edge({
   ...generator.config,
   abortSignal: controller.signal,
   progressEvery: 1000,
@@ -141,15 +145,15 @@ describe('Large datasets tutorial', () => {
   it('estimates the presets without generating', async () => {
     const presets = output
       .split('\n')
-      .filter((line) => presetNames.some((name) => line.startsWith(name)))
+      .filter((line) => edgePresetNames.some((name) => line.startsWith(name)))
       .join('\n');
     await writeGolden('presets.txt', presets);
 
-    expect(Generator.preset('tiny').estimate().cars).toBe(5);
-    expect(Generator.preset('large').estimate().rowsTotal).toBeGreaterThan(
+    expect(Edge.preset('tiny').estimate().cars).toBe(5);
+    expect(Edge.preset('large').estimate().rowsTotal).toBeGreaterThan(
       20_000_000,
     );
-    expect(Generator.preset('xl').estimate().cars).toBe(20_000_000);
+    expect(Edge.preset('xl').estimate().cars).toBe(20_000_000);
   });
 
   it('scales the cars per catalog to the target rows', () => {
@@ -170,11 +174,12 @@ describe('Large datasets tutorial', () => {
     expect(JSON.parse(lines[0])).toHaveProperty('_hash');
   });
 
-  it('reports the phases and stops on abort', async () => {
+  it('reports the progress and stops on abort', async () => {
     await writeGolden('output.txt', output);
 
-    expect(output).toContain('phase prices');
-    expect(output).toContain('phase layers');
-    expect(output).toContain('stopped: ');
+    expect(output).toContain('5000 of ');
+    expect(output).toContain(
+      'stopped: Edge: generation aborted after 3000 rows',
+    );
   });
 });

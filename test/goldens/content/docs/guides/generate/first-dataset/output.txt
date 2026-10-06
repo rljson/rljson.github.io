@@ -1,0 +1,21 @@
+tableCfgs          tableCfgs   17
+addresses          components  3
+persons            components  2
+workshops          components  2
+prices             components  5
+brands             components  5
+parts              components  35
+cadScenes          trees       35
+carIds             sliceIds    1
+carPrices          layers      1
+carBrands          layers      1
+carWorkshops       layers      1
+carParts           layers      1
+carCad             layers      1
+catalogs           cakes       1
+revisions          revisions   0
+manufacturers      components  1
+5 cars, 112 rows
+The car world is valid
+same config: true
+other config: false

@@ -22,6 +22,7 @@
     "@astrojs/check": "^0.9.10",
     "@ggdna/dna-scripts": "^0.2.2",
     "@ggdna/dna-vscode": "^0.2.1",
+    "@rljson/edge": "^0.0.1",
     "@rljson/hash": "0.0.19",
     "@rljson/rljson": "^0.0.84",
     "@tssuite/golden": "^1.0.1",

@@ -29,7 +29,7 @@ Create a project and install the generator and the core package:
 mkdir car-world
 cd car-world
 echo '{ "type": "module" }' > package.json
-pnpm add @rljson/generator @rljson/rljson
+pnpm add @rljson/edge @rljson/rljson
 ```
 
 `"type": "module"` lets the application use ES modules and top-level `await`.
@@ -39,8 +39,9 @@ of the previous step. The complete file is shown at the end.
 
 ## 2. Generate a world
 
-This world has two manufacturers with one catalog of four cars each. Parts
-and CAD scenes are switched off, [Parts and CAD
+This world has two manufacturers with one catalog of four cars each. Every
+manufacturer offers two models and has one owner for its two workshops.
+Parts and CAD scenes are switched off, [Parts and CAD
 scenes](/guides/generate/parts-and-cad/) walks them:
 
 <Snippet
@@ -82,13 +83,13 @@ per catalog, like `wheelsRef` in
 />
 
 The id of a catalog is the manufacturer, the segment and the model year,
-like `nordwagen-cars-2026`. A slice id is the catalog followed by a number,
-like `nordwagen-cars-000001`.
+like `volkswagen-cars-2026`. A slice id is the catalog followed by a number,
+like `volkswagen-cars-000001`.
 
 <Aside type="note">
   `hip` hashes nested objects too, so `layers` carries a `_hash` of its own,
-  next to the layer names. Skip the keys that start with an underscore when
-  you iterate it. The same holds for the `add` of a layer.
+  next to the layer names. Skip the keys that start with an underscore when you
+  iterate it. The same holds for the `add` of a layer.
 </Aside>
 
 ## 5. From a car to its price, brand and workshop
@@ -118,13 +119,15 @@ Components refer to components. A workshop refers to its address in
   title="walk.ts"
 />
 
-Several cars of a catalog share a workshop, and a person can own several
-workshops. The references express that without copying a single value.
+Two cars of a catalog share each workshop, and one person owns both
+workshops of a manufacturer. The references express that without copying
+a single value.
 
 ## 7. Count the shared rows
 
 Equal content has an equal hash, and the generator stores it once. Compare
-the number of cars with the number of brand and workshop rows:
+the number of cars with the number of brand and workshop rows: eight cars
+use four brands and four workshops.
 
 <Snippet
   file="car-world.spec.ts"

@@ -33,7 +33,7 @@ Create a project and install the generator and the core package:
 mkdir car-world
 cd car-world
 echo '{ "type": "module" }' > package.json
-pnpm add @rljson/generator @rljson/rljson
+pnpm add @rljson/edge @rljson/rljson
 ```
 
 `"type": "module"` lets the application use ES modules and top-level `await`.
@@ -53,13 +53,13 @@ a fifth and changes the price of a fifth:
   title="revisions.ts"
 />
 
-| Setting       | Meaning                                                   |
-| ------------- | --------------------------------------------------------- |
-| `startYear`   | The model year of the first version                       |
-| `count`       | How many revisions follow it                              |
-| `addRatio`    | The share of cars a revision adds                         |
-| `removeRatio` | The share of cars a revision removes                      |
-| `changeRatio` | The share of cars whose components a revision changes     |
+| Setting       | Meaning                                          |
+| ------------- | ------------------------------------------------ |
+| `startYear`   | The model year of the first version              |
+| `count`       | How many revisions follow it                     |
+| `addShare`    | The share of cars a revision adds                |
+| `removeShare` | The share of cars a revision removes             |
+| `changeShare` | The share of cars whose price a revision changes |
 
 ## 3. Find the versions
 
@@ -107,9 +107,9 @@ shows how few rows a year adds. The prices of the cars that did not change
 are not copied: the later layer refers to the earlier one.
 
 <Aside type="note">
-  Every layer of a cake uses the slice ids of its cake. So the layer of
-  2027 names the slice ids row of 2027, and `BaseValidator` checks that it
-  does, while `base` names the layer of 2026.
+  Every layer of a cake uses the slice ids of its cake. So the layer of 2027
+  names the slice ids row of 2027, and `BaseValidator` checks that it does,
+  while `base` names the layer of 2026.
 </Aside>
 
 ## 6. Follow the revisions

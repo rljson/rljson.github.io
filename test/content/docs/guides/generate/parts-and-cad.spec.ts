@@ -11,16 +11,16 @@
 
 // #region app
 // #region config
-import { Generator } from '@rljson/generator';
+import { Edge } from '@rljson/edge';
 // #endregion config
 // #region bom
 import { resolveSliceIds, rowOf } from '@rljson/rljson';
 // #endregion bom
 // #region walk
-import type { Part } from '@rljson/generator';
+import type { EPart } from '@rljson/edge';
 // #endregion walk
 // #region cad
-import type { CadMeta } from '@rljson/generator';
+import type { ECadMeta } from '@rljson/edge';
 import type { Tree } from '@rljson/rljson';
 // #endregion cad
 // #region validate
@@ -36,12 +36,11 @@ const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 // #region app
 // #region config
-// One catalog of three cars with small trees
-const generator = new Generator({
-  seed: 'parts-and-cad',
+// One catalog of three cars: parts four levels deep, scenes two levels deep
+const generator = new Edge({
   catalogs: { carsPerCatalog: 3 },
   layers: {
-    parts: { depth: 3, fanOut: 2, sharing: 'perModel', standardPartsPool: 6 },
+    parts: { depth: 4, fanOut: 2, sharing: 'perModel', standardPartsPool: 6 },
     cad: { depth: 2, fanOut: 3, linkToParts: true },
   },
 });
@@ -65,7 +64,7 @@ console.log(`${firstCar}: ${bom.name}, ${bom.subPartRefs.length} assemblies`);
 
 // #region walk
 // Follow subPartRefs down to the leaves
-const printPart = (part: Part, indent = ''): void => {
+const printPart = (part: EPart, indent = ''): void => {
   console.log(`${indent}${part.name} (${part.partNumber}) × ${part.quantity}`);
   for (const subPartRef of part.subPartRefs) {
     printPart(rowOf(world.parts, subPartRef), indent + '  ');
@@ -76,7 +75,7 @@ printPart(bom);
 
 // #region shared
 // Count the parts reached from every car, and the rows that store them
-const countParts = (part: Part): number =>
+const countParts = (part: EPart): number =>
   part.subPartRefs.reduce(
     (sum, ref) => sum + countParts(rowOf(world.parts, ref)),
     1,
@@ -94,12 +93,14 @@ console.log(`${references} part references, ${world.parts._data.length} rows`);
 const cadLayer = rowOf(world.carCad, catalog.layers.carCad);
 
 const printNode = (node: Tree, indent = ''): void => {
-  const meta = node.meta as CadMeta;
+  const meta = node.meta as ECadMeta;
   const detail =
     meta.type === 'mesh'
       ? `${meta.vertices} vertices`
       : `${node.children?.length ?? 0} children`;
-  const part = meta.partRef ? `, shows ${rowOf(world.parts, meta.partRef).name}` : '';
+  const part = meta.partRef
+    ? `, shows ${rowOf(world.parts, meta.partRef).name}`
+    : '';
 
   console.log(`${indent}${node.id}: ${meta.type}, ${detail}${part}`);
   for (const childRef of node.children ?? []) {
@@ -126,14 +127,15 @@ const output = log.mock.calls.map((args) => args.join(' ')).join('\n');
 log.mockRestore();
 
 describe('Parts and CAD tutorial', () => {
-  const depthOf = (part: Part): number =>
-    1 + Math.max(0, ...part.subPartRefs.map((r) => depthOf(rowOf(world.parts, r))));
+  const depthOf = (part: EPart): number =>
+    1 +
+    Math.max(0, ...part.subPartRefs.map((r) => depthOf(rowOf(world.parts, r))));
 
-  it('assigns a bill of materials three levels deep to every car', () => {
+  it('assigns a bill of materials four levels deep to every car', () => {
     for (const carId of carIds) {
       const root = rowOf(world.parts, partsLayer.add[carId]);
       expect(root.level).toBe(0);
-      expect(depthOf(root)).toBe(4);
+      expect(depthOf(root)).toBe(5);
     }
   });
 
@@ -144,7 +146,7 @@ describe('Parts and CAD tutorial', () => {
 
   it('links every mesh to a part', () => {
     for (const node of world.cadScenes._data) {
-      const meta = node.meta as CadMeta;
+      const meta = node.meta as ECadMeta;
       if (meta.type === 'mesh') {
         expect(meta.partRef).toBeTypeOf('string');
         expect(() => rowOf(world.parts, meta.partRef!)).not.toThrow();

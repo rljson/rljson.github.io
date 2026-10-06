@@ -1,0 +1,20 @@
+{
+  "_type": "components",
+  "_data": [
+    {
+      "id": "volkswagen",
+      "name": "Volkswagen AG",
+      "brand": "Volkswagen",
+      "country": "DE",
+      "founded": 1937,
+      "website": "https://www.volkswagen.example",
+      "headquartersRef": "z-hRNWl0UW69fx-wbF9cOO",
+      "catalogsRef": [
+        "O3-J7QQSwdJHlFafk3tqcz"
+      ],
+      "_hash": "L15wLSbe2Ruon9GX4Sj5HG"
+    }
+  ],
+  "_tableCfg": "Zzn4r_dHGNL7sPxndBRiwX",
+  "_hash": "Kg3y5Iwr_rZSLWnoPIpfqD"
+}

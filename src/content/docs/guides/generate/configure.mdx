@@ -14,8 +14,7 @@ estimate with what the run produced.
 
 You will learn how to:
 
-- describe a world with a `GeneratorConfig`
-- give a count as a number or as a range
+- describe a world with an `EConfig`
 - estimate the rows before anything is generated
 - switch layers off
 - tune the values of a layer
@@ -29,7 +28,7 @@ Create a project and install the generator and the core package:
 mkdir car-world
 cd car-world
 echo '{ "type": "module" }' > package.json
-pnpm add @rljson/generator @rljson/rljson
+pnpm add @rljson/edge @rljson/rljson
 ```
 
 `"type": "module"` lets the application use ES modules and top-level `await`.
@@ -39,8 +38,8 @@ code of the previous step. The complete file is shown at the end.
 
 ## 2. Describe the world
 
-A configuration has a seed and sections for the manufacturers, the catalogs
-and the layers. Every field but the seed is optional and has a default:
+A configuration has sections for the manufacturers, the catalogs and the
+layers. Every field is optional and has a default:
 
 <Snippet
   file="configure.spec.ts"
@@ -48,17 +47,15 @@ and the layers. Every field but the seed is optional and has a default:
   title="configure.ts"
 />
 
-| Section         | Decides                                                       |
-| --------------- | ------------------------------------------------------------- |
-| `seed`          | The random numbers, and so the data                           |
-| `manufacturers` | How many manufacturers, how many catalogs each                 |
-| `catalogs`      | How many cars per catalog, the model year, the revisions       |
-| `layers`        | Which aspects the cars get, and the values of each aspect      |
+| Section         | Decides                                                                                            |
+| --------------- | -------------------------------------------------------------------------------------------------- |
+| `manufacturers` | How many manufacturers, how many catalogs each                                                     |
+| `catalogs`      | How many cars per catalog, the model year, the revisions                                           |
+| `layers`        | Which aspects the cars get, and the values of each aspect                                          |
 | `scale`         | Optional: a target number of rows, see [Generate large datasets](/guides/generate/large-datasets/) |
 
-A count is a number or a range. `carsPerCatalog: { min: 8, max: 12 }` lets
-the generator draw a size for each catalog, from the seed, so the catalogs
-differ in size but every run yields the same sizes.
+Nothing in a configuration is random. Two catalogs with ten cars each get
+the same twenty cars on every run.
 
 ## 3. Estimate before you generate
 
@@ -84,14 +81,16 @@ Now generate the world and compare the statistics with the estimate:
   title="configure.ts"
 />
 
-The numbers agree. The estimate knows the counts of the configuration and
-the sharing rules of each layer, so it is exact for everything that does not
-depend on chance.
+The cars agree, and so do most tables. The estimate knows the counts of
+the configuration and the sharing rules of each layer, but it counts every
+row that can exist. Here it expects five owners per manufacturer, while
+three workshops need only three of them. And it expects twenty prices,
+while two cars happen to get the same price.
 
 <Aside type="note">
-  Rows that become equal by chance, like two cars that draw the same price,
-  are stored once. Then the statistics count fewer rows than the estimate.
-  The estimate is an upper bound.
+  Rows that turn out equal are stored once, and owners no workshop needs are
+  never generated. So the statistics can count fewer rows than the estimate,
+  never more. The estimate is an upper bound.
 </Aside>
 
 ## 5. Switch layers off
@@ -132,8 +131,8 @@ brand layers, as [Walk the car world](/guides/generate/car-world/) does:
 ## 7. Read the resolved configuration
 
 The generator fills every field you left out with its default. `config`
-returns the result. Store it with the data you generated: with the seed, it
-reproduces the data at any time.
+returns the result. Store it with the data you generated: it reproduces the
+data at any time.
 
 <Snippet
   file="configure.spec.ts"
@@ -170,9 +169,8 @@ node configure.ts
 
 ## What you have learned
 
-- A `GeneratorConfig` describes the manufacturers, the catalogs and the
-  layers of a world. Every field but the seed has a default.
-- A count is a number or a range, drawn from the seed.
+- An `EConfig` describes the manufacturers, the catalogs and the layers
+  of a world. Every field has a default.
 - `estimate` tells the size of a world before you generate it.
 - A layer set to `false` is left out, and its tables stay empty.
 - Every layer has settings for its values, like ranges, currencies and

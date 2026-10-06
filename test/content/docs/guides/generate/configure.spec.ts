@@ -11,8 +11,8 @@
 
 // #region app
 // #region config
-import { Generator } from '@rljson/generator';
-import type { GeneratorConfig } from '@rljson/generator';
+import { Edge } from '@rljson/edge';
+import type { EConfig } from '@rljson/edge';
 // #endregion config
 // #region zipf
 import { rowOf } from '@rljson/rljson';
@@ -28,23 +28,22 @@ const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 // #region app
 // #region config
 // Sizes, layers and value ranges of the world
-const config: GeneratorConfig = {
-  seed: 'configure',
+const config: EConfig = {
   manufacturers: { count: 2, catalogsPerManufacturer: 1 },
-  catalogs: { carsPerCatalog: { min: 8, max: 12 } },
+  catalogs: { carsPerCatalog: 10 },
   layers: {
     prices: {
       currencies: ['EUR', 'CHF'],
       range: { min: 20000, max: 80000 },
       roundTo: 100,
     },
-    brands: { modelsPerBrand: 3, popularity: 'zipf' },
+    brands: { modelsPerManufacturer: 3, popularity: 'zipf' },
     workshops: { perCatalog: 3 },
     parts: false,
     cad: false,
   },
 };
-const generator = new Generator(config);
+const generator = new Edge(config);
 // #endregion config
 
 // #region estimate
@@ -96,7 +95,9 @@ for (const [model, count] of byCount) {
 // #region resolved
 // The resolved configuration has every default filled in
 const resolved = generator.config;
-console.log(`cars per catalog: ${JSON.stringify(resolved.catalogs.carsPerCatalog)}`);
+console.log(
+  `cars per catalog: ${JSON.stringify(resolved.catalogs.carsPerCatalog)}`,
+);
 console.log(`start year: ${resolved.catalogs.startYear}`);
 // #endregion resolved
 // #endregion app
@@ -105,10 +106,9 @@ const output = log.mock.calls.map((args) => args.join(' ')).join('\n');
 log.mockRestore();
 
 describe('Configure tutorial', () => {
-  it('draws the catalog sizes from the configured range', () => {
+  it('generates two catalogs of ten cars', () => {
     expect(world.catalogs._data).toHaveLength(2);
-    expect(stats.cars).toBeGreaterThanOrEqual(16);
-    expect(stats.cars).toBeLessThanOrEqual(24);
+    expect(stats.cars).toBe(20);
   });
 
   it('estimates what the run produces', () => {
@@ -138,8 +138,7 @@ describe('Configure tutorial', () => {
   it('fills the defaults into the resolved configuration', async () => {
     await writeGolden('config.json', JSON.parse(JSON.stringify(resolved)));
 
-    expect(resolved.seed).toBe('configure');
-    expect(resolved.catalogs.carsPerCatalog).toEqual({ min: 8, max: 12 });
+    expect(resolved.catalogs.carsPerCatalog).toBe(10);
     expect(resolved.catalogs.startYear).toBe(2026);
   });
 

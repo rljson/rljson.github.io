@@ -11,7 +11,7 @@
 
 // #region app
 // #region generate
-import { Generator } from '@rljson/generator';
+import { Edge } from '@rljson/edge';
 // #endregion generate
 // #region manufacturers
 import { rowOf } from '@rljson/rljson';
@@ -29,12 +29,17 @@ const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 
 // #region app
 // #region generate
-// Two manufacturers with one catalog of four cars each
-const generator = new Generator({
-  seed: 'car-world',
+// Two manufacturers with one catalog of four cars each. Every manufacturer
+// offers two models and has one person who owns its two workshops.
+const generator = new Edge({
   manufacturers: { count: 2, catalogsPerManufacturer: 1 },
   catalogs: { carsPerCatalog: 4 },
-  layers: { workshops: { perCatalog: 2 }, parts: false, cad: false },
+  layers: {
+    brands: { modelsPerManufacturer: 2 },
+    workshops: { perCatalog: 2, ownersPerManufacturer: 1 },
+    parts: false,
+    cad: false,
+  },
 });
 const { world, stats } = await generator.generate();
 // #endregion generate
@@ -84,7 +89,7 @@ for (const carId of carIds) {
   const workshop = rowOf(world.workshops, workshopLayer.add[carId]);
 
   console.log(
-    `${carId}: ${brand.brand} ${brand.model} ${brand.modelYear}, ` +
+    `${carId}: ${brand.brand} ${brand.model}, ` +
       `${price.amount} ${price.currency}, serviced by ${workshop.name}`,
   );
 }
@@ -145,6 +150,7 @@ describe('Car world tutorial', () => {
     expect(output).toContain('layers: carPrices, carBrands, carWorkshops');
     expect(output).toContain('serviced by');
     expect(output).toContain('owned by');
-    expect(output).toContain('8 cars share');
+    expect(output).toContain('8 cars share 4 brands and 4 workshops');
+    expect(world.persons._data).toHaveLength(2);
   });
 });

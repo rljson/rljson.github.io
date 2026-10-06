@@ -35,7 +35,7 @@ Create a project and install the generator and the core package:
 mkdir car-world
 cd car-world
 echo '{ "type": "module" }' > package.json
-pnpm add @rljson/generator @rljson/rljson
+pnpm add @rljson/edge @rljson/rljson
 ```
 
 `"type": "module"` lets the application use ES modules and top-level `await`.
@@ -59,16 +59,17 @@ Before you generate millions of rows, ask how many there will be.
   title="Output"
 />
 
-The two biggest presets reach 20 million rows in different ways. `large`
-gives every car a bill of materials and a scene of its own, so most rows
-are parts and nodes. `xl` shares them per model but has 20 million cars, so
-most rows are prices, and the layers are the biggest rows: one assignment
-per car.
+The two biggest presets are big in different ways. `large` gives every car
+a bill of materials and a scene of its own, so most of its 25 million rows
+are parts and nodes. `xl` shares them per model but lists 20 million cars,
+so its layers are the biggest rows: one assignment per car.
 
 ## 3. Pick a target size
 
 Instead of counting cars, name the number of rows you want. The generator
-scales the cars per catalog until the estimate reaches it:
+scales the cars per catalog until the estimate reaches it. That works when
+every car adds rows of its own, so this world gives every car a bill of
+materials and a scene with `sharing: 'perCar'`:
 
 <Snippet
   file="large-datasets.spec.ts"
@@ -78,12 +79,14 @@ scales the cars per catalog until the estimate reaches it:
 
 The resolved configuration shows what the generator chose. The world in
 this tutorial is small, so the steps run in seconds; the same code handles
-`large`.
+`large`. When the rows never reach the target, because the cars share
+their bills of materials and scenes, the generator stops at 100 000 cars
+per catalog.
 
 <Aside type="note">
-  A catalog is a cake, and each of its layers is one row with one entry per
-  car. Keep a catalog below about 100 000 cars, so that a layer row stays a
-  few megabytes. Large worlds come from many catalogs, not from huge ones.
+  A catalog is a cake, and each of its layers is one row with one entry per car.
+  Keep a catalog below about 100 000 cars, so that a layer row stays a few
+  megabytes. Large worlds come from many catalogs, not from huge ones.
 </Aside>
 
 ## 4. Receive the rows
@@ -100,9 +103,9 @@ layers before cakes.
   title="large.ts"
 />
 
-| Callback  | Called                                                                                                          |
-| --------- | --------------------------------------------------------------------------------------------------------------- |
-| `onRow`   | For every row, with its table. A returned promise is awaited, so the callback can slow the generator down       |
+| Callback  | Called                                                                                                            |
+| --------- | ----------------------------------------------------------------------------------------------------------------- |
+| `onRow`   | For every row, with its table. A returned promise is awaited, so the callback can slow the generator down         |
 | `onTable` | Optional. Once per table, before its first row, with the table's configuration. A database creates the table here |
 
 The callback counts the rows and drops them. However many rows pass
@@ -127,16 +130,18 @@ generator did. For a world that fits into memory, `generate` and one
 `JSON.stringify` of the result give a single Rljson file instead.
 
 <Aside type="tip">
-  The same callback shape writes into a database. With `@rljson/io`, create
-  the table in `onTable` and insert each row in `onRow`. In the browser,
-  write into IndexedDB. The generator does not know the difference.
+  The same callback shape writes into a database. With `@rljson/io`, create the
+  table in `onTable` and insert each row in `onRow`. In the browser, write into
+  IndexedDB. The generator does not know the difference.
 </Aside>
 
 ## 6. Watch the progress
 
-A long run should say where it is. `progress` is called when a phase
-begins and after every `progressEvery` rows. The phases follow the order of
-the rows. `run` without a sink drops the rows, which is all this step needs:
+A long run should say where it is. `progress` is called when a new phase
+begins, without a table, and after every `progressEvery` rows, with the
+table of the last row. Both report the rows done and the rows the estimate
+expects. This step prints the regular reports only. `run` without a sink
+drops the rows, which is all this step needs:
 
 <Snippet
   file="large-datasets.spec.ts"
@@ -145,7 +150,8 @@ the rows. `run` without a sink drops the rows, which is all this step needs:
 />
 
 `rowsTotal` is the estimate, so a progress bar knows its end from the
-start.
+start. It is an upper bound: the run ends below it when rows fold into
+one.
 
 ## 7. Stop a run
 
@@ -181,9 +187,8 @@ node large.ts
 />
 
 To generate the `large` preset, replace the generator of step 3 by
-`Generator.preset('large', { seed: 'large-datasets' })` and keep the NDJSON
-callback of step 5. It writes about 20 million rows, which takes minutes
-and a few gigabytes of disk.
+`Edge.preset('large')` and keep the NDJSON callback of step 5. It writes
+about 25 million rows, which takes minutes and a few gigabytes of disk.
 
 ## What you have learned
 

@@ -1,0 +1,220 @@
+---
+title: Parts and CAD scenes
+description: Generate bills of materials up to four levels deep and CAD scenes as trees, walk both, and see how shared parts are stored once.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+Two layers of a catalog hold hierarchical data. The parts layer assigns a
+bill of materials to every car: a part that refers to its sub parts, which
+refer to theirs, up to four levels deep. The CAD layer assigns a scene to
+every car: a [tree](/guides/data_types/tree/) whose nodes are groups and
+meshes. Both are built from the same idea, rows that refer to rows by hash,
+but with different data types:
+
+```text
+Bill of materials (components)       CAD scene (trees)
+Vehicle                              scene
+├─ Engine            level 1         ├─ body          group
+│  ├─ Cylinder head  level 2         │  ├─ hood       mesh, 12 480 vertices
+│  │  ├─ Valve       level 3         │  └─ door-l     mesh
+│  │  │  └─ Spring   level 4         ├─ chassis       group
+│  │  └─ Camshaft                    └─ wheels        group
+│  └─ Turbocharger                      ├─ wheel-fl   mesh
+└─ Chassis                              └─ wheel-fr   mesh
+```
+
+In this tutorial you generate small trees of both kinds, walk them from the
+car down to the leaves, count how many parts the cars share, and follow a
+mesh to the part it shows.
+
+You will learn how to:
+
+- configure the depth, the fan-out and the sharing of parts and scenes
+- find the bill of materials and the scene of a car
+- walk components that refer to components
+- walk a tree of nodes
+- measure how much the cars share
+
+## 1. Set up the project
+
+Create a project and install the generator and the core package:
+
+```bash
+mkdir car-world
+cd car-world
+echo '{ "type": "module" }' > package.json
+pnpm add @rljson/edge @rljson/rljson
+```
+
+`"type": "module"` lets the application use ES modules and top-level `await`.
+Now create the file `parts.ts`. Each of the following steps adds code to it:
+put the imports of a step at the top of the file, and its code below the code
+of the previous step. The complete file is shown at the end.
+
+## 2. Configure the trees
+
+Keep the world small: one catalog of three cars, parts four levels deep
+with two sub parts each, scenes two levels deep with three children each:
+
+<Snippet
+  file="parts-and-cad.spec.ts"
+  region="config"
+  title="parts.ts"
+/>
+
+| Setting             | Meaning                                                      |
+| ------------------- | ------------------------------------------------------------ |
+| `depth`             | Levels below the root, 1 to 4                                |
+| `fanOut`            | Sub parts or children per node, 1 to 6                       |
+| `sharing`           | Who gets the same tree: `perCar`, `perModel` or `perCatalog` |
+| `standardPartsPool` | How many distinct parts the lowest level draws from          |
+| `linkToParts`       | Whether a mesh refers to the part it shows                   |
+
+With `perModel`, every car of a model gets the same bill of materials, so
+its rows are stored once per model. With `perCar`, every car gets a tree of
+its own; that is how the `large` preset reaches 25 million rows.
+
+## 3. Find the bill of materials of a car
+
+The parts layer, `carParts`, assigns a part of level 0 to every car: the
+bill of materials. Like every part, it lists its sub parts in
+`subPartRefs`:
+
+<Snippet
+  file="parts-and-cad.spec.ts"
+  region="bom"
+  title="parts.ts"
+/>
+
+A part has these columns:
+
+| Column        | Meaning                                                    |
+| ------------- | ---------------------------------------------------------- |
+| `name`        | The name of the part                                       |
+| `partNumber`  | A number that is unique per manufacturer                   |
+| `category`    | `bom`, `engine`, `chassis`, `body`, `interior`, `standard` |
+| `level`       | 0 for the bill of materials, up to 4 for a standard part   |
+| `quantity`    | How many of it the parent contains                         |
+| `weightKg`    | The weight of one                                          |
+| `material`    | The material, or `null`                                    |
+| `subPartRefs` | The hashes of the sub parts, empty for a leaf              |
+
+The table configuration declares `subPartRefs` as a reference column of
+type `jsonArray`, so the validator checks every element.
+
+## 4. Walk the parts
+
+A recursive function prints a part and descends into its sub parts:
+
+<Snippet
+  file="parts-and-cad.spec.ts"
+  region="walk"
+  title="parts.ts"
+/>
+
+This is the same walk as in [Components](/guides/data_types/components/),
+where a car follows `wheelsRef` to its wheels. Here the rows refer to rows
+of their own table, so the walk repeats until a part has no sub parts.
+
+## 5. Count the shared parts
+
+Count the parts the walk reaches from every car, and compare the count with
+the rows of the parts table:
+
+<Snippet
+  file="parts-and-cad.spec.ts"
+  region="shared"
+  title="parts.ts"
+/>
+
+The references outnumber the rows. The three cars belong to at most three
+models, so there are at most three bills of materials, and the lowest level
+draws from a pool of six standard parts, which every tree shares. A part
+that is equal in every column has the same hash, wherever it is used.
+
+<Aside type="tip">
+  The same is true of the subtrees. If two bills of materials contain the same
+  engine, down to the last screw, they refer to the same engine row. That is
+  what `sharing` controls, and what `dedupRatio` in the statistics measures.
+</Aside>
+
+## 6. Walk the CAD scene
+
+The CAD layer, `carCad`, assigns the root node of a scene to every car. The
+nodes are rows of the trees table `cadScenes`. A node's `meta` tells whether
+it is a group or a mesh, and a mesh carries its vertex count and, with
+`linkToParts`, the hash of the part it shows:
+
+<Snippet
+  file="parts-and-cad.spec.ts"
+  region="cad"
+  title="parts.ts"
+/>
+
+The scene is a tree as the [Tree](/guides/data_types/tree/) tutorial
+builds it: `children` holds the hashes of the child nodes, `meta` holds the
+data. `ECadMeta` from `@rljson/edge` types the data:
+
+| Field       | Meaning                                                 |
+| ----------- | ------------------------------------------------------- |
+| `type`      | `group` or `mesh`                                       |
+| `variant`   | What the scene shows: the model, the car or the catalog |
+| `transform` | `position`, `rotation` and `scale`, three numbers each  |
+| `material`  | The material of a mesh                                  |
+| `vertices`  | The vertex count of a mesh                              |
+| `boundsM`   | Width, height and depth in meters                       |
+| `partRef`   | The hash of the part the mesh shows, or `null`          |
+
+The layer points at a trees table instead of a components table. A layer
+only needs a table whose rows have hashes, so a tree root serves as a
+component.
+
+## 7. Validate the world
+
+<Snippet
+  file="parts-and-cad.spec.ts"
+  region="validate"
+  title="parts.ts"
+/>
+
+The validator checks every `subPartRefs` element against the parts table,
+every child of every node against the scenes table, and every assignment of
+both layers.
+
+## 8. Run the application
+
+Here is the complete `parts.ts`:
+
+<Snippet
+  file="parts-and-cad.spec.ts"
+  region="app"
+  title="parts.ts"
+/>
+
+Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
+or with `npx tsx parts.ts`:
+
+```bash
+node parts.ts
+```
+
+<Snippet
+  file="output.txt"
+  title="Output"
+/>
+
+## What you have learned
+
+- The parts layer assigns a bill of materials to every car: components that
+  refer to components, up to four levels deep.
+- The CAD layer assigns a scene to every car: a tree of groups and meshes,
+  and a mesh can refer to its part.
+- `depth`, `fanOut` and `sharing` size the trees, and `sharing` decides how
+  much the cars share.
+- Shared parts and subtrees are stored once, which the statistics report as
+  `dedupRatio`.
+
+Next, [Catalog revisions](/guides/generate/revisions/) generates the model
+years of a catalog.

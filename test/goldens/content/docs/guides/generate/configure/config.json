@@ -1,0 +1,44 @@
+{
+  "manufacturers": {
+    "count": 2,
+    "catalogsPerManufacturer": 1
+  },
+  "catalogs": {
+    "carsPerCatalog": 10,
+    "startYear": 2026,
+    "revisions": {
+      "count": 0,
+      "addShare": 0.2,
+      "removeShare": 0.1,
+      "changeShare": 0.2
+    }
+  },
+  "layers": {
+    "prices": {
+      "currencies": [
+        "EUR",
+        "CHF"
+      ],
+      "range": {
+        "min": 20000,
+        "max": 80000
+      },
+      "roundTo": 100,
+      "discountShare": 0
+    },
+    "brands": {
+      "modelsPerManufacturer": 3,
+      "popularity": "zipf"
+    },
+    "workshops": {
+      "perCatalog": 3,
+      "ownersPerManufacturer": 5
+    },
+    "parts": false,
+    "cad": false
+  },
+  "scale": {
+    "targetRows": null
+  },
+  "progressEvery": 1000
+}

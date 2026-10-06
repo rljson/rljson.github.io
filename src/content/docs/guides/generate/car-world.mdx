@@ -1,0 +1,176 @@
+---
+title: Walk the car world
+description: Follow the references of a generated world from a manufacturer to a single car, through reference arrays, cakes, layers and components.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+A generated world is a graph of references. The manufacturers are its
+entry point. A manufacturer lists its catalogs, and a catalog is a cake
+whose layers assign a price, a brand and a workshop to every car. In this
+tutorial you start at the manufacturers and follow the references down to
+the cars, with nothing but `rowOf` and `resolveSliceIds` from
+`@rljson/rljson`.
+
+You will learn how to:
+
+- follow an array of references
+- resolve the cars of a catalog from its slice ids
+- look up the component a layer assigns to a car
+- follow a chain of references, from a workshop to its owner
+- see which rows the cars share
+
+## 1. Set up the project
+
+Create a project and install the generator and the core package:
+
+```bash
+mkdir car-world
+cd car-world
+echo '{ "type": "module" }' > package.json
+pnpm add @rljson/edge @rljson/rljson
+```
+
+`"type": "module"` lets the application use ES modules and top-level `await`.
+Now create the file `walk.ts`. Each of the following steps adds code to it:
+put the imports of a step at the top of the file, and its code below the code
+of the previous step. The complete file is shown at the end.
+
+## 2. Generate a world
+
+This world has two manufacturers with one catalog of four cars each. Every
+manufacturer offers two models and has one owner for its two workshops.
+Parts and CAD scenes are switched off, [Parts and CAD
+scenes](/guides/generate/parts-and-cad/) walks them:
+
+<Snippet
+  file="car-world.spec.ts"
+  region="generate"
+  title="walk.ts"
+/>
+
+[Configure the generator](/guides/generate/configure/) explains the
+configuration. Here it only has to be small enough to print.
+
+## 3. Start at the manufacturers
+
+The table `manufacturers` is the entry point of the world: one row per
+manufacturer, nothing above it. Print each manufacturer, and follow its
+`headquartersRef` to an address:
+
+<Snippet
+  file="car-world.spec.ts"
+  region="manufacturers"
+  title="walk.ts"
+/>
+
+`headquartersRef` holds one hash, so `rowOf` returns one row. The next step
+follows a column that holds many.
+
+## 4. From a manufacturer to its catalogs
+
+A manufacturer lists its catalogs in `catalogsRef`, an array with one hash
+per catalog, like `wheelsRef` in
+[Components](/guides/data_types/components/). A catalog is a
+[cake](/guides/data_types/cake/): its `sliceIdsRow` names the row of
+`carIds` that lists its cars, and `layers` names one layer per aspect:
+
+<Snippet
+  file="car-world.spec.ts"
+  region="catalogs"
+  title="walk.ts"
+/>
+
+The id of a catalog is the manufacturer, the segment and the model year,
+like `volkswagen-cars-2026`. A slice id is the catalog followed by a number,
+like `volkswagen-cars-000001`.
+
+<Aside type="note">
+  `hip` hashes nested objects too, so `layers` carries a `_hash` of its own,
+  next to the layer names. Skip the keys that start with an underscore when you
+  iterate it. The same holds for the `add` of a layer.
+</Aside>
+
+## 5. From a car to its price, brand and workshop
+
+Each layer of the cake lives in a layers table that is named after the
+aspect: `carPrices`, `carBrands`, `carWorkshops`. Look up the three layers
+of the first catalog. Then, for every car, take the component each layer
+assigns in `add`:
+
+<Snippet
+  file="car-world.spec.ts"
+  region="cars"
+  title="walk.ts"
+/>
+
+The three lookups are the same operation. A layer maps a slice id to the
+hash of a component, and `rowOf` turns the hash into the row.
+
+## 6. From a workshop to its owner
+
+Components refer to components. A workshop refers to its address in
+`addressRef` and to its owner in `ownerRef`:
+
+<Snippet
+  file="car-world.spec.ts"
+  region="workshops"
+  title="walk.ts"
+/>
+
+Two cars of a catalog share each workshop, and one person owns both
+workshops of a manufacturer. The references express that without copying
+a single value.
+
+## 7. Count the shared rows
+
+Equal content has an equal hash, and the generator stores it once. Compare
+the number of cars with the number of brand and workshop rows: eight cars
+use four brands and four workshops.
+
+<Snippet
+  file="car-world.spec.ts"
+  region="shared"
+  title="walk.ts"
+/>
+
+The layers hold one assignment per car, the components tables hold one row
+per distinct value. That is the normalization Rljson is built for: the
+layers are as long as the catalog, the components as long as the variety.
+
+## 8. Run the application
+
+Here is the complete `walk.ts`:
+
+<Snippet
+  file="car-world.spec.ts"
+  region="app"
+  title="walk.ts"
+/>
+
+Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
+or with `npx tsx walk.ts`:
+
+```bash
+node walk.ts
+```
+
+<Snippet
+  file="output.txt"
+  title="Output"
+/>
+
+## What you have learned
+
+- The manufacturers table is the entry point. A row lists other rows with
+  an array of references.
+- A catalog is a cake. `resolveSliceIds` yields its cars, `layers` names
+  one layer per aspect.
+- A layer's `add` maps every car to a component, and `rowOf` follows the
+  hash to the row.
+- Components refer to components, like a workshop to its address and owner.
+- Rows with equal content are stored once, however many cars use them.
+
+Next, [Configure the generator](/guides/generate/configure/) replaces the
+preset by a configuration of your own.

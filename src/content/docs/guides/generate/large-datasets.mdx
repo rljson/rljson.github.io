@@ -1,0 +1,205 @@
+---
+title: Generate large datasets
+description: Estimate the presets, pick a target size, receive the rows through a callback, write NDJSON files from it, watch the progress and stop a run.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+`generate` returns a world as one object in memory. That is the default,
+and it works for thousands of cars, not for millions. For large worlds the
+generator hands every row to a callback as soon as it is hashed, and keeps
+only the hashes that later rows refer to.
+
+The generator itself writes nothing. It depends on neither the file system
+nor a database, so it runs in Node.js, in the browser and in a Web Worker
+alike. Where the rows go is the callback's business: a file, an
+`@rljson/io` database or the browser's IndexedDB. In this tutorial you
+estimate the size of every preset, pick a target size, count the rows in a
+callback, write them as NDJSON files, watch the progress and stop a run.
+
+You will learn how to:
+
+- estimate the size of the presets
+- let the generator scale a world to a target number of rows
+- receive the rows through a callback with `run`
+- write NDJSON files from the callback
+- watch the progress of a run
+- stop a run with an `AbortSignal`
+
+## 1. Set up the project
+
+Create a project and install the generator and the core package:
+
+```bash
+mkdir car-world
+cd car-world
+echo '{ "type": "module" }' > package.json
+pnpm add @rljson/edge @rljson/rljson
+```
+
+`"type": "module"` lets the application use ES modules and top-level `await`.
+Now create the file `large.ts`. Each of the following steps adds code to it:
+put the imports of a step at the top of the file, and its code below the code
+of the previous step. The complete file is shown at the end.
+
+## 2. Estimate the presets
+
+Before you generate millions of rows, ask how many there will be.
+`estimate` works from the configuration alone:
+
+<Snippet
+  file="large-datasets.spec.ts"
+  region="presets"
+  title="large.ts"
+/>
+
+<Snippet
+  file="presets.txt"
+  title="Output"
+/>
+
+The two biggest presets are big in different ways. `large` gives every car
+a bill of materials and a scene of its own, so most of its 25 million rows
+are parts and nodes. `xl` shares them per model but lists 20 million cars,
+so its layers are the biggest rows: one assignment per car.
+
+## 3. Pick a target size
+
+Instead of counting cars, name the number of rows you want. The generator
+scales the cars per catalog until the estimate reaches it. That works when
+every car adds rows of its own, so this world gives every car a bill of
+materials and a scene with `sharing: 'perCar'`:
+
+<Snippet
+  file="large-datasets.spec.ts"
+  region="target"
+  title="large.ts"
+/>
+
+The resolved configuration shows what the generator chose. The world in
+this tutorial is small, so the steps run in seconds; the same code handles
+`large`. When the rows never reach the target, because the cars share
+their bills of materials and scenes, the generator stops at 100 000 cars
+per catalog.
+
+<Aside type="note">
+  A catalog is a cake, and each of its layers is one row with one entry per car.
+  Keep a catalog below about 100 000 cars, so that a layer row stays a few
+  megabytes. Large worlds come from many catalogs, not from huge ones.
+</Aside>
+
+## 4. Receive the rows
+
+`run` takes a sink: an object with an `onRow` callback. The generator calls
+it for every row, with the name of the row's table, and keeps nothing. The
+rows come in the order of their references: addresses before workshops, sub
+parts before parts, nodes before their parents, components before layers,
+layers before cakes.
+
+<Snippet
+  file="large-datasets.spec.ts"
+  region="callback"
+  title="large.ts"
+/>
+
+| Callback  | Called                                                                                                            |
+| --------- | ----------------------------------------------------------------------------------------------------------------- |
+| `onRow`   | For every row, with its table. A returned promise is awaited, so the callback can slow the generator down         |
+| `onTable` | Optional. Once per table, before its first row, with the table's configuration. A database creates the table here |
+
+The callback counts the rows and drops them. However many rows pass
+through, the memory stays flat. A callback like this feeds a database, a
+socket or a test.
+
+## 5. Write NDJSON files from the callback
+
+Files are the application's job. This step opens one write stream per
+table and appends every row as one line of JSON. When a stream falls
+behind, `onRow` returns a promise that waits for it, and the generator
+waits too:
+
+<Snippet
+  file="large-datasets.spec.ts"
+  region="ndjson"
+  title="large.ts"
+/>
+
+NDJSON files load line by line, so a reader needs no more memory than the
+generator did. For a world that fits into memory, `generate` and one
+`JSON.stringify` of the result give a single Rljson file instead.
+
+<Aside type="tip">
+  The same callback shape writes into a database. With `@rljson/io`, create the
+  table in `onTable` and insert each row in `onRow`. In the browser, write into
+  IndexedDB. The generator does not know the difference.
+</Aside>
+
+## 6. Watch the progress
+
+A long run should say where it is. `progress` is called when a new phase
+begins, without a table, and after every `progressEvery` rows, with the
+table of the last row. Both report the rows done and the rows the estimate
+expects. This step prints the regular reports only. `run` without a sink
+drops the rows, which is all this step needs:
+
+<Snippet
+  file="large-datasets.spec.ts"
+  region="progress"
+  title="large.ts"
+/>
+
+`rowsTotal` is the estimate, so a progress bar knows its end from the
+start. It is an upper bound: the run ends below it when rows fold into
+one.
+
+## 7. Stop a run
+
+Pass an `AbortSignal` to stop a run. The generator checks it after every
+row. The rows the callback has written so far stay where they are:
+
+<Snippet
+  file="large-datasets.spec.ts"
+  region="abort"
+  title="large.ts"
+/>
+
+## 8. Run the application
+
+Here is the complete `large.ts`:
+
+<Snippet
+  file="large-datasets.spec.ts"
+  region="app"
+  title="large.ts"
+/>
+
+Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
+or with `npx tsx large.ts`:
+
+```bash
+node large.ts
+```
+
+<Snippet
+  file="output.txt"
+  title="Output"
+/>
+
+To generate the `large` preset, replace the generator of step 3 by
+`Edge.preset('large')` and keep the NDJSON callback of step 5. It writes
+about 25 million rows, which takes minutes and a few gigabytes of disk.
+
+## What you have learned
+
+- `estimate` sizes a world before you generate it, and `scale.targetRows`
+  lets the generator size it for you.
+- `run` hands every row to a callback, in the order of the references, and
+  keeps nothing. A returned promise slows the generator down.
+- The generator writes no files and knows no database. The callback does,
+  in Node.js, in the browser or in a Web Worker.
+- `progress` reports phases and rows, and an `AbortSignal` stops a run.
+
+You have finished the tutorials on the generator. Start again with [Your
+first dataset](/guides/generate/first-dataset/), or build data of your own
+with the [Data Types](/guides/data_types/components/) tutorials.

@@ -1,0 +1,15 @@
+tiny             5 cars         112 rows      0 MB
+small          400 cars        1159 rows      0 MB
+medium      100000 cars       15362 rows     33 MB
+large       200000 cars    25060857 rows   6929 MB
+xl        20000000 cars      291325 rows   6049 MB
+cars per catalog: 164
+estimated rows: 19961
+received 18849 of 18849 rows
+9184 parts, 9184 nodes, 200 prices
+16 files, prices.ndjson has 200 lines
+first line: {"amount":18600,"currency":"EUR","validFrom":"2026-01-01","discountPercent":0,"taxIncluded":true,"_hash":"JhnUkWMmMrljPjP7yGa7M-"}
+5000 of 19961 rows, parts
+10000 of 19961 rows, parts
+15000 of 19961 rows, parts
+stopped: Edge: generation aborted after 3000 rows

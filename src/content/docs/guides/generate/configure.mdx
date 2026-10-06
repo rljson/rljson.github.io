@@ -1,0 +1,181 @@
+---
+title: Configure the generator
+description: Replace a preset by a configuration of your own, estimate the result before you generate it, and tune counts, layers, value ranges and popularity.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+A preset is a configuration someone else has written. In this tutorial you
+write your own: how many manufacturers, catalogs and cars, which layers,
+which price range and currencies, and how popular each model is. You
+estimate the size of the world before you generate it and compare the
+estimate with what the run produced.
+
+You will learn how to:
+
+- describe a world with an `EConfig`
+- estimate the rows before anything is generated
+- switch layers off
+- tune the values of a layer
+- read the resolved configuration with all defaults
+
+## 1. Set up the project
+
+Create a project and install the generator and the core package:
+
+```bash
+mkdir car-world
+cd car-world
+echo '{ "type": "module" }' > package.json
+pnpm add @rljson/edge @rljson/rljson
+```
+
+`"type": "module"` lets the application use ES modules and top-level `await`.
+Now create the file `configure.ts`. Each of the following steps adds code to
+it: put the imports of a step at the top of the file, and its code below the
+code of the previous step. The complete file is shown at the end.
+
+## 2. Describe the world
+
+A configuration has sections for the manufacturers, the catalogs and the
+layers. Every field is optional and has a default:
+
+<Snippet
+  file="configure.spec.ts"
+  region="config"
+  title="configure.ts"
+/>
+
+| Section         | Decides                                                                                            |
+| --------------- | -------------------------------------------------------------------------------------------------- |
+| `manufacturers` | How many manufacturers, how many catalogs each                                                     |
+| `catalogs`      | How many cars per catalog, the model year, the revisions                                           |
+| `layers`        | Which aspects the cars get, and the values of each aspect                                          |
+| `scale`         | Optional: a target number of rows, see [Generate large datasets](/guides/generate/large-datasets/) |
+
+Nothing in a configuration is random. Two catalogs with ten cars each get
+the same twenty cars on every run.
+
+## 3. Estimate before you generate
+
+`estimate` calculates how many rows each table will have. It costs nothing:
+no row is generated, no memory is used.
+
+<Snippet
+  file="configure.spec.ts"
+  region="estimate"
+  title="configure.ts"
+/>
+
+Use it to size a configuration before a long run, or to show a user what a
+setting means.
+
+## 4. Generate and compare
+
+Now generate the world and compare the statistics with the estimate:
+
+<Snippet
+  file="configure.spec.ts"
+  region="generate"
+  title="configure.ts"
+/>
+
+The cars agree, and so do most tables. The estimate knows the counts of
+the configuration and the sharing rules of each layer, but it counts every
+row that can exist. Here it expects five owners per manufacturer, while
+three workshops need only three of them. And it expects twenty prices,
+while two cars happen to get the same price.
+
+<Aside type="note">
+  Rows that turn out equal are stored once, and owners no workshop needs are
+  never generated. So the statistics can count fewer rows than the estimate,
+  never more. The estimate is an upper bound.
+</Aside>
+
+## 5. Switch layers off
+
+A layer set to `false` is left out: the cake has fewer layers, and the
+tables of the layer stay empty:
+
+<Snippet
+  file="configure.spec.ts"
+  region="layers-off"
+  title="configure.ts"
+/>
+
+The tables keep their names, so an application sees the same shape with
+every configuration. Only their rows differ.
+
+## 6. Tune the values
+
+Each layer has settings of its own. The prices draw from a range, rounded,
+in one of the configured currencies. The brands follow a popularity: with
+`zipf`, a few models get most of the cars, as in a real catalog:
+
+<Snippet
+  file="configure.spec.ts"
+  region="values"
+  title="configure.ts"
+/>
+
+The bars show the distribution. Count the cars of each model by walking the
+brand layers, as [Walk the car world](/guides/generate/car-world/) does:
+
+<Snippet
+  file="configure.spec.ts"
+  region="zipf"
+  title="configure.ts"
+/>
+
+## 7. Read the resolved configuration
+
+The generator fills every field you left out with its default. `config`
+returns the result. Store it with the data you generated: it reproduces the
+data at any time.
+
+<Snippet
+  file="configure.spec.ts"
+  region="resolved"
+  title="configure.ts"
+/>
+
+<Snippet
+  file="config.json"
+  title="Output"
+/>
+
+## 8. Run the application
+
+Here is the complete `configure.ts`:
+
+<Snippet
+  file="configure.spec.ts"
+  region="app"
+  title="configure.ts"
+/>
+
+Run it with a Node.js version that runs TypeScript directly, like Node.js 24,
+or with `npx tsx configure.ts`:
+
+```bash
+node configure.ts
+```
+
+<Snippet
+  file="output.txt"
+  title="Output"
+/>
+
+## What you have learned
+
+- An `EConfig` describes the manufacturers, the catalogs and the layers
+  of a world. Every field has a default.
+- `estimate` tells the size of a world before you generate it.
+- A layer set to `false` is left out, and its tables stay empty.
+- Every layer has settings for its values, like ranges, currencies and
+  popularity.
+- `config` returns the resolved configuration, which reproduces the data.
+
+Next, [Parts and CAD scenes](/guides/generate/parts-and-cad/) walks the
+hierarchical data of a car.

@@ -1,0 +1,31 @@
+estimated: 20 cars, 79 rows
+  tableCfgs          17
+  addresses          8
+  persons            10
+  workshops          6
+  prices             20
+  brands             6
+  parts              0
+  cadScenes          0
+  carIds             2
+  carPrices          2
+  carBrands          2
+  carWorkshops       2
+  carParts           0
+  carCad             0
+  catalogs           2
+  revisions          0
+  manufacturers      2
+generated: 20 cars, 74 rows
+layers: carPrices, carBrands, carWorkshops
+parts: 0 rows
+prices: 25600 to 43500
+currencies: CHF, EUR
+  Polo         #####
+  A1           #####
+  Golf         ###
+  A3           ###
+  Passat       ##
+  A4           ##
+cars per catalog: 10
+start year: 2026

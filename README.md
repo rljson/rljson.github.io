@@ -18,6 +18,7 @@ and published at [rljson.github.io](https://rljson.github.io).
 | ------------------------------------- | ------------------------------------------ |
 | `src/content/docs/index.mdx`          | Landing page                               |
 | `src/content/docs/guides/data_types/` | Tutorials on the data types                |
+| `src/content/docs/guides/generate/`   | Tutorials on the example data generator    |
 | `src/content/docs/guides/old/`        | Start here, Format and Protocols guides    |
 | `src/content/docs/reference/`         | Ecosystem and type reference               |
 | `src/assets/logo/`                    | Rljson logos, taken from `@rljson/icons`   |

@@ -93,6 +93,7 @@ export default defineConfig({
         {
           label: 'Generate Rljson',
           items: [
+            { label: 'Usecase', slug: 'guides/generate/usecase' },
             {
               label: 'Your first dataset',
               slug: 'guides/generate/first-dataset',

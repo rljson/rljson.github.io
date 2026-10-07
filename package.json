@@ -3,8 +3,11 @@
   "type": "module",
   "version": "0.0.15",
   "scripts": {
+    "sync-usecase": "node scripts/sync-usecase.js",
+    "predev": "node scripts/sync-usecase.js",
     "dev": "astro dev",
     "start": "astro dev",
+    "prebuild": "node scripts/sync-usecase.js",
     "build": "pnpm run test && astro build",
     "preview": "astro preview",
     "astro": "astro",

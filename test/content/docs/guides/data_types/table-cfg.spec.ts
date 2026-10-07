@@ -119,12 +119,12 @@ const manufacturers = hip<ComponentsTable<Manufacturer>>({
   _type: 'components',
   _tableCfg: ref(manufacturersCfg),
   _data: [
-    { name: 'Porsche', country: 'Germany', founded: 1931 },
-    { name: 'Volvo', country: 'Sweden', founded: 1927 },
+    { name: 'Quinis', country: 'Germany', founded: 1931 },
+    { name: 'Corex', country: 'Sweden', founded: 1927 },
   ],
 });
 
-const [porsche, volvo] = manufacturers._data;
+const [quinis, corex] = manufacturers._data;
 // #endregion manufacturers
 
 // #region check-rows
@@ -132,10 +132,10 @@ type Row = Record<string, string>;
 
 // Rows delivered by an importer, e.g. read from a JSON file
 const delivery: Row[] = [
-  { id: 'taycan', bodyStyle: 'sedan', manufacturersRef: ref(porsche) },
-  { id: 'ex30', bodyStyle: 'suv', manufacturersRef: ref(volvo) },
-  { id: 'macan', bodyStyle: 'suv', manufacturersRef: ref(porsche) },
-  { id: 'ex90', body: 'suv' },
+  { id: 'vimuna', bodyStyle: 'sedan', manufacturersRef: ref(quinis) },
+  { id: 'rivel', bodyStyle: 'suv', manufacturersRef: ref(corex) },
+  { id: 'ivoel', bodyStyle: 'suv', manufacturersRef: ref(quinis) },
+  { id: 'eldim', body: 'suv' },
 ];
 
 // Check each row on its own and keep only the valid ones
@@ -199,13 +199,13 @@ describe('TableCfg tutorial', () => {
 
     expect(output).toBe(
       [
-        '✓ taycan',
-        '✓ ex30',
-        '✓ macan',
-        '✗ ex90: Column "body" in row 0 of table "cars" does not exist.',
+        '✓ vimuna',
+        '✓ rivel',
+        '✓ ivoel',
+        '✗ eldim: Column "body" in row 0 of table "cars" does not exist.',
       ].join('\n'),
     );
-    expect(accepted.map((row) => row.id)).toEqual(['taycan', 'ex30', 'macan']);
+    expect(accepted.map((row) => row.id)).toEqual(['vimuna', 'rivel', 'ivoel']);
   });
 
   it('validates the catalog', () => {
@@ -217,7 +217,7 @@ describe('TableCfg tutorial', () => {
     const fromCsv = hip<ComponentsTable<Record<string, string | number>>>({
       _type: 'components',
       _tableCfg: ref(manufacturersCfg),
-      _data: [{ name: 'Porsche', country: 'Germany', founded: '1931' }],
+      _data: [{ name: 'Quinis', country: 'Germany', founded: '1931' }],
     });
 
     const result = await validate.run({ ...catalog, manufacturers: fromCsv });
@@ -300,7 +300,7 @@ describe('TableCfg tutorial', () => {
       manufacturers: hip<ComponentsTable<Manufacturer>>({
         _type: 'components',
         _tableCfg: ref(neither),
-        _data: [{ name: 'Porsche', country: 'Germany', founded: 1931 }],
+        _data: [{ name: 'Quinis', country: 'Germany', founded: 1931 }],
       }),
     });
 

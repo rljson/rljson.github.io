@@ -1,22 +1,16 @@
 ---
-title: Generate large datasets
+title: Large & Small Datasets
 description: Estimate the presets, pick a target size, receive the rows through a callback, write NDJSON files from it, watch the progress and stop a run.
 ---
 
+import UsecaseSizes from '../../../../assets/usecase/usecase-sizes.svg';
 import { Aside } from '@astrojs/starlight/components';
 import Snippet from '../../../../components/Snippet.astro';
 
-`generate` returns a world as one object in memory. That is the default,
-and it works for thousands of cars, not for millions. For large worlds the
-generator hands every row to a callback as soon as it is hashed, and keeps
-only the hashes that later rows refer to.
+For millions of cars, the generator hands every row to a callback instead
+of keeping it in memory. Estimate, scale, stream, watch and stop a run.
 
-The generator itself writes nothing. It depends on neither the file system
-nor a database, so it runs in Node.js, in the browser and in a Web Worker
-alike. Where the rows go is the callback's business: a file, an
-`@rljson/io` database or the browser's IndexedDB. In this tutorial you
-estimate the size of every preset, pick a target size, count the rows in a
-callback, write them as NDJSON files, watch the progress and stop a run.
+<UsecaseSizes />
 
 You will learn how to:
 
@@ -112,7 +106,7 @@ The callback counts the rows and drops them. However many rows pass
 through, the memory stays flat. A callback like this feeds a database, a
 socket or a test.
 
-## 5. Write NDJSON files from the callback
+## 5. Streaming big Rljson datasets
 
 Files are the application's job. This step opens one write stream per
 table and appends every row as one line of JSON. When a stream falls

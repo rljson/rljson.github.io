@@ -1,21 +1,16 @@
 ---
-title: Catalog revisions
+title: History & Revisions
 description: Generate the model years of a catalog as derived slice ids, derived layers and revisions, and resolve what each year contains.
 ---
 
+import UsecaseRevision from '../../../../assets/usecase/usecase-revision.svg';
 import { Aside } from '@astrojs/starlight/components';
 import Snippet from '../../../../components/Snippet.astro';
 
-A catalog changes every year: cars come, cars go, prices move. Rljson does
-not edit rows; it derives new ones. In a generated world, every model year
-of a catalog is a cake of its own. Its slice ids build on the year before,
-as in the [SliceIds](/guides/data_types/slices/) tutorial, its layers build
-on the layers of the year before, and a [revision](/guides/data_types/revision/)
-links each year to the next.
+Every model year of a catalog builds on the year before, and a revision
+links the two. Generate three years and follow what changes.
 
-In this tutorial you generate three model years of one catalog, read what
-each year adds and removes, resolve a derived layer, and follow the
-revisions from the first year to the last.
+<UsecaseRevision />
 
 You will learn how to:
 
@@ -168,5 +163,5 @@ node revisions.ts
   it follows `base` like `resolveSliceIds`.
 - The revisions table links the versions by their hashes.
 
-Next, [Generate large datasets](/guides/generate/large-datasets/) streams
+Next, [Large & Small Datasets](/guides/generate/large-datasets/) streams
 millions of rows to files.

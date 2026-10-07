@@ -3,20 +3,20 @@
   "_data": [
     {
       "table": "cars",
-      "id": "taycan",
-      "predecessor": "IAS_Jw1gssdgdMVGa717BN",
-      "successor": "DYDPSkXQkz_sd5abFUrnS8",
+      "id": "vimuna",
+      "predecessor": "NUMMb8vVtDH5ll088W-Nu8",
+      "successor": "166JMhXue5ojmPehB6SvPp",
       "timestamp": 1743552000000,
-      "_hash": "soQr7Vx5sC7pF-ApUvkWpr"
+      "_hash": "VJfe9Vg3RQhARaCFIDYJcl"
     },
     {
       "table": "cars",
-      "id": "ex30",
-      "predecessor": "XQGkKGau9atgdpAY_w8aEC",
-      "successor": "0fW6kKpSHYPoh7lvSGN5bu",
+      "id": "rivel",
+      "predecessor": "zeyKY3zCKxvo1uXZf-lt55",
+      "successor": "TTC2mep_GWMdeYPpEohxuT",
       "timestamp": 1747008000000,
-      "_hash": "zwAtXNDVeG5gv6Zqbw7Nil"
+      "_hash": "ugnVDtisD2DhS77XSi4cnP"
     }
   ],
-  "_hash": "cGBx57hXPjgLZX1APj4HRk"
+  "_hash": "PSQZymNBD5_zxKmLt_uMX2"
 }

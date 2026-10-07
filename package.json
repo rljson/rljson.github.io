@@ -1,10 +1,13 @@
 {
   "name": "rljson.github.io",
   "type": "module",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "scripts": {
+    "sync-usecase": "node scripts/sync-usecase.js",
+    "predev": "node scripts/sync-usecase.js",
     "dev": "astro dev",
     "start": "astro dev",
+    "prebuild": "node scripts/sync-usecase.js",
     "build": "pnpm run test && astro build",
     "preview": "astro preview",
     "astro": "astro",
@@ -20,9 +23,9 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "@ggdna/dna-scripts": "^0.2.2",
-    "@ggdna/dna-vscode": "^0.2.2",
-    "@rljson/edge": "^0.0.1",
+    "@ggdna/dna-scripts": "^0.2.3",
+    "@ggdna/dna-vscode": "^0.2.3",
+    "@rljson/edge": "^0.0.2",
     "@rljson/hash": "0.0.19",
     "@rljson/rljson": "^0.0.84",
     "@tssuite/golden": "^1.0.1",
@@ -32,7 +35,7 @@
     "prettier": "^3.9.9",
     "prettier-plugin-astro": "^1.1.0",
     "typescript": "~6.0.3",
-    "vite": "^8.3.2",
+    "vite": "^8.3.3",
     "vitest": "^5.0.3"
   },
   "private": true

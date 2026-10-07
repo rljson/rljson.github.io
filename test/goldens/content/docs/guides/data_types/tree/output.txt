@@ -1,4 +1,4 @@
-Taycan
+Vimuna
   Body
     Door
     Roof
@@ -7,7 +7,7 @@ Taycan
     Electric Motor
 
 After the battery upgrade:
-Taycan
+Vimuna
   Body
     Door
     Roof
@@ -15,4 +15,4 @@ Taycan
     Performance Battery Plus
     Electric Motor
 
-New parts: Taycan, Drivetrain, Performance Battery Plus
+New parts: Vimuna, Drivetrain, Performance Battery Plus

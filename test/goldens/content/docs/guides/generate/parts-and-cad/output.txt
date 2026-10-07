@@ -1,39 +1,39 @@
-volkswagen-cars-000001: Bill of materials Volkswagen Polo, 2 assemblies
-Bill of materials Volkswagen Polo (VOL-POLO-BOM) × 1
-  Engine (VOL-POLO-1-0001) × 1
-    Cylinder head (VOL-POLO-2-0002) × 1
-      Intake valve (VOL-POLO-3-0003) × 1
+velora-cars-000001: Bill of materials Velora Amita, 2 assemblies
+Bill of materials Velora Amita (VEL-AMITA-BOM) × 1
+  Engine (VEL-AMITA-1-0001) × 1
+    Cylinder head (VEL-AMITA-2-0002) × 1
+      Intake valve (VEL-AMITA-3-0003) × 1
         Hex bolt M6x20 (STD-0001) × 1
         Hex bolt M8x25 (STD-0002) × 2
-      Exhaust valve (VOL-POLO-3-0004) × 2
+      Exhaust valve (VEL-AMITA-3-0004) × 2
         Flange bolt M8x30 (STD-0004) × 4
         Hex nut M6 (STD-0005) × 1
-    Engine block (VOL-POLO-2-0005) × 2
-      Cylinder liner (VOL-POLO-3-0006) × 1
+    Engine block (VEL-AMITA-2-0005) × 2
+      Cylinder liner (VEL-AMITA-3-0006) × 1
         Hex bolt M6x20 (STD-0001) × 1
         Hex bolt M8x25 (STD-0002) × 2
-      Piston (VOL-POLO-3-0007) × 2
+      Piston (VEL-AMITA-3-0007) × 2
         Flange bolt M8x30 (STD-0004) × 4
         Hex nut M6 (STD-0005) × 1
-  Transmission (VOL-POLO-1-0008) × 1
-    Gearbox housing (VOL-POLO-2-0009) × 1
-      Housing front (VOL-POLO-3-0010) × 1
+  Transmission (VEL-AMITA-1-0008) × 1
+    Gearbox housing (VEL-AMITA-2-0009) × 1
+      Housing front (VEL-AMITA-3-0010) × 1
         Hex bolt M6x20 (STD-0001) × 1
         Hex bolt M8x25 (STD-0002) × 2
-      Housing rear (VOL-POLO-3-0011) × 2
+      Housing rear (VEL-AMITA-3-0011) × 2
         Flange bolt M8x30 (STD-0004) × 4
         Hex nut M6 (STD-0005) × 1
-    Gear set (VOL-POLO-2-0012) × 2
-      Input shaft (VOL-POLO-3-0013) × 1
+    Gear set (VEL-AMITA-2-0012) × 2
+      Input shaft (VEL-AMITA-3-0013) × 1
         Hex bolt M6x20 (STD-0001) × 1
         Hex bolt M8x25 (STD-0002) × 2
-      Output shaft (VOL-POLO-3-0014) × 2
+      Output shaft (VEL-AMITA-3-0014) × 2
         Flange bolt M8x30 (STD-0004) × 4
         Hex nut M6 (STD-0005) × 1
 93 part references, 49 rows
 scene: group, 3 children
   body: group, 3 children
-    hood: mesh, 500 vertices, shows Bill of materials Volkswagen Polo
+    hood: mesh, 500 vertices, shows Bill of materials Velora Amita
     roof: mesh, 637 vertices, shows Hex bolt M6x20
     doors: mesh, 774 vertices, shows Hex bolt M8x25
   chassis: group, 3 children

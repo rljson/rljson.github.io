@@ -48,7 +48,7 @@ const [white, black, silver] = colorsTable._data;
 
 // #region slice-ids
 // The catalog: the ids of all cars
-const cars = hip<SliceIds>({ add: ['taycan', 'macan', 'ex30', 'xc40'] });
+const cars = hip<SliceIds>({ add: ['vimuna', 'ivoel', 'rivel', 'amar'] });
 
 // The table hosting the catalog
 const carsTable = hip<SliceIdsTable>({ _type: 'sliceIds', _data: [cars] });
@@ -61,10 +61,10 @@ const carColorLayer = hip<Layer>({
   sliceIdsTableRow: ref(cars),
   componentsTable: 'colorsTable',
   add: {
-    taycan: ref(white),
-    macan: ref(black),
-    ex30: ref(white),
-    xc40: ref(silver),
+    vimuna: ref(white),
+    ivoel: ref(black),
+    rivel: ref(white),
+    amar: ref(silver),
   },
 });
 // #endregion layer
@@ -96,16 +96,16 @@ console.log('The car catalog is valid');
 describe('Layers tutorial', () => {
   it('stores each color once', () => {
     expect(colorsTable._data).toHaveLength(3);
-    expect(carColorLayer.add.taycan).toBe(carColorLayer.add.ex30);
+    expect(carColorLayer.add.vimuna).toBe(carColorLayer.add.rivel);
   });
 
   it('assigns a color to each car', async () => {
     await writeGolden('car-layers-table.json', carLayersTable);
     expect(Object.keys(carColorLayer.add)).toEqual([
-      'taycan',
-      'macan',
-      'ex30',
-      'xc40',
+      'vimuna',
+      'ivoel',
+      'rivel',
+      'amar',
       '_hash',
     ]);
   });

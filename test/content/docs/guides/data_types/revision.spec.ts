@@ -50,15 +50,15 @@ type Car = {
 const ref = (row: object): Ref => (row as { _hash: Ref })._hash;
 
 // The first version of each car
-const taycanV1 = hip<Car>({
-  id: 'taycan',
+const vimunaV1 = hip<Car>({
+  id: 'vimuna',
   power: 300,
   range: 503,
   weight: 2140,
 });
 
-const ex30V1 = hip<Car>({
-  id: 'ex30',
+const rivelV1 = hip<Car>({
+  id: 'rivel',
   power: 200,
   range: 476,
   weight: 1850,
@@ -67,15 +67,15 @@ const ex30V1 = hip<Car>({
 
 // #region second-version
 // The manufacturers have published new values after a software update
-const taycanV2 = hip<Car>({
-  id: 'taycan',
+const vimunaV2 = hip<Car>({
+  id: 'vimuna',
   power: 320,
   range: 520,
   weight: 2140,
 });
 
-const ex30V2 = hip<Car>({
-  id: 'ex30',
+const rivelV2 = hip<Car>({
+  id: 'rivel',
   power: 200,
   range: 480,
   weight: 1850,
@@ -89,16 +89,16 @@ const revisions = hip<RevisionsTable>({
   _data: [
     {
       table: 'cars',
-      id: 'taycan',
-      predecessor: ref(taycanV1),
-      successor: ref(taycanV2),
+      id: 'vimuna',
+      predecessor: ref(vimunaV1),
+      successor: ref(vimunaV2),
       timestamp: Date.UTC(2025, 3, 2), // April 2, 2025
     },
     {
       table: 'cars',
-      id: 'ex30',
-      predecessor: ref(ex30V1),
-      successor: ref(ex30V2),
+      id: 'rivel',
+      predecessor: ref(rivelV1),
+      successor: ref(rivelV2),
       timestamp: Date.UTC(2025, 4, 12), // May 12, 2025
     },
   ],
@@ -109,7 +109,7 @@ const revisions = hip<RevisionsTable>({
 // The table keeps both versions: the revisions point to them
 const cars = hip<ComponentsTable<Car>>({
   _type: 'components',
-  _data: [taycanV1, ex30V1, taycanV2, ex30V2], // old and new versions
+  _data: [vimunaV1, rivelV1, vimunaV2, rivelV2], // old and new versions
 });
 
 const garage: Rljson = { cars, revisions };
@@ -165,7 +165,7 @@ const changesOf = (revision: Revision) => {
 };
 
 // Print the history of each car, oldest change first
-for (const id of ['taycan', 'ex30']) {
+for (const id of ['vimuna', 'rivel']) {
   console.log(id);
 
   const history = revisions._data
@@ -185,15 +185,15 @@ log.mockRestore();
 
 describe('Revision tutorial', () => {
   it('keeps each version as a row of its own', () => {
-    expect(ref(taycanV1)).not.toBe(ref(taycanV2));
+    expect(ref(vimunaV1)).not.toBe(ref(vimunaV2));
     expect(cars._data).toHaveLength(4);
   });
 
   it('links predecessor and successor', async () => {
     await writeGolden('revisions.json', revisions);
 
-    expect(revisions._data[0].predecessor).toBe(ref(taycanV1));
-    expect(revisions._data[0].successor).toBe(ref(taycanV2));
+    expect(revisions._data[0].predecessor).toBe(ref(vimunaV1));
+    expect(revisions._data[0].successor).toBe(ref(vimunaV2));
   });
 
   it('validates the garage with both validators', () => {
@@ -205,9 +205,9 @@ describe('Revision tutorial', () => {
 
     expect(output).toBe(
       [
-        'taycan',
+        'vimuna',
         '  2025-04-02: power 300 → 320, range 503 → 520',
-        'ex30',
+        'rivel',
         '  2025-05-12: range 476 → 480',
       ].join('\n'),
     );
@@ -221,8 +221,8 @@ describe('Revision tutorial', () => {
       return next ? latest(next.successor) : hash;
     };
 
-    expect(latest(ref(taycanV1))).toBe(ref(taycanV2));
-    expect(latest(ref(taycanV2))).toBe(ref(taycanV2)); // already the newest
+    expect(latest(ref(vimunaV1))).toBe(ref(vimunaV2));
+    expect(latest(ref(vimunaV2))).toBe(ref(vimunaV2)); // already the newest
     // #endregion latest
   });
 
@@ -236,10 +236,10 @@ describe('Revision tutorial', () => {
       revisions: {
         hasErrors: true,
         missingRows: [
-          { table: 'cars', row: ref(taycanV1) },
-          { table: 'cars', row: ref(taycanV2) },
-          { table: 'cars', row: ref(ex30V1) },
-          { table: 'cars', row: ref(ex30V2) },
+          { table: 'cars', row: ref(vimunaV1) },
+          { table: 'cars', row: ref(vimunaV2) },
+          { table: 'cars', row: ref(rivelV1) },
+          { table: 'cars', row: ref(rivelV2) },
         ],
       },
     });

@@ -40,15 +40,15 @@ storage, transport, databases and tooling on top of the format.
 
 ## Agents and tooling
 
-| Package                                                        | Purpose                                                                        |
-| -------------------------------------------------------------- | ------------------------------------------------------------------------------ |
-| [`@rljson/fs-agent`](https://github.com/rljson/fs-agent)       | File system ↔ database sync                                                    |
-| [`@rljson/mongo-agent`](https://github.com/rljson/mongo-agent) | MongoDB ↔ database sync                                                        |
-| [`@rljson/cli`](https://github.com/rljson/cli)                 | Command line interface                                                         |
-| [`@rljson/converter`](https://github.com/rljson/converter)     | Convert data into and out of Rljson                                            |
-| [`@rljson/edge`](https://github.com/rljson/edge)               | Example data generator, see [Generate Rljson](/guides/generate/first-dataset/) |
-| [`@rljson/generator`](https://github.com/rljson/generator)     | Code and data generation                                                       |
-| [`@rljson/is-ready`](https://github.com/rljson/is-ready)       | Readiness signalling                                                           |
+| Package                                                        | Purpose                                                                |
+| -------------------------------------------------------------- | ---------------------------------------------------------------------- |
+| [`@rljson/fs-agent`](https://github.com/rljson/fs-agent)       | File system ↔ database sync                                            |
+| [`@rljson/mongo-agent`](https://github.com/rljson/mongo-agent) | MongoDB ↔ database sync                                                |
+| [`@rljson/cli`](https://github.com/rljson/cli)                 | Command line interface                                                 |
+| [`@rljson/converter`](https://github.com/rljson/converter)     | Convert data into and out of Rljson                                    |
+| [`@rljson/edge`](https://github.com/rljson/edge)               | Example data generator, see [Example](/guides/generate/first-dataset/) |
+| [`@rljson/generator`](https://github.com/rljson/generator)     | Code and data generation                                               |
+| [`@rljson/is-ready`](https://github.com/rljson/is-ready)       | Readiness signalling                                                   |
 
 ## User interface
 

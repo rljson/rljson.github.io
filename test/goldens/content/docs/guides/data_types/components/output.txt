@@ -1,9 +1,9 @@
-taycan by porsche
-  wheel 0: 20″ × 245 mm, by porsche
-  wheel 1: 20″ × 245 mm, by porsche
-  wheel 2: 20″ × 285 mm, by porsche
-  wheel 3: 20″ × 285 mm, by porsche
-ex30 by volvo
+vimuna by quinis
+  wheel 0: 20″ × 245 mm, by quinis
+  wheel 1: 20″ × 245 mm, by quinis
+  wheel 2: 20″ × 285 mm, by quinis
+  wheel 3: 20″ × 285 mm, by quinis
+rivel by corex
   wheel 0: 19″ × 245 mm, by bbs
   wheel 1: 19″ × 245 mm, by bbs
   wheel 2: 19″ × 245 mm, by bbs

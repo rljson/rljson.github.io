@@ -1,17 +1,18 @@
 ---
-title: Walk the car world
+title: Iterate data
 description: Follow the references of a generated world from a manufacturer to a single car, through reference arrays, cakes, layers and components.
 ---
 
+import UsecaseOverview from '../../../../assets/usecase/usecase-overview.svg';
+import UsecaseManufacturer from '../../../../assets/usecase/usecase-manufacturer.svg';
+import UsecaseCar from '../../../../assets/usecase/usecase-car.svg';
 import { Aside } from '@astrojs/starlight/components';
 import Snippet from '../../../../components/Snippet.astro';
 
-A generated world is a graph of references. The manufacturers are its
-entry point. A manufacturer lists its catalogs, and a catalog is a cake
-whose layers assign a price, a brand and a workshop to every car. In this
-tutorial you start at the manufacturers and follow the references down to
-the cars, with nothing but `rowOf` and `resolveSliceIds` from
-`@rljson/rljson`.
+A generated world is a graph of references. Start at the manufacturers and
+follow the references down to a car and its price, brand and workshop.
+
+<UsecaseOverview />
 
 You will learn how to:
 
@@ -41,8 +42,8 @@ of the previous step. The complete file is shown at the end.
 
 This world has two manufacturers with one catalog of four cars each. Every
 manufacturer offers two models and has one owner for its two workshops.
-Parts and CAD scenes are switched off, [Parts and CAD
-scenes](/guides/generate/parts-and-cad/) walks them:
+Parts and CAD scenes are switched off, [Work with
+trees](/guides/generate/parts-and-cad/) walks them:
 
 <Snippet
   file="car-world.spec.ts"
@@ -70,6 +71,8 @@ follows a column that holds many.
 
 ## 4. From a manufacturer to its catalogs
 
+<UsecaseManufacturer />
+
 A manufacturer lists its catalogs in `catalogsRef`, an array with one hash
 per catalog, like `wheelsRef` in
 [Components](/guides/data_types/components/). A catalog is a
@@ -83,8 +86,8 @@ per catalog, like `wheelsRef` in
 />
 
 The id of a catalog is the manufacturer, the segment and the model year,
-like `volkswagen-cars-2026`. A slice id is the catalog followed by a number,
-like `volkswagen-cars-000001`.
+like `velora-cars-2026`. A slice id is the catalog followed by a number,
+like `velora-cars-000001`.
 
 <Aside type="note">
   `hip` hashes nested objects too, so `layers` carries a `_hash` of its own,
@@ -93,6 +96,8 @@ like `volkswagen-cars-000001`.
 </Aside>
 
 ## 5. From a car to its price, brand and workshop
+
+<UsecaseCar />
 
 Each layer of the cake lives in a layers table that is named after the
 aspect: `carPrices`, `carBrands`, `carWorkshops`. Look up the three layers

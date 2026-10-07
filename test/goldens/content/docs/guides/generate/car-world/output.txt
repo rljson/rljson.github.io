@@ -1,11 +1,11 @@
-Volkswagen AG, Wolfsburg (DE), founded 1937
-Audi AG, Ingolstadt (DE), founded 1909
-volkswagen-cars-2026: 4 cars
+Velora AG, Ingolstadt (DE), founded 1919
+Yarant AG, Munich (DE), founded 1948
+velora-cars-2026: 4 cars
   layers: carPrices, carBrands, carWorkshops
-volkswagen-cars-000001: Volkswagen Polo, 18600 EUR, serviced by Lindqvist Motors
-volkswagen-cars-000002: Volkswagen Golf, 26070 EUR, serviced by Autohaus Lindqvist
-volkswagen-cars-000003: Volkswagen Polo, 19040 EUR, serviced by Lindqvist Motors
-volkswagen-cars-000004: Volkswagen Golf, 26500 EUR, serviced by Autohaus Lindqvist
+velora-cars-000001: Velora Amita, 18600 EUR, serviced by Lindqvist Motors
+velora-cars-000002: Velora Orveo, 26070 EUR, serviced by Autohaus Lindqvist
+velora-cars-000003: Velora Amita, 19040 EUR, serviced by Lindqvist Motors
+velora-cars-000004: Velora Orveo, 26500 EUR, serviced by Autohaus Lindqvist
 Lindqvist Motors, 38440 Wolfsburg, owned by Mira Lindqvist
 Autohaus Lindqvist, 70173 Stuttgart, owned by Mira Lindqvist
 Hamburg Car Service, 20095 Hamburg, owned by Elias Koch

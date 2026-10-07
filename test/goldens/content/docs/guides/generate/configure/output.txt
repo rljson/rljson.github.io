@@ -21,11 +21,11 @@ layers: carPrices, carBrands, carWorkshops
 parts: 0 rows
 prices: 25600 to 43500
 currencies: CHF, EUR
-  Polo         #####
-  A1           #####
-  Golf         ###
-  A3           ###
-  Passat       ##
-  A4           ##
+  Amita        #####
+  Belita       #####
+  Orveo        ###
+  Paveo        ###
+  Calix        ##
+  Dovix        ##
 cars per catalog: 10
 start year: 2026

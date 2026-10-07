@@ -3,14 +3,14 @@ title: Configure the generator
 description: Replace a preset by a configuration of your own, estimate the result before you generate it, and tune counts, layers, value ranges and popularity.
 ---
 
+import UsecaseSizes from '../../../../assets/usecase/usecase-sizes.svg';
 import { Aside } from '@astrojs/starlight/components';
 import Snippet from '../../../../components/Snippet.astro';
 
-A preset is a configuration someone else has written. In this tutorial you
-write your own: how many manufacturers, catalogs and cars, which layers,
-which price range and currencies, and how popular each model is. You
-estimate the size of the world before you generate it and compare the
-estimate with what the run produced.
+Write your own configuration: manufacturers, catalogs, cars, layers and
+values. Estimate the size first, then generate.
+
+<UsecaseSizes />
 
 You will learn how to:
 
@@ -47,12 +47,12 @@ layers. Every field is optional and has a default:
   title="configure.ts"
 />
 
-| Section         | Decides                                                                                            |
-| --------------- | -------------------------------------------------------------------------------------------------- |
-| `manufacturers` | How many manufacturers, how many catalogs each                                                     |
-| `catalogs`      | How many cars per catalog, the model year, the revisions                                           |
-| `layers`        | Which aspects the cars get, and the values of each aspect                                          |
-| `scale`         | Optional: a target number of rows, see [Generate large datasets](/guides/generate/large-datasets/) |
+| Section         | Decides                                                                                           |
+| --------------- | ------------------------------------------------------------------------------------------------- |
+| `manufacturers` | How many manufacturers, how many catalogs each                                                    |
+| `catalogs`      | How many cars per catalog, the model year, the revisions                                          |
+| `layers`        | Which aspects the cars get, and the values of each aspect                                         |
+| `scale`         | Optional: a target number of rows, see [Large & Small Datasets](/guides/generate/large-datasets/) |
 
 Nothing in a configuration is random. Two catalogs with ten cars each get
 the same twenty cars on every run.
@@ -120,7 +120,7 @@ in one of the configured currencies. The brands follow a popularity: with
 />
 
 The bars show the distribution. Count the cars of each model by walking the
-brand layers, as [Walk the car world](/guides/generate/car-world/) does:
+brand layers, as [Iterate data](/guides/generate/car-world/) does:
 
 <Snippet
   file="configure.spec.ts"
@@ -177,5 +177,5 @@ node configure.ts
   popularity.
 - `config` returns the resolved configuration, which reproduces the data.
 
-Next, [Parts and CAD scenes](/guides/generate/parts-and-cad/) walks the
+Next, [Work with trees](/guides/generate/parts-and-cad/) walks the
 hierarchical data of a car.

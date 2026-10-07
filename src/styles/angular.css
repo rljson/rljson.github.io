@@ -321,3 +321,8 @@ header.header {
 .hero .tagline {
   color: var(--tertiary-contrast);
 }
+
+/* The side note of the use case page, see scripts/sync-usecase.js */
+.uc-note {
+  opacity: 0.6;
+}

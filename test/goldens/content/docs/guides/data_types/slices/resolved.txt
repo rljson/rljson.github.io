@@ -1,2 +1,2 @@
-2025: taycan, macan, ex30, xc40
-2026: taycan, ex30, xc40, ex90
+2025: vimuna, ivoel, rivel, amar
+2026: vimuna, rivel, amar, eldim

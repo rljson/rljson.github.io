@@ -1,10 +1,10 @@
-volkswagen-cars-2026 → volkswagen-cars-2027 → volkswagen-cars-2028
-volkswagen-cars-2026: 6 cars, 6 added, 0 removed
-volkswagen-cars-2027: 7 cars, 2 added, 1 removed
-volkswagen-cars-2028: 8 cars, 2 added, 1 removed
-volkswagen-cars-2026: 6 prices, 6 in add, base: no
-volkswagen-cars-2027: 7 prices, 3 in add, base: yes
-volkswagen-cars-2028: 8 prices, 3 in add, base: yes
-catalogs: volkswagen-cars-2026 → volkswagen-cars-2027 on 2027-01-01
-catalogs: volkswagen-cars-2027 → volkswagen-cars-2028 on 2028-01-01
+velora-cars-2026 → velora-cars-2027 → velora-cars-2028
+velora-cars-2026: 6 cars, 6 added, 0 removed
+velora-cars-2027: 7 cars, 2 added, 1 removed
+velora-cars-2028: 8 cars, 2 added, 1 removed
+velora-cars-2026: 6 prices, 6 in add, base: no
+velora-cars-2027: 7 prices, 3 in add, base: yes
+velora-cars-2028: 8 prices, 3 in add, base: yes
+catalogs: velora-cars-2026 → velora-cars-2027 on 2027-01-01
+catalogs: velora-cars-2027 → velora-cars-2028 on 2028-01-01
 The car world is valid

@@ -38,16 +38,16 @@ const log = vi.spyOn(console, 'log').mockImplementation(() => {});
 // #region catalog-2025
 // The catalog of 2025 lists four cars by their slice ids
 const catalog2025 = hip<SliceIds>({
-  add: ['taycan', 'macan', 'ex30', 'xc40'],
+  add: ['vimuna', 'ivoel', 'rivel', 'amar'],
 });
 // #endregion catalog-2025
 
 // #region derive
-// The catalog of 2026: the EX90 is new, the Macan is gone
+// The catalog of 2026: the Eldim is new, the Ivoel is gone
 const catalog2026 = hip<SliceIds>({
   base: ref(catalog2025),
-  add: ['ex90'],
-  remove: ['macan'],
+  add: ['eldim'],
+  remove: ['ivoel'],
 });
 // #endregion derive
 
@@ -89,8 +89,8 @@ describe('Slices tutorial', () => {
 
     expect(catalog2025.add).toHaveLength(4);
     expect(catalog2026.base).toBe(ref(catalog2025));
-    expect(catalog2026.add).toEqual(['ex90']);
-    expect(catalog2026.remove).toEqual(['macan']);
+    expect(catalog2026.add).toEqual(['eldim']);
+    expect(catalog2026.remove).toEqual(['ivoel']);
   });
 
   it('validates the car catalog', () => {
@@ -108,8 +108,8 @@ describe('Slices tutorial', () => {
 
     expect(output).toBe(
       [
-        '2025: taycan, macan, ex30, xc40',
-        '2026: taycan, ex30, xc40, ex90',
+        '2025: vimuna, ivoel, rivel, amar',
+        '2026: vimuna, rivel, amar, eldim',
       ].join('\n'),
     );
   });

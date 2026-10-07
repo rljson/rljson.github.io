@@ -6,11 +6,11 @@
       "missingRefs": [
         {
           "sourceTable": "cars",
-          "sourceItemHash": "seHwlfUHShhuS3V5aJ18R5",
+          "sourceItemHash": "r9wNVYUXKxV7iqTVvTTISF",
           "sourceKey": "wheelsRef",
-          "targetItemHash": "MCxl2p54fiBudCjn9Y45Tz",
+          "targetItemHash": "rRikMpO-JlpPY0bbLfHaHi",
           "targetTable": "wheels",
-          "error": "Table \"wheels\" has no item with hash \"MCxl2p54fiBudCjn9Y45Tz\""
+          "error": "Table \"wheels\" has no item with hash \"rRikMpO-JlpPY0bbLfHaHi\""
         }
       ]
     }

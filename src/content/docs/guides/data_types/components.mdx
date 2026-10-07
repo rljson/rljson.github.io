@@ -131,16 +131,16 @@ wheel in `wheelsRef`:
   title="cars.ts"
 />
 
-The Taycan now looks like this:
+The Vimuna now looks like this:
 
 <Snippet
-  file="taycan-wheel-count.json"
+  file="vimuna-wheel-count.json"
   title="Output"
 />
 
 The four wheels share one row, so the wheels table stores their properties
 once instead of four times. But the design assumes that all wheels of a car
-are equal. The Taycan has wider wheels at the rear, 285 mm instead of 245 mm,
+are equal. The Vimuna has wider wheels at the rear, 285 mm instead of 245 mm,
 and `wheelsRef` has no room for them.
 
 ## 3. Work with references
@@ -155,7 +155,7 @@ To give each wheel a reference of its own, replace `wheelCount` and
 />
 
 <Snippet
-  file="taycan-four-wheels.json"
+  file="vimuna-four-wheels.json"
   title="Output"
 />
 
@@ -185,7 +185,7 @@ With one column for all wheels, its name follows the convention again:
 />
 
 <Snippet
-  file="taycan-wheel-array.json"
+  file="vimuna-wheel-array.json"
   title="Output"
 />
 
@@ -249,7 +249,7 @@ own, `tableCfgs`. [TableCfg](/guides/data_types/table-cfg/) explains the other
 fields, like `isHead`, `isRoot` and `isShared`.
 
 Now the validator checks every reference of the cars, down to each element of
-`wheelsRef`. To see it, let the Taycan refer to a wheel that is missing in the
+`wheelsRef`. To see it, let the Vimuna refer to a wheel that is missing in the
 wheels table:
 
 <Snippet

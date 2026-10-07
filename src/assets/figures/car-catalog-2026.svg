@@ -1,5 +1,5 @@
 <svg width="520" height="88" viewBox="0 20 520 88" fill="none" xmlns="http://www.w3.org/2000/svg">
-<!-- The catalog of 2026, derived from 2025: macan is removed, ex90 is added -->
+<!-- The catalog of 2026, derived from 2025: ivoel is removed, eldim is added -->
 <g stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
 <!-- One table: rounded outer corners, a column per car -->
 <rect x="10" y="24" width="500" height="80" rx="8"/>
@@ -52,7 +52,7 @@
 <circle cx="118" cy="44" r="6"/>
 </g>
 </g>
-<g stroke="#22a35a" stroke-width="2.5"> <!-- the added ex90, highlighted -->
+<g stroke="#22a35a" stroke-width="2.5"> <!-- the added eldim, highlighted -->
 <path d="M410 24H502A8 8 0 0 1 510 32V96A8 8 0 0 1 502 104H410Z" fill="#22a35a33"/>
 <g transform="translate(422 34) scale(0.5)" stroke-width="3">
 <path d="M4 44C3 34 4 26 8 22L26 19C34 12 42 7 54 6H80C90 6 98 15 106 23C122 25 138 26 145 29C149 31 150 36 150 40C150 44 149 48 145 48H133.5A16 16 0 1 0 102.5 48H47.5A16 16 0 1 0 16.5 48H8C5.5 48 4 46.5 4 44Z" fill="var(--sl-color-bg, #fff)"/>
@@ -67,10 +67,10 @@
 <g stroke="#22a35a" stroke-width="2"><circle cx="498" cy="36" r="8" fill="#22a35a"/><path d="M494 36H502M498 32V40" stroke="var(--sl-color-bg, #fff)"/></g>
 </g>
 <g fill="currentColor" font-family="var(--sl-font, sans-serif)" font-size="14" text-anchor="middle">
-<text x="60" y="92">taycan</text>
-<text x="160" y="92" opacity="0.5">macan</text>
-<text x="260" y="92">ex30</text>
-<text x="360" y="92">xc40</text>
-<text x="460" y="92" fill="#22a35a" font-weight="600">ex90</text>
+<text x="60" y="92">Vimuna</text>
+<text x="160" y="92" opacity="0.5">Ivoel</text>
+<text x="260" y="92">Rivel</text>
+<text x="360" y="92">Amar</text>
+<text x="460" y="92" fill="#22a35a" font-weight="600">Eldim</text>
 </g>
 </svg>

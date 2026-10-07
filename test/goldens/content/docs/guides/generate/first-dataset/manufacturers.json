@@ -2,19 +2,19 @@
   "_type": "components",
   "_data": [
     {
-      "id": "volkswagen",
-      "name": "Volkswagen AG",
-      "brand": "Volkswagen",
+      "id": "velora",
+      "name": "Velora AG",
+      "brand": "Velora",
       "country": "DE",
-      "founded": 1937,
-      "website": "https://www.volkswagen.example",
-      "headquartersRef": "z-hRNWl0UW69fx-wbF9cOO",
+      "founded": 1919,
+      "website": "https://www.velora.example",
+      "headquartersRef": "QahAaE6bm71GLM7Yob0WYt",
       "catalogsRef": [
-        "O3-J7QQSwdJHlFafk3tqcz"
+        "19lWV7tb45SU8RF3h20ZIc"
       ],
-      "_hash": "L15wLSbe2Ruon9GX4Sj5HG"
+      "_hash": "fZWwzZthD99xhnSUtPVDBV"
     }
   ],
   "_tableCfg": "Zzn4r_dHGNL7sPxndBRiwX",
-  "_hash": "Kg3y5Iwr_rZSLWnoPIpfqD"
+  "_hash": "EyeY2YUpMplPCkIvz-VAEl"
 }

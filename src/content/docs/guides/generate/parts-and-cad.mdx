@@ -1,33 +1,17 @@
 ---
-title: Parts and CAD scenes
+title: Work with trees
 description: Generate bills of materials up to four levels deep and CAD scenes as trees, walk both, and see how shared parts are stored once.
 ---
 
+import UsecaseParts from '../../../../assets/usecase/usecase-parts.svg';
+import UsecaseCad from '../../../../assets/usecase/usecase-cad.svg';
 import { Aside } from '@astrojs/starlight/components';
 import Snippet from '../../../../components/Snippet.astro';
 
-Two layers of a catalog hold hierarchical data. The parts layer assigns a
-bill of materials to every car: a part that refers to its sub parts, which
-refer to theirs, up to four levels deep. The CAD layer assigns a scene to
-every car: a [tree](/guides/data_types/tree/) whose nodes are groups and
-meshes. Both are built from the same idea, rows that refer to rows by hash,
-but with different data types:
+Every car has a bill of materials and a 3D scene, both trees of rows.
+Walk them from the car down to the leaves and count what the cars share.
 
-```text
-Bill of materials (components)       CAD scene (trees)
-Vehicle                              scene
-├─ Engine            level 1         ├─ body          group
-│  ├─ Cylinder head  level 2         │  ├─ hood       mesh, 12 480 vertices
-│  │  ├─ Valve       level 3         │  └─ door-l     mesh
-│  │  │  └─ Spring   level 4         ├─ chassis       group
-│  │  └─ Camshaft                    └─ wheels        group
-│  └─ Turbocharger                      ├─ wheel-fl   mesh
-└─ Chassis                              └─ wheel-fr   mesh
-```
-
-In this tutorial you generate small trees of both kinds, walk them from the
-car down to the leaves, count how many parts the cars share, and follow a
-mesh to the part it shows.
+<UsecaseParts />
 
 You will learn how to:
 
@@ -142,6 +126,8 @@ that is equal in every column has the same hash, wherever it is used.
 
 ## 6. Walk the CAD scene
 
+<UsecaseCad />
+
 The CAD layer, `carCad`, assigns the root node of a scene to every car. The
 nodes are rows of the trees table `cadScenes`. A node's `meta` tells whether
 it is a group or a mesh, and a mesh carries its vertex count and, with
@@ -216,5 +202,5 @@ node parts.ts
 - Shared parts and subtrees are stored once, which the statistics report as
   `dedupRatio`.
 
-Next, [Catalog revisions](/guides/generate/revisions/) generates the model
+Next, [History & Revisions](/guides/generate/revisions/) generates the model
 years of a catalog.

@@ -11,8 +11,8 @@ hash, and every reference to the old row stays as it is. A revision records
 such a change. It names the table, the old row, the new row and the time of
 the change. Revisions are rows of a table of type `revisions`.
 
-In this tutorial you correct the technical data of two cars, the Taycan and
-the EX30. You keep both versions, record the corrections as revisions and
+In this tutorial you correct the technical data of two cars, the Vimuna and
+the Rivel. You keep both versions, record the corrections as revisions and
 print the history of each car. Along the way you write a validator of your
 own, which checks that the rows a revision links exist.
 
@@ -97,7 +97,7 @@ The table of cars keeps the old and the new versions:
   title="history.ts"
 />
 
-Anything that refers to the old Taycan row still sees the old values. The
+Anything that refers to the old Vimuna row still sees the old values. The
 revisions tell an application that a newer version exists.
 
 <Aside type="note">

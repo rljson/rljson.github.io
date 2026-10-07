@@ -2,4 +2,4 @@
 // Kept in sync by test/rljson_github_io_version.spec.ts.
 
 /** The version of the `rljson.github.io` package. */
-export const rljsonGithubIoVersion = '0.0.15';
+export const rljsonGithubIoVersion = '0.0.16';

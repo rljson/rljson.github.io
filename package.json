@@ -1,7 +1,7 @@
 {
   "name": "rljson.github.io",
   "type": "module",
-  "version": "0.0.15",
+  "version": "0.0.16",
   "scripts": {
     "sync-usecase": "node scripts/sync-usecase.js",
     "predev": "node scripts/sync-usecase.js",

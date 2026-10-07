@@ -4,3 +4,5 @@ allowBuilds:
 minimumReleaseAgeExclude:
   - '@rljson/rljson@0.0.82 || 0.0.83 || 0.0.84'
   - '@rljson/edge@0.0.1'
+overrides:
+  "@rljson\/edge": link:./.gg/ts_links/@rljson/edge

@@ -15,7 +15,7 @@
 // generated; do not edit it by hand.
 
 import { existsSync, realpathSync } from 'fs';
-import { readFile, writeFile } from 'fs/promises';
+import { mkdir, readdir, readFile, writeFile } from 'fs/promises';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
@@ -71,7 +71,9 @@ export const toSitePage = async (markdown, readImage) => {
     .replace(/<!--[\s\S]*?-->\s*/g, '')
     .replace(/^# .*\n+/m, '');
 
-  const description = body.split('\n\n')[0].replace(/\s+/g, ' ').trim();
+  const description = body
+    .split('\n\n')
+    .find((p) => !p.startsWith('#') && !p.startsWith('![')).replace(/\s+/g, ' ').trim();
 
   const parts = [];
   let last = 0;
@@ -85,7 +87,7 @@ export const toSitePage = async (markdown, readImage) => {
 
   return [
     '---',
-    'title: Usecase',
+    'title: Example Usecase',
     `description: ${JSON.stringify(description)}`,
     '---',
     '',
@@ -96,7 +98,10 @@ export const toSitePage = async (markdown, readImage) => {
   ].join('\n');
 };
 
-/** Writes the page, or keeps the existing one when edge is not found */
+/** The folder the themed images go to; the chapters of »Generate Rljson« import them */
+export const imageDir = join(root, 'src', 'assets', 'usecase');
+
+/** Writes the page and the images, or keeps them when edge is not found */
 export const syncUsecase = async () => {
   const doc = findEdgeDoc();
   if (!doc) {
@@ -108,6 +113,15 @@ export const syncUsecase = async () => {
     readFile(join(doc, 'img', file), 'utf8'),
   );
   await writeFile(targetPage, page);
+
+  await mkdir(imageDir, { recursive: true });
+  const images = (await readdir(join(doc, 'img'))).filter((f) =>
+    f.startsWith('usecase-'),
+  );
+  for (const file of images) {
+    const svg = await readFile(join(doc, 'img', file), 'utf8');
+    await writeFile(join(imageDir, file), `${themeSvg(svg)}\n`);
+  }
   console.log(`sync-usecase: wrote the page from ${doc}`);
 };
 

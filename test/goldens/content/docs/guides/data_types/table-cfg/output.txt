@@ -1,4 +1,4 @@
-✓ taycan
-✓ ex30
-✓ macan
-✗ ex90: Column "body" in row 0 of table "cars" does not exist.
+✓ vimuna
+✓ rivel
+✓ ivoel
+✗ eldim: Column "body" in row 0 of table "cars" does not exist.

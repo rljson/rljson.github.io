@@ -47,7 +47,7 @@ const colorsTable = hip<ComponentsTable<Color>>({
 
 const brandsTable = hip<ComponentsTable<Brand>>({
   _type: 'components',
-  _data: [{ name: 'Porsche' }, { name: 'Volvo' }],
+  _data: [{ name: 'Quinis' }, { name: 'Corex' }],
 });
 
 const pricesTable = hip<ComponentsTable<Price>>({
@@ -61,12 +61,12 @@ const pricesTable = hip<ComponentsTable<Price>>({
 });
 
 // The catalog: the ids of all cars, shared by all layers
-const cars = hip<SliceIds>({ add: ['taycan', 'macan', 'ex30', 'xc40'] });
+const cars = hip<SliceIds>({ add: ['vimuna', 'ivoel', 'rivel', 'amar'] });
 const carsTable = hip<SliceIdsTable>({ _type: 'sliceIds', _data: [cars] });
 
 const [white, black, silver] = colorsTable._data;
-const [porsche, volvo] = brandsTable._data;
-const [taycanPrice, macanPrice, ex30Price, xc40Price] = pricesTable._data;
+const [quinis, corex] = brandsTable._data;
+const [vimunaPrice, ivoelPrice, rivelPrice, amarPrice] = pricesTable._data;
 
 // One layer per aspect of the cars
 const colorLayer = hip<Layer>({
@@ -74,10 +74,10 @@ const colorLayer = hip<Layer>({
   sliceIdsTableRow: ref(cars),
   componentsTable: 'colorsTable',
   add: {
-    taycan: ref(white),
-    macan: ref(black),
-    ex30: ref(white),
-    xc40: ref(silver),
+    vimuna: ref(white),
+    ivoel: ref(black),
+    rivel: ref(white),
+    amar: ref(silver),
   },
 });
 
@@ -86,10 +86,10 @@ const brandLayer = hip<Layer>({
   sliceIdsTableRow: ref(cars),
   componentsTable: 'brandsTable',
   add: {
-    taycan: ref(porsche),
-    macan: ref(porsche),
-    ex30: ref(volvo),
-    xc40: ref(volvo),
+    vimuna: ref(quinis),
+    ivoel: ref(quinis),
+    rivel: ref(corex),
+    amar: ref(corex),
   },
 });
 
@@ -98,10 +98,10 @@ const priceLayer = hip<Layer>({
   sliceIdsTableRow: ref(cars),
   componentsTable: 'pricesTable',
   add: {
-    taycan: ref(taycanPrice),
-    macan: ref(macanPrice),
-    ex30: ref(ex30Price),
-    xc40: ref(xc40Price),
+    vimuna: ref(vimunaPrice),
+    ivoel: ref(ivoelPrice),
+    rivel: ref(rivelPrice),
+    amar: ref(amarPrice),
   },
 });
 

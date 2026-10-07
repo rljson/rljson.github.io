@@ -2,16 +2,16 @@
   "_type": "components",
   "_data": [
     {
-      "id": "porsche",
+      "id": "quinis",
       "country": "Germany",
       "founded": 1931,
-      "_hash": "oGtMimnyJ8xM10PgS2WEPg"
+      "_hash": "RiTv7_Zn2GAp2JPf83clYm"
     },
     {
-      "id": "volvo",
+      "id": "corex",
       "country": "Sweden",
       "founded": 1927,
-      "_hash": "SQxsTq3FTq0lQC2iWQiDfH"
+      "_hash": "tYv7ENnmWroK-oFAVDpYuP"
     },
     {
       "id": "bbs",
@@ -20,5 +20,5 @@
       "_hash": "pXmhguPi0ENTjJfQaZvLBt"
     }
   ],
-  "_hash": "2YXC_MccIFpHwHgfdIhDfC"
+  "_hash": "v9IQIGOywmoUicveVDGNOG"
 }

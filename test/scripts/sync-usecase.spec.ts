@@ -4,10 +4,10 @@
 // Use of this source code is governed by terms that can be
 // found in the LICENSE file in the root of this package.
 
-import { readFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import { describe, expect, it } from 'vitest';
 
-import { targetPage, themeSvg, toSitePage } from '../../scripts/sync-usecase.js';
+import { imageDir, targetPage, themeSvg, toSitePage } from '../../scripts/sync-usecase.js';
 
 const svg = [
   '<svg xmlns="http://www.w3.org/2000/svg" class="uc uc-x" viewBox="0 0 960 400" width="960" height="400">',
@@ -30,8 +30,7 @@ describe('sync-usecase', () => {
     const markdown = [
       '<!-- license -->',
       '',
-      '# The car world',
-      '',
+      '# The car world',      '',
       'Edge invents a world.',
       '',
       '![A picture](img/x.svg)',
@@ -40,7 +39,7 @@ describe('sync-usecase', () => {
       '',
     ].join('\n');
     const page = await toSitePage(markdown, async () => svg);
-    expect(page).toMatch(/^---\ntitle: Usecase\ndescription: "Edge invents a world."\n---/);
+    expect(page).toMatch(/^---\ntitle: Example Usecase\ndescription: "Edge invents a world."\n---/);
     expect(page).not.toContain('# The car world');
     expect(page).not.toContain('license');
     expect(page).toContain('<figure class="uc-figure">\n<svg');
@@ -49,7 +48,14 @@ describe('sync-usecase', () => {
 
   it('keeps the generated page in the repo', async () => {
     const page = await readFile(targetPage, 'utf8');
-    expect(page).toContain('title: Usecase');
+    expect(page).toContain('title: Example Usecase');
     expect(page.match(/<svg/g)?.length).toBe(7);
+  });
+
+  it('keeps the themed images for the chapters in the repo', async () => {
+    const images = await readdir(imageDir);
+    expect(images.filter((f) => f.endsWith('.svg')).length).toBe(7);
+    const svg = await readFile(`${imageDir}/usecase-parts.svg`, 'utf8');
+    expect(svg).toContain(":root[data-theme='dark'] svg.uc{");
   });
 });

@@ -102,7 +102,7 @@ a database. The validator accepts three combinations:
 Head and root tables need an `id` column: a row with the same id is the same
 object, in every version. The cars are the root of the catalog, so they are
 identified by their id. The manufacturers are shared: several cars may use
-the same row, like the Taycan and the Macan in step 6.
+the same row, like the Vimuna and the Ivoel in step 6.
 
 ## 4. Store the configurations
 
@@ -145,7 +145,7 @@ which is empty for a valid row:
   title="catalog.ts"
 />
 
-The Macan refers to the same manufacturer as the Taycan. The EX90 uses the
+The Ivoel refers to the same manufacturer as the Vimuna. The Eldim uses the
 column `body`, which the configuration does not know, so the application
 rejects it.
 

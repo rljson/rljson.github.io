@@ -19,7 +19,7 @@ organization charts. Every node of a tree is a row of a table of type
 root covers the whole tree.
 
 In this tutorial you build a car from nested parts. Every part has a name
-and can consist of sub parts: the Taycan consists of a body and a
+and can consist of sub parts: the Vimuna consists of a body and a
 drivetrain, the body of a door and a roof, the drivetrain of a battery and a
 motor. You print the parts, replace the battery and see that the change adds
 only the parts on the path from the battery to the root.
@@ -74,7 +74,7 @@ The parts carry their name in `meta`, so they leave out `id`.
 ## 3. Create the parents
 
 Parts that consist of sub parts are the parents. The body and the drivetrain
-are the parents of the leaves, and the Taycan is the root above them:
+are the parents of the leaves, and the Vimuna is the root above them:
 
 <Snippet
   file="tree.spec.ts"
@@ -130,9 +130,9 @@ by its hash and descends:
 
 ## 7. Replace a part
 
-The Taycan gets a larger battery. The battery node is immutable, so the new
+The Vimuna gets a larger battery. The battery node is immutable, so the new
 battery needs a new leaf. The new leaf has a new hash, so its parent, the
-drivetrain, needs a new node, and so does the Taycan. The body is not
+drivetrain, needs a new node, and so does the Vimuna. The body is not
 touched:
 
 <Snippet

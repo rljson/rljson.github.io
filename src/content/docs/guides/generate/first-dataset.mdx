@@ -1,31 +1,19 @@
 ---
-title: Your first dataset
-description: Generate a small car world with @rljson/edge, list its tables, validate it and see that every run yields the same data.
+title: Generate data
+description: Generate the World of Cars with @rljson/edge, list its tables, validate it and see that every run yields the same data.
 ---
 
+import UsecaseOverview from '../../../../assets/usecase/usecase-overview.svg';
 import { Aside } from '@astrojs/starlight/components';
 import Snippet from '../../../../components/Snippet.astro';
 
-`@rljson/edge` creates test data for Rljson applications: a car world
-with manufacturers, their catalogs and cars. Every car has a price, a brand,
-a workshop, a bill of materials and a CAD scene. The world uses every data
-type of the [Data Types](/guides/data_types/components/) tutorials, so one
-generated world exercises components, slice ids, layers, cakes, trees,
-revisions and table configurations at once:
+We use Edge, the Rljson example data generator (`@rljson/edge`), to create
+Rljson example data. Generate the data of the
+[example use case](/guides/generate/usecase/):
+the World of Cars. List its tables, validate it and see that every run
+yields the same data.
 
-```text
-Manufacturers            components   manufacturers
-└─ Catalogs              jsonArray    manufacturers.catalogsRef
-   └─ Catalog            cakes        catalogs, its slices are cars
-      ├─ Prices          layers       carPrices    → components  prices
-      ├─ Brands          layers       carBrands    → components  brands
-      ├─ Workshops       layers       carWorkshops → components  workshops
-      ├─ Parts           layers       carParts     → components  parts
-      └─ CAD             layers       carCad       → trees       cadScenes
-```
-
-In this tutorial you generate the smallest world, list its tables, validate
-it and generate it a second time to see that nothing in it is random.
+<UsecaseOverview />
 
 You will learn how to:
 
@@ -76,7 +64,7 @@ names of the tables.
 
 <Aside type="note">
   `generate` keeps the whole world in memory. That is fine up to `medium`. For
-  `large` and `xl`, [Generate large datasets](/guides/generate/large-datasets/)
+  `large` and `xl`, [Large & Small Datasets](/guides/generate/large-datasets/)
   hands the rows to a callback instead.
 </Aside>
 
@@ -102,9 +90,9 @@ entry point of the world, one row per manufacturer:
   title="Output"
 />
 
-The manufacturers, their cities and their models come from dictionaries of
-real brands. The workshops, their owners and their addresses are made up
-from dictionaries of names and streets.
+All names are invented: manufacturers, models, workshops and their owners
+come from dictionaries of made-up names. Only countries and cities are
+real.
 
 ## 4. Read the statistics
 
@@ -196,5 +184,5 @@ node first.ts
 - Nothing is random: the same configuration yields the same data and the
   same hashes.
 
-Next, [Walk the car world](/guides/generate/car-world/) follows the
+Next, [Iterate data](/guides/generate/car-world/) follows the
 references from the manufacturers down to a single car.

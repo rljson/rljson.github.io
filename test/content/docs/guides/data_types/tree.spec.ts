@@ -59,14 +59,14 @@ const motor = part('Electric Motor');
 // The parents: parts that consist of sub parts
 const body = part('Body', [door, roof]);
 const drivetrain = part('Drivetrain', [battery, motor]);
-const taycan = part('Taycan', [body, drivetrain]);
+const vimuna = part('Vimuna', [body, drivetrain]);
 // #endregion parents
 
 // #region table
 // All parts of the car live in one trees table
 const parts = hip<TreesTable>({
   _type: 'trees',
-  _data: [taycan, body, drivetrain, door, roof, battery, motor],
+  _data: [vimuna, body, drivetrain, door, roof, battery, motor],
 });
 // #endregion table
 
@@ -93,24 +93,24 @@ const print = (table: TreesTable, hash: Ref, indent = '') => {
 };
 
 // Print the whole car, starting at the root
-print(parts, ref(taycan));
+print(parts, ref(vimuna));
 // #endregion print
 
 // #region change
-// The Taycan gets a larger battery
+// The Vimuna gets a larger battery
 const batteryPlus = part('Performance Battery Plus');
 // A new sub part has a new hash, so every parent up to the root changes
 const newDrivetrain = part('Drivetrain', [batteryPlus, motor]);
-const newTaycan = part('Taycan', [body, newDrivetrain]);
+const newVimuna = part('Vimuna', [body, newDrivetrain]);
 
 // Add the new parts; the old ones stay as they are
 const newParts = hip<TreesTable>({
   _type: 'trees',
-  _data: [...parts._data, newTaycan, newDrivetrain, batteryPlus],
+  _data: [...parts._data, newVimuna, newDrivetrain, batteryPlus],
 });
 
 console.log('\nAfter the battery upgrade:');
-print(newParts, ref(newTaycan));
+print(newParts, ref(newVimuna));
 
 // Only the changed path is new: the body is reused
 const known = new Set(parts._data.map(ref));
@@ -125,7 +125,7 @@ log.mockRestore();
 
 describe('Tree tutorial', () => {
   it('references the sub parts by their hashes', () => {
-    expect(taycan.children).toEqual([ref(body), ref(drivetrain)]);
+    expect(vimuna.children).toEqual([ref(body), ref(drivetrain)]);
     expect(door.children).toBeNull();
   });
 
@@ -143,7 +143,7 @@ describe('Tree tutorial', () => {
 
     expect(output).toBe(
       [
-        'Taycan',
+        'Vimuna',
         '  Body',
         '    Door',
         '    Roof',
@@ -151,14 +151,14 @@ describe('Tree tutorial', () => {
         '    Performance Battery',
         '    Electric Motor',
         '\nAfter the battery upgrade:',
-        'Taycan',
+        'Vimuna',
         '  Body',
         '    Door',
         '    Roof',
         '  Drivetrain',
         '    Performance Battery Plus',
         '    Electric Motor',
-        '\nNew parts: Taycan, Drivetrain, Performance Battery Plus',
+        '\nNew parts: Vimuna, Drivetrain, Performance Battery Plus',
       ].join('\n'),
     );
   });
@@ -166,7 +166,7 @@ describe('Tree tutorial', () => {
   it('builds a tree from a plain object', () => {
     // #region from-object
     const nodes = treeFromObject({
-      taycan: {
+      vimuna: {
         body: {
           door: { meta: { name: 'Door' } },
           roof: { meta: { name: 'Roof' } },
@@ -190,7 +190,7 @@ describe('Tree tutorial', () => {
     // #region missing-child
     const incomplete = hip<TreesTable>({
       _type: 'trees',
-      _data: [taycan, body, drivetrain, door, roof, battery],
+      _data: [vimuna, body, drivetrain, door, roof, battery],
     });
 
     const result = await validate.run({ parts: incomplete });

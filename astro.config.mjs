@@ -79,6 +79,33 @@ export default defineConfig({
           ],
         },*/
         {
+          label: 'Example',
+          items: [
+            {
+              label: 'World of Cars',
+              slug: 'guides/generate/usecase',
+            },
+            {
+              label: 'Generate data',
+              slug: 'guides/generate/first-dataset',
+            },
+            { label: 'Iterate data', slug: 'guides/generate/car-world' },
+            {
+              label: 'Configure the generator',
+              slug: 'guides/generate/configure',
+            },
+            {
+              label: 'Work with trees',
+              slug: 'guides/generate/parts-and-cad',
+            },
+            { label: 'History & Revisions', slug: 'guides/generate/revisions' },
+            {
+              label: 'Large & Small Datasets',
+              slug: 'guides/generate/large-datasets',
+            },
+          ],
+        },
+        {
           label: 'Data Types',
           items: [
             { label: 'Components', slug: 'guides/data_types/components' },
@@ -88,30 +115,6 @@ export default defineConfig({
             // { label: 'Tree', slug: 'guides/data_types/tree' },
             // { label: 'TableCfg', slug: 'guides/data_types/table-cfg' },
             // { label: 'Revision', slug: 'guides/data_types/revision' },
-          ],
-        },
-        {
-          label: 'Generate Rljson',
-          items: [
-            { label: 'Usecase', slug: 'guides/generate/usecase' },
-            {
-              label: 'Your first dataset',
-              slug: 'guides/generate/first-dataset',
-            },
-            { label: 'Walk the car world', slug: 'guides/generate/car-world' },
-            {
-              label: 'Configure the generator',
-              slug: 'guides/generate/configure',
-            },
-            {
-              label: 'Parts and CAD scenes',
-              slug: 'guides/generate/parts-and-cad',
-            },
-            { label: 'Catalog revisions', slug: 'guides/generate/revisions' },
-            {
-              label: 'Generate large datasets',
-              slug: 'guides/generate/large-datasets',
-            },
           ],
         },
         /* {

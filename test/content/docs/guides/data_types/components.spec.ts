@@ -49,13 +49,13 @@ type Manufacturer = {
 const manufacturers = hip<ComponentsTable<Manufacturer>>({
   _type: 'components',
   _data: [
-    { id: 'porsche', country: 'Germany', founded: 1931 },
-    { id: 'volvo', country: 'Sweden', founded: 1927 },
+    { id: 'quinis', country: 'Germany', founded: 1931 },
+    { id: 'corex', country: 'Sweden', founded: 1927 },
     { id: 'bbs', country: 'Germany', founded: 1970 },
   ],
 });
 
-const [porsche, volvo, bbs] = manufacturers._data;
+const [quinis, corex, bbs] = manufacturers._data;
 // #endregion manufacturers
 
 // #region wheels
@@ -69,13 +69,13 @@ type Wheel = {
 const wheels = hip<ComponentsTable<Wheel>>({
   _type: 'components',
   _data: [
-    { manufacturersRef: ref(porsche), diameter: 20, width: 245 },
-    { manufacturersRef: ref(porsche), diameter: 20, width: 285 },
+    { manufacturersRef: ref(quinis), diameter: 20, width: 245 },
+    { manufacturersRef: ref(quinis), diameter: 20, width: 285 },
     { manufacturersRef: ref(bbs), diameter: 19, width: 245 },
   ],
 });
 
-const [taycanFront, taycanRear, ex30Wheel] = wheels._data;
+const [vimunaFront, vimunaRear, rivelWheel] = wheels._data;
 // #endregion wheels
 
 // #region wheel-array
@@ -90,23 +90,23 @@ const cars = hip<ComponentsTable<Car>>({
   _type: 'components',
   _data: [
     {
-      id: 'taycan',
-      manufacturersRef: ref(porsche),
+      id: 'vimuna',
+      manufacturersRef: ref(quinis),
       wheelsRef: [
-        ref(taycanFront),
-        ref(taycanFront),
-        ref(taycanRear),
-        ref(taycanRear),
+        ref(vimunaFront),
+        ref(vimunaFront),
+        ref(vimunaRear),
+        ref(vimunaRear),
       ],
     },
     {
-      id: 'ex30',
-      manufacturersRef: ref(volvo),
+      id: 'rivel',
+      manufacturersRef: ref(corex),
       wheelsRef: [
-        ref(ex30Wheel),
-        ref(ex30Wheel),
-        ref(ex30Wheel),
-        ref(ex30Wheel),
+        ref(rivelWheel),
+        ref(rivelWheel),
+        ref(rivelWheel),
+        ref(rivelWheel),
       ],
     },
   ],
@@ -209,19 +209,19 @@ describe('Components tutorial', () => {
 
   it('gives equal content an equal hash', () => {
     // #region same-content
-    const porscheAgain = hip<Manufacturer>({
+    const quinisAgain = hip<Manufacturer>({
       founded: 1931,
       country: 'Germany',
-      id: 'porsche',
+      id: 'quinis',
     });
 
-    expect(ref(porscheAgain)).toBe(ref(porsche)); // same content, same hash
+    expect(ref(quinisAgain)).toBe(ref(quinis)); // same content, same hash
     // #endregion same-content
   });
 
   it('refers to the manufacturer of each wheel', () => {
-    expect(taycanFront.manufacturersRef).toBe(ref(porsche));
-    expect(ex30Wheel.manufacturersRef).toBe(ref(bbs));
+    expect(vimunaFront.manufacturersRef).toBe(ref(quinis));
+    expect(rivelWheel.manufacturersRef).toBe(ref(bbs));
   });
 
   it('first counts the wheels of a car', async () => {
@@ -238,25 +238,25 @@ describe('Components tutorial', () => {
       _type: 'components',
       _data: [
         {
-          id: 'taycan',
-          manufacturersRef: ref(porsche),
+          id: 'vimuna',
+          manufacturersRef: ref(quinis),
           wheelCount: 4,
-          wheelsRef: ref(taycanFront), // no room for the rear wheels
+          wheelsRef: ref(vimunaFront), // no room for the rear wheels
         },
         {
-          id: 'ex30',
-          manufacturersRef: ref(volvo),
+          id: 'rivel',
+          manufacturersRef: ref(corex),
           wheelCount: 4,
-          wheelsRef: ref(ex30Wheel),
+          wheelsRef: ref(rivelWheel),
         },
       ],
     });
     // #endregion wheel-count
 
-    const [taycan] = cars._data;
-    await writeGolden('taycan-wheel-count.json', taycan);
+    const [vimuna] = cars._data;
+    await writeGolden('vimuna-wheel-count.json', vimuna);
 
-    expect(taycan.wheelsRef).toBe(ref(taycanFront));
+    expect(vimuna.wheelsRef).toBe(ref(vimunaFront));
     expect(await validate.run({ manufacturers, wheels, cars })).toEqual({});
   });
 
@@ -276,56 +276,56 @@ describe('Components tutorial', () => {
       _type: 'components',
       _data: [
         {
-          id: 'taycan',
-          manufacturersRef: ref(porsche),
-          wheel0: ref(taycanFront),
-          wheel1: ref(taycanFront),
-          wheel2: ref(taycanRear),
-          wheel3: ref(taycanRear),
+          id: 'vimuna',
+          manufacturersRef: ref(quinis),
+          wheel0: ref(vimunaFront),
+          wheel1: ref(vimunaFront),
+          wheel2: ref(vimunaRear),
+          wheel3: ref(vimunaRear),
         },
         {
-          id: 'ex30',
-          manufacturersRef: ref(volvo),
-          wheel0: ref(ex30Wheel),
-          wheel1: ref(ex30Wheel),
-          wheel2: ref(ex30Wheel),
-          wheel3: ref(ex30Wheel),
+          id: 'rivel',
+          manufacturersRef: ref(corex),
+          wheel0: ref(rivelWheel),
+          wheel1: ref(rivelWheel),
+          wheel2: ref(rivelWheel),
+          wheel3: ref(rivelWheel),
         },
       ],
     });
     // #endregion four-wheels
 
-    const [taycan] = cars._data;
-    await writeGolden('taycan-four-wheels.json', taycan);
+    const [vimuna] = cars._data;
+    await writeGolden('vimuna-four-wheels.json', vimuna);
 
-    expect(taycan.wheel0).toBe(taycan.wheel1); // the same row of wheels
-    expect(taycan.wheel2).toBe(ref(taycanRear));
+    expect(vimuna.wheel0).toBe(vimuna.wheel1); // the same row of wheels
+    expect(vimuna.wheel2).toBe(ref(vimunaRear));
     expect(await validate.run({ manufacturers, wheels, cars })).toEqual({});
   });
 
   it('finally refers to the wheels in an array', async () => {
-    const [taycan] = cars._data;
-    await writeGolden('taycan-wheel-array.json', taycan);
+    const [vimuna] = cars._data;
+    await writeGolden('vimuna-wheel-array.json', vimuna);
 
-    expect(taycan.wheelsRef).toEqual([
-      ref(taycanFront),
-      ref(taycanFront),
-      ref(taycanRear),
-      ref(taycanRear),
+    expect(vimuna.wheelsRef).toEqual([
+      ref(vimunaFront),
+      ref(vimunaFront),
+      ref(vimunaRear),
+      ref(vimunaRear),
     ]);
 
     // The order of the wheels is part of the content, and so of the hash
     const rearFirst = hip<Car>({
-      id: 'taycan',
-      manufacturersRef: ref(porsche),
+      id: 'vimuna',
+      manufacturersRef: ref(quinis),
       wheelsRef: [
-        ref(taycanRear),
-        ref(taycanRear),
-        ref(taycanFront),
-        ref(taycanFront),
+        ref(vimunaRear),
+        ref(vimunaRear),
+        ref(vimunaFront),
+        ref(vimunaFront),
       ],
     });
-    expect(ref(rearFirst)).not.toBe(ref(taycan));
+    expect(ref(rearFirst)).not.toBe(ref(vimuna));
   });
 
   it('validates the car catalog', () => {
@@ -340,12 +340,12 @@ describe('Components tutorial', () => {
 
     expect(output).toBe(
       [
-        'taycan by porsche',
-        '  wheel 0: 20″ × 245 mm, by porsche',
-        '  wheel 1: 20″ × 245 mm, by porsche',
-        '  wheel 2: 20″ × 285 mm, by porsche',
-        '  wheel 3: 20″ × 285 mm, by porsche',
-        'ex30 by volvo',
+        'vimuna by quinis',
+        '  wheel 0: 20″ × 245 mm, by quinis',
+        '  wheel 1: 20″ × 245 mm, by quinis',
+        '  wheel 2: 20″ × 285 mm, by quinis',
+        '  wheel 3: 20″ × 285 mm, by quinis',
+        'rivel by corex',
         '  wheel 0: 19″ × 245 mm, by bbs',
         '  wheel 1: 19″ × 245 mm, by bbs',
         '  wheel 2: 19″ × 245 mm, by bbs',
@@ -385,7 +385,7 @@ describe('Components tutorial', () => {
     // #region unknown-wheel
     // A wheel that was never added to the wheels table
     const unknownWheel = hip<Wheel>({
-      manufacturersRef: ref(porsche),
+      manufacturersRef: ref(quinis),
       diameter: 21,
       width: 305,
     });
@@ -395,12 +395,12 @@ describe('Components tutorial', () => {
       _tableCfg: ref(carsCfg),
       _data: [
         {
-          id: 'taycan',
-          manufacturersRef: ref(porsche),
+          id: 'vimuna',
+          manufacturersRef: ref(quinis),
           wheelsRef: [
-            ref(taycanFront),
-            ref(taycanFront),
-            ref(taycanRear),
+            ref(vimunaFront),
+            ref(vimunaFront),
+            ref(vimunaRear),
             ref(unknownWheel), // not in the wheels table
           ],
         },

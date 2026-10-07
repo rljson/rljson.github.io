@@ -4,9 +4,6 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
-overrides:
-  '@rljson/edge': link:./.gg/ts_links/@rljson/edge
-
 importers:
 
   .:
@@ -31,8 +28,8 @@ importers:
         specifier: ^0.2.3
         version: 0.2.3
       '@rljson/edge':
-        specifier: link:.gg/ts_links/@rljson/edge
-        version: link:.gg/ts_links/@rljson/edge
+        specifier: ^0.0.2
+        version: 0.0.2
       '@rljson/hash':
         specifier: 0.0.19
         version: 0.0.19
@@ -806,6 +803,10 @@ packages:
 
   '@prettier/parse-srcset@3.1.0':
     resolution: {integrity: sha512-FIRv2rZotO9NP/r66taYqD1zICpPiBbrECqjKV/xqNotqDxF7fLzzUeK+1RSRx9Tenk0DajR/GcRmTJ2qtHaKQ==}
+
+  '@rljson/edge@0.0.2':
+    resolution: {integrity: sha512-c3nmbMYIPFMZde3c2gtwNtIAKS+BRO4xqaZZR8DPn8PbbNqdz1f64QUsgqrbV437dQaXmzCwf0cQPjlH/uX/OQ==}
+    engines: {node: '>=22.14.0'}
 
   '@rljson/hash@0.0.19':
     resolution: {integrity: sha512-1bBHWbzzaOE3ba2niyvmu4d9VYv5atLzzHDI2ka3AlHLyBDD8Q9qI/HCjimULJlprIGVeN4+jN8sth4CdnGxOQ==}
@@ -2999,6 +3000,12 @@ snapshots:
     optional: true
 
   '@prettier/parse-srcset@3.1.0': {}
+
+  '@rljson/edge@0.0.2':
+    dependencies:
+      '@rljson/hash': 0.0.19
+      '@rljson/json': 0.0.23
+      '@rljson/rljson': 0.0.84
 
   '@rljson/hash@0.0.19':
     dependencies:

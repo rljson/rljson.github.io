@@ -29,7 +29,7 @@ Start with the project of [Import Rljson Data](/guides/db/import/) and
 create `joins-views.ts`. A view is described by a `ColumnSelection`: each
 column has an alias and a route from the catalog to a value.
 `car-world-db.ts` has a small helper for that. To print a view,
-`join.formatView()` formats its rows as a text table:
+`join.markdown()` returns its rows as a markdown table:
 
 <Snippet
   file="car-world-db.ts"
@@ -58,7 +58,7 @@ the cars of the catalog, follows every route for every car and returns a
 />
 
 <Snippet
-  file="catalog.txt"
+  file="catalog.md"
   title="Output"
 />
 
@@ -76,7 +76,7 @@ and `persons`, two tables beyond the layer:
 />
 
 <Snippet
-  file="service.txt"
+  file="service.md"
   title="Output"
 />
 
@@ -92,7 +92,7 @@ weight join like any other component:
 />
 
 <Snippet
-  file="parts.txt"
+  file="parts.md"
   title="Output"
 />
 

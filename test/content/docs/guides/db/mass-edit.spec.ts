@@ -79,7 +79,7 @@ const select = hip<EditColumnSelection>({
 });
 await manager.edit(select, catalogRef);
 
-await writeGolden('before.txt', manager.join.formatView());
+await writeGolden('before.md', manager.join.markdown());
 // #endregion select
 
 // #region filter
@@ -126,7 +126,7 @@ const discount = hip<EditSetValue>({
 });
 await manager.edit(discount);
 
-await writeGolden('after.txt', manager.join.formatView());
+await writeGolden('after.md', manager.join.markdown());
 // #endregion setValue
 
 // #region untouched
@@ -155,9 +155,9 @@ const publishedCatalog = await db.join(
   published.cakeRef,
 );
 await writeGolden(
-  'published.txt',
+  'published.md',
   `New catalog: ${published.cakeRef !== catalogRef}\n\n` +
-    publishedCatalog.formatView(),
+    publishedCatalog.markdown(),
 );
 // #endregion publish
 // #endregion app

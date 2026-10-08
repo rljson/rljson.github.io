@@ -1,0 +1,7 @@
+| model  | bill                            | weight |
+| ------ | ------------------------------- | ------ |
+| Amita  | Bill of materials Velora Amita  | 120    |
+| Orveo  | Bill of materials Velora Orveo  | 160    |
+| Calix  | Bill of materials Velora Calix  | 200    |
+| Rivuna | Bill of materials Velora Rivuna | 240    |
+| Eldel  | Bill of materials Velora Eldel  | 280    |

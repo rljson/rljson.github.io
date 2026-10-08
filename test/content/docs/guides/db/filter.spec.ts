@@ -37,7 +37,7 @@ const catalogView = new ColumnSelection([
   column('price', 'carPrices/prices/amount', 'number'),
 ]);
 const catalog = await db.join(catalogView, 'catalogs', catalogRef);
-await writeGolden('catalog.txt', catalog.formatView());
+await writeGolden('catalog.md', catalog.markdown());
 // #endregion view
 
 // #region number
@@ -58,7 +58,7 @@ const expensiveCars = hip<RowFilter>({
 });
 
 const expensiveView = catalog.clone().filter(expensiveCars);
-await writeGolden('expensive.txt', expensiveView.formatView());
+await writeGolden('expensive.md', expensiveView.markdown());
 // #endregion number
 
 // #region and
@@ -85,7 +85,7 @@ const dieselSuvs = hip<RowFilter>({
   _hash: '',
 });
 const dieselSuvView = catalog.clone().filter(dieselSuvs);
-await writeGolden('diesel-and-suv.txt', dieselSuvView.formatView());
+await writeGolden('diesel-and-suv.md', dieselSuvView.markdown());
 // #endregion and
 
 // #region or
@@ -97,7 +97,7 @@ const dieselOrSuv = hip<RowFilter>({
   _hash: '',
 });
 const dieselOrSuvView = catalog.clone().filter(dieselOrSuv);
-await writeGolden('diesel-or-suv.txt', dieselOrSuvView.formatView());
+await writeGolden('diesel-or-suv.md', dieselOrSuvView.markdown());
 // #endregion or
 // #endregion app
 

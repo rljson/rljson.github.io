@@ -104,7 +104,7 @@ await manager.edit(discount(10));
 // A later setValue on the same cell replaces the earlier one
 await manager.edit(discount(15));
 const headRows = manager.join.rows;
-await writeGolden('head.txt', manager.join.formatView());
+await writeGolden('head.md', manager.join.markdown());
 // #endregion setup
 
 // #region read
@@ -134,20 +134,20 @@ await writeGolden('steps.txt', names.join('\n'));
 const browser = new MultiEditManager('catalogs', db);
 
 await browser.editHistoryRef(filtered);
-await writeGolden('undo.txt', browser.join.formatView());
+await writeGolden('undo.md', browser.join.markdown());
 // #endregion undo
 
 // #region redo
 const redo: string[] = [];
 await browser.editHistoryRef(discounted);
-redo.push('Forward to 10 %:', browser.join.formatView());
+redo.push('Forward to 10 %:\n', browser.join.markdown());
 
 await browser.editHistoryRef(head);
-redo.push('\nForward to 15 %:', browser.join.formatView());
+redo.push('\nForward to 15 %:\n', browser.join.markdown());
 
 await browser.editHistoryRef(selected);
-redo.push('\nBack to the selection:', browser.join.formatView());
-await writeGolden('redo.txt', redo.join('\n'));
+redo.push('\nBack to the selection:\n', browser.join.markdown());
+await writeGolden('redo.md', redo.join('\n'));
 // #endregion redo
 
 // #region branch
@@ -160,8 +160,8 @@ const branch = (await db.getEditHistories('catalogs', {})).find(
   (h) => h._hash === browser.head!.editHistoryRef,
 )!;
 await writeGolden(
-  'branch.txt',
-  `${browser.join.formatView()}\n\n` +
+  'branch.md',
+  `${browser.join.markdown()}\n\n` +
     `Builds on the filter: ${branch.previous?.[0] === filtered}`,
 );
 // #endregion branch

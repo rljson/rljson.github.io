@@ -36,7 +36,7 @@ const catalogView = new ColumnSelection([
 // Join the catalog with the selection
 const catalog = await db.join(catalogView, 'catalogs', catalogRef);
 const summary = `${catalog.rowCount} cars, ${catalog.columnCount} columns`;
-await writeGolden('catalog.txt', `${summary}\n\n${catalog.formatView()}`);
+await writeGolden('catalog.md', `${summary}\n\n${catalog.markdown()}`);
 // #endregion join
 
 // #region references
@@ -51,7 +51,7 @@ const serviceView = new ColumnSelection([
   column('lastName', 'carWorkshops/workshops/persons/lastName'),
 ]);
 const service = await db.join(serviceView, 'catalogs', catalogRef);
-await writeGolden('service.txt', service.formatView());
+await writeGolden('service.md', service.markdown());
 // #endregion references
 
 // #region parts
@@ -62,7 +62,7 @@ const partsView = new ColumnSelection([
   column('weight', 'carParts/parts/weightKg', 'number'),
 ]);
 const parts = await db.join(partsView, 'catalogs', catalogRef);
-await writeGolden('parts.txt', parts.formatView());
+await writeGolden('parts.md', parts.markdown());
 // #endregion parts
 // #endregion app
 

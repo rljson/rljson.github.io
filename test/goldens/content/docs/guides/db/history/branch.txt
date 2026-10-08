@@ -1,7 +1,0 @@
-model  | price | discount
--------|-------|---------
-Calix  | 60310 | 5
-Rivuna | 81160 | 5
-Eldel  | 88630 | 5
-
-Builds on the filter: true

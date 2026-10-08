@@ -1,7 +1,0 @@
-model  | workshop         | street        | city      | firstName | lastName
--------|------------------|---------------|-----------|-----------|----------
-Amita  | Lindqvist Motors | Hauptstraße   | Wolfsburg | Mira      | Lindqvist
-Orveo  | Autohaus Koch    | Bahnhofstraße | Stuttgart | Elias     | Koch
-Calix  | Lindqvist Motors | Hauptstraße   | Wolfsburg | Mira      | Lindqvist
-Rivuna | Autohaus Koch    | Bahnhofstraße | Stuttgart | Elias     | Koch
-Eldel  | Lindqvist Motors | Hauptstraße   | Wolfsburg | Mira      | Lindqvist

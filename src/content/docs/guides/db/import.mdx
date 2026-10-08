@@ -60,8 +60,9 @@ reference to a missing row stops the import.
 
 ## 3. List the tables
 
-`tables` returns the configurations of all tables, `dumpTable` the rows of
-one:
+`tables` returns a `Tables` view on the database. `ls({ long: true })`
+lists each table with its type and row count, without the insert history
+tables:
 
 <Snippet
   file="import.spec.ts"

@@ -31,14 +31,7 @@ const { db, catalogRef } = await carWorldDb();
 // Every table of the world now lives in the Db, next to the insert history
 // Db keeps for it
 const tables = await db.core.tables();
-const lines: string[] = [];
-for (const key of Object.keys(tables).sort()) {
-  if (key.endsWith('InsertHistory') || key.startsWith('_')) continue;
-  const { [key]: table } = await db.core.dumpTable(key);
-  lines.push(
-    `${key.padEnd(18)} ${table._type.padEnd(11)} ${table._data.length}`,
-  );
-}
+const lines = tables.ls({ long: true });
 await writeGolden('tables.txt', lines.join('\n'));
 // #endregion tables
 

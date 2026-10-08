@@ -8,6 +8,9 @@ export default defineConfig(({ mode }) => {
     test: {
       globals: true,
       environment: 'node',
+      // Compile linked @rljson sources (gg ts_links) instead of loading them in Node.
+      // Remove once "Make gg-linked rljson packages loadable in vitest" is implemented.
+      server: { deps: { inline: [/@rljson\//] } },
       setupFiles: [],
       include: ['**/test/**/*.spec.ts'],
 

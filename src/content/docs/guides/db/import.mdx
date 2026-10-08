@@ -42,12 +42,12 @@ its own, like `import.ts` on this page.
 
 ## 2. Create the Db and import the world
 
-A `Db` works on an `Io`. `IoMem` keeps everything in memory, which is all a
-tutorial needs. Db reads the type of each table, cake, layer, slice ids or
+A `Db` works on an `Io`. `Db.example()` returns a Db on an empty in-memory
+Io, which is all a tutorial needs. Db reads the type of each table, cake, layer, slice ids or
 components, from its table configuration, so the world goes in as Edge
-generates it. `createTablesFromData` creates every table the world
-describes, each with its insert history, which [Edit single
-items](/guides/db/single-edit/) uses. Then import the world in one call:
+generates it. Import the world in one call. With `createTables: true`,
+`import` first creates every table the world describes, each with its
+insert history, which [Edit single items](/guides/db/single-edit/) uses:
 
 <Snippet
   file="car-world-db.ts"

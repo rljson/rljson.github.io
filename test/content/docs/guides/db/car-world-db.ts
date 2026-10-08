@@ -26,12 +26,8 @@ export const carWorldDb = async () => {
   await io.isReady();
   const db = new Db(io);
 
-  // Create a table for every table configuration of the world, except
-  // tableCfgs, which every Db has. Then import the world as it is.
-  for (const tableCfg of world.tableCfgs._data) {
-    if (tableCfg.key === 'tableCfgs') continue;
-    await db.core.createTableWithInsertHistory(tableCfg);
-  }
+  // Create the tables the world describes, then import the world as it is
+  await db.core.createTablesFromData(world);
   await db.core.import(world);
 
   const catalogRef = world.catalogs._data[0]._hash as string;

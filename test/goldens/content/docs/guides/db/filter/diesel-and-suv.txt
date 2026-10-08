@@ -1,0 +1,3 @@
+model | body | fuel   | price
+------|------|--------|------
+Eldel | suv  | diesel | 88630

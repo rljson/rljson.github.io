@@ -1,0 +1,128 @@
+---
+title: Import Rljson Data
+description: Generate a car world, create its tables in a Db and import the data, then read it back with a route.
+---
+
+import UsecaseOverview from '../../../../assets/usecase/usecase-overview.svg';
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+`@rljson/db` is the database management system of Rljson. It stores Rljson
+tables on an `Io` backend, in memory, on disk or on a server, and gives you
+one interface to read and write them: routes to address data, joins to build
+views, edits to change many rows at once, and histories to go back.
+
+This chapter works with the car world from [World of
+Cars](/guides/generate/usecase/): one manufacturer, Velora, with a catalog
+of five cars, their prices, brands, workshops and bills of materials.
+
+<UsecaseOverview />
+
+You will learn how to:
+
+- create a Db on an in memory Io
+- create the tables and import the data
+- read a column of the catalog with a route
+
+## 1. Set up the project
+
+Create a project and install Db, an Io backend, the generator and the core
+packages:
+
+```bash
+mkdir car-db
+cd car-db
+echo '{ "type": "module" }' > package.json
+pnpm add @rljson/db @rljson/io @rljson/edge @rljson/rljson @rljson/hash
+```
+
+All pages of this chapter share one file, `car-world-db.ts`. It generates
+the world and imports it into a Db. Each page then adds an application of
+its own, like `import.ts` on this page.
+
+## 2. Create the Db and import the world
+
+A `Db` works on an `Io`. `IoMem` keeps everything in memory, which is all a
+tutorial needs. Db reads the type of each table, cake, layer, slice ids or
+components, from its table configuration, so the world goes in as Edge
+generates it. Create a table for every table configuration, then import
+the world in one call. `createTableWithInsertHistory` also creates the
+insert history of each table, which [Edit single
+items](/guides/db/single-edit/) uses:
+
+<Snippet
+  file="car-world-db.ts"
+  region="setup"
+  title="car-world-db.ts"
+/>
+
+`import` validates the data before it writes it. A broken hash or a
+reference to a missing row stops the import.
+
+## 3. List the tables
+
+`tables` returns the configurations of all tables, `dumpTable` the rows of
+one:
+
+<Snippet
+  file="import.spec.ts"
+  region="tables"
+  title="import.ts"
+/>
+
+<Snippet
+  file="tables.txt"
+  title="Output"
+/>
+
+## 4. Read with a route
+
+A route names the tables from the catalog down to a column, separated by
+slashes. `@` pins a table to one row, here the catalog. Db follows the
+catalog to its brands layer, the layer to the brand of each car, and
+returns one cell per car:
+
+<Snippet
+  file="import.spec.ts"
+  region="read"
+  title="import.ts"
+/>
+
+<Snippet
+  file="models.txt"
+  title="Output"
+/>
+
+## 5. Run the application
+
+Here are the imports `car-world-db.ts` needs at its top:
+
+<Snippet
+  file="car-world-db.ts"
+  region="imports"
+  title="car-world-db.ts"
+/>
+
+And the complete `import.ts`:
+
+<Snippet
+  file="import.spec.ts"
+  region="app"
+  title="import.ts"
+/>
+
+Run it with `node import.ts`:
+
+The `tableCfgs` table holds the configurations of the data tables and of
+their insert histories.
+
+## What you have learned
+
+- Db is the database management system of Rljson, on top of an `Io`.
+- Db reads the type of a table from its table configuration.
+- `createTableWithInsertHistory` creates a table, `import` fills it.
+- A route like `catalogs@ref/carBrands/brands/model` reads a
+  column of a catalog.
+
+Next, [Joins & Views](/guides/db/joins-views/) puts many columns side by
+side.

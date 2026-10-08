@@ -1,0 +1,106 @@
+---
+title: Filter view data
+description: Filter the rows of a view with number and string column filters, combined with and or or.
+---
+
+import CarCatalog from '../../../../assets/figures/car-catalog.svg';
+import Snippet from '../../../../components/Snippet.astro';
+
+A catalog lists its cars, a view shows one row per car. Often you only need
+some of them: the expensive cars, the diesels, the SUVs. A `RowFilter`
+selects them.
+
+<CarCatalog />
+
+The figure shows a catalog of four cars. The view below has five, the cars
+of Velora: Amita, Orveo, Calix, Rivuna and Eldel.
+
+You will learn how to:
+
+- filter a column by a number
+- filter a column by a string
+- combine filters with `and` and `or`
+
+## 1. Build the view
+
+Start with the project of [Import Rljson Data](/guides/db/import/) and
+create `filter.ts`. Join the catalog with model, body type, fuel and price:
+
+<Snippet
+  file="filter.spec.ts"
+  region="view"
+  title="filter.ts"
+/>
+
+<Snippet
+  file="catalog.txt"
+  title="Output"
+/>
+
+## 2. Filter by a number
+
+A column filter names the route of its column, a type, an operator and the
+value it searches for. Number filters know `equals`, `notEquals`,
+`greaterThan`, `greaterThanOrEquals`, `lessThan` and `lessThanOrEquals`.
+A `RowFilter` holds the column filters:
+
+<Snippet
+  file="filter.spec.ts"
+  region="number"
+  title="filter.ts"
+/>
+
+<Snippet
+  file="expensive.txt"
+  title="Output"
+/>
+
+`filter` adds the filter to the join it is called on. `clone` keeps the full
+view for the next filter.
+
+## 3. Combine filters
+
+String filters know `equals`, `notEquals`, `contains`, `notContains`,
+`startsWith`, `endsWith` and `regExp`. The operator of the row filter decides
+how the column filters combine:
+
+<Snippet
+  file="filter.spec.ts"
+  region="and"
+  title="filter.ts"
+/>
+
+<Snippet
+  file="diesel-and-suv.txt"
+  title="Output"
+/>
+
+"or" keeps the rows that any filter matches:
+
+<Snippet
+  file="filter.spec.ts"
+  region="or"
+  title="filter.ts"
+/>
+
+<Snippet
+  file="diesel-or-suv.txt"
+  title="Output"
+/>
+
+## 4. Run the application
+
+<Snippet
+  file="filter.spec.ts"
+  region="app"
+  title="filter.ts"
+/>
+
+## What you have learned
+
+- A column filter names a column by its route and compares its value.
+- A `RowFilter` combines column filters with `and` or `or`.
+- `join.filter` narrows a view, `join.clone` keeps the original.
+
+Next, [Mass Edit view data](/guides/db/mass-edit/) changes the rows a filter
+keeps.

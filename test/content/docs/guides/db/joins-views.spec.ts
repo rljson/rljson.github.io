@@ -13,7 +13,7 @@
 // #region select
 import { writeGolden } from '@tssuite/golden';
 import { ColumnSelection } from '@rljson/db';
-import { carWorldDb, column, formatView } from './car-world-db';
+import { carWorldDb, column } from './car-world-db';
 // #endregion select
 // #endregion app
 
@@ -36,7 +36,7 @@ const catalogView = new ColumnSelection([
 // Join the catalog with the selection
 const catalog = await db.join(catalogView, 'catalogs', catalogRef);
 const summary = `${catalog.rowCount} cars, ${catalog.columnCount} columns`;
-await writeGolden('catalog.txt', `${summary}\n\n${formatView(catalog)}`);
+await writeGolden('catalog.txt', `${summary}\n\n${catalog.formatView()}`);
 // #endregion join
 
 // #region references
@@ -51,7 +51,7 @@ const serviceView = new ColumnSelection([
   column('lastName', 'carWorkshops/workshops/persons/lastName'),
 ]);
 const service = await db.join(serviceView, 'catalogs', catalogRef);
-await writeGolden('service.txt', formatView(service));
+await writeGolden('service.txt', service.formatView());
 // #endregion references
 
 // #region parts
@@ -62,7 +62,7 @@ const partsView = new ColumnSelection([
   column('weight', 'carParts/parts/weightKg', 'number'),
 ]);
 const parts = await db.join(partsView, 'catalogs', catalogRef);
-await writeGolden('parts.txt', formatView(parts));
+await writeGolden('parts.txt', parts.formatView());
 // #endregion parts
 // #endregion app
 

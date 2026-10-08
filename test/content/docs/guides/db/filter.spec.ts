@@ -13,7 +13,7 @@
 // #region view
 import { writeGolden } from '@tssuite/golden';
 import { ColumnSelection } from '@rljson/db';
-import { carWorldDb, column, formatView } from './car-world-db';
+import { carWorldDb, column } from './car-world-db';
 // #endregion view
 // #region number
 import type { NumberFilter, RowFilter } from '@rljson/db';
@@ -37,7 +37,7 @@ const catalogView = new ColumnSelection([
   column('price', 'carPrices/prices/amount', 'number'),
 ]);
 const catalog = await db.join(catalogView, 'catalogs', catalogRef);
-await writeGolden('catalog.txt', formatView(catalog));
+await writeGolden('catalog.txt', catalog.formatView());
 // #endregion view
 
 // #region number
@@ -58,7 +58,7 @@ const expensiveCars = hip<RowFilter>({
 });
 
 const expensiveView = catalog.clone().filter(expensiveCars);
-await writeGolden('expensive.txt', formatView(expensiveView));
+await writeGolden('expensive.txt', expensiveView.formatView());
 // #endregion number
 
 // #region and
@@ -85,7 +85,7 @@ const dieselSuvs = hip<RowFilter>({
   _hash: '',
 });
 const dieselSuvView = catalog.clone().filter(dieselSuvs);
-await writeGolden('diesel-and-suv.txt', formatView(dieselSuvView));
+await writeGolden('diesel-and-suv.txt', dieselSuvView.formatView());
 // #endregion and
 
 // #region or
@@ -97,7 +97,7 @@ const dieselOrSuv = hip<RowFilter>({
   _hash: '',
 });
 const dieselOrSuvView = catalog.clone().filter(dieselOrSuv);
-await writeGolden('diesel-or-suv.txt', formatView(dieselOrSuvView));
+await writeGolden('diesel-or-suv.txt', dieselOrSuvView.formatView());
 // #endregion or
 // #endregion app
 

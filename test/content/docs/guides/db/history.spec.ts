@@ -24,7 +24,7 @@ import {
   createEditTableCfg,
   createMultiEditTableCfg,
 } from '@rljson/rljson';
-import { carWorldDb, column, formatView } from './car-world-db';
+import { carWorldDb, column } from './car-world-db';
 // #endregion setup
 // #endregion app
 
@@ -104,7 +104,7 @@ await manager.edit(discount(10));
 // A later setValue on the same cell replaces the earlier one
 await manager.edit(discount(15));
 const headRows = manager.join.rows;
-await writeGolden('head.txt', formatView(manager.join));
+await writeGolden('head.txt', manager.join.formatView());
 // #endregion setup
 
 // #region read
@@ -134,19 +134,19 @@ await writeGolden('steps.txt', names.join('\n'));
 const browser = new MultiEditManager('catalogs', db);
 
 await browser.editHistoryRef(filtered);
-await writeGolden('undo.txt', formatView(browser.join));
+await writeGolden('undo.txt', browser.join.formatView());
 // #endregion undo
 
 // #region redo
 const redo: string[] = [];
 await browser.editHistoryRef(discounted);
-redo.push('Forward to 10 %:', formatView(browser.join));
+redo.push('Forward to 10 %:', browser.join.formatView());
 
 await browser.editHistoryRef(head);
-redo.push('\nForward to 15 %:', formatView(browser.join));
+redo.push('\nForward to 15 %:', browser.join.formatView());
 
 await browser.editHistoryRef(selected);
-redo.push('\nBack to the selection:', formatView(browser.join));
+redo.push('\nBack to the selection:', browser.join.formatView());
 await writeGolden('redo.txt', redo.join('\n'));
 // #endregion redo
 
@@ -161,7 +161,7 @@ const branch = (await db.getEditHistories('catalogs', {})).find(
 )!;
 await writeGolden(
   'branch.txt',
-  `${formatView(browser.join)}\n\n` +
+  `${browser.join.formatView()}\n\n` +
     `Builds on the filter: ${branch.previous?.[0] === filtered}`,
 );
 // #endregion branch

@@ -28,18 +28,12 @@ You will learn how to:
 Start with the project of [Import Rljson Data](/guides/db/import/) and
 create `joins-views.ts`. A view is described by a `ColumnSelection`: each
 column has an alias and a route from the catalog to a value.
-`car-world-db.ts` has a small helper for that, and one that formats a view
-as a text table:
+`car-world-db.ts` has a small helper for that. To print a view,
+`join.formatView()` formats its rows as a text table:
 
 <Snippet
   file="car-world-db.ts"
   region="columns"
-  title="car-world-db.ts"
-/>
-
-<Snippet
-  file="car-world-db.ts"
-  region="print"
   title="car-world-db.ts"
 />
 

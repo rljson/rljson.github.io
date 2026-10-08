@@ -9,7 +9,7 @@
 
 // #region imports
 import { Db } from '@rljson/db';
-import type { ColumnInfo, Join } from '@rljson/db';
+import type { ColumnInfo } from '@rljson/db';
 import { Edge } from '@rljson/edge';
 // #endregion imports
 
@@ -45,28 +45,3 @@ export const column = (
   titleShort: alias,
 });
 // #endregion columns
-
-// #region print
-// Formats the rows of a view as a table. Every cell is an array: a route
-// that runs through a reference array yields one value per reference.
-export const formatView = (join: Join): string => {
-  const header = join.columnSelection.aliases;
-  const rows = join.rows.map((row) =>
-    row.map((cell: unknown[]) => cell.join(', ')),
-  );
-  const widths = header.map((title, i) =>
-    Math.max(title.length, ...rows.map((row) => row[i].length)),
-  );
-  const line = (cells: string[]) =>
-    cells
-      .map((cell, i) => cell.padEnd(widths[i]))
-      .join(' | ')
-      .trimEnd();
-
-  return [
-    line(header),
-    widths.map((w) => '-'.repeat(w)).join('-|-'),
-    ...rows.map(line),
-  ].join('\n');
-};
-// #endregion print

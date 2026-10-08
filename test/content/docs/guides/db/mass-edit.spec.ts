@@ -12,7 +12,7 @@
 // #region app
 // #region tables
 import { writeGolden } from '@tssuite/golden';
-import { carWorldDb, column, formatView } from './car-world-db';
+import { carWorldDb, column } from './car-world-db';
 import {
   createEditHistoryTableCfg,
   createEditTableCfg,
@@ -79,7 +79,7 @@ const select = hip<EditColumnSelection>({
 });
 await manager.edit(select, catalogRef);
 
-await writeGolden('before.txt', formatView(manager.join));
+await writeGolden('before.txt', manager.join.formatView());
 // #endregion select
 
 // #region filter
@@ -126,7 +126,7 @@ const discount = hip<EditSetValue>({
 });
 await manager.edit(discount);
 
-await writeGolden('after.txt', formatView(manager.join));
+await writeGolden('after.txt', manager.join.formatView());
 // #endregion setValue
 
 // #region untouched
@@ -157,7 +157,7 @@ const publishedCatalog = await db.join(
 await writeGolden(
   'published.txt',
   `New catalog: ${published.cakeRef !== catalogRef}\n\n` +
-    formatView(publishedCatalog),
+    publishedCatalog.formatView(),
 );
 // #endregion publish
 // #endregion app

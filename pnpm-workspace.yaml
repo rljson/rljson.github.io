@@ -8,4 +8,4 @@ minimumReleaseAgeExclude:
   - '@rljson/io@0.0.84'
 overrides:
   "@rljson\/db": link:./.gg/ts_links/@rljson/db
-  '@rljson/rljson': 0.0.84
+  '@rljson/rljson': link:./.gg/ts_links/@rljson/rljson

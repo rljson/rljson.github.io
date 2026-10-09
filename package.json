@@ -18,7 +18,7 @@
   },
   "dependencies": {
     "@astrojs/starlight": "^0.42.5",
-    "astro": "^7.3.6",
+    "astro": "^7.3.8",
     "sharp": "^0.35.5"
   },
   "devDependencies": {
@@ -37,7 +37,7 @@
     "prettier": "^3.9.9",
     "prettier-plugin-astro": "^1.1.0",
     "typescript": "~6.0.3",
-    "vite": "^8.3.3",
+    "vite": "^8.3.4",
     "vitest": "^5.0.3"
   },
   "private": true

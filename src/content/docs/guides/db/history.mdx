@@ -1,0 +1,132 @@
+---
+title: History, Undo & Redo
+description: Read the edit history of a catalog, walk back and forward, and edit after going back.
+---
+
+import UsecaseRevision from '../../../../assets/usecase/usecase-revision.svg';
+import { Aside } from '@astrojs/starlight/components';
+import Snippet from '../../../../components/Snippet.astro';
+
+Db keeps every edit. Each one adds a row to the edit history, and each row
+points to the one before it. Walking that chain backwards is undo, walking
+it forwards again is redo.
+
+<UsecaseRevision />
+
+The figure shows how a catalog changes from one year to the next, and how
+everything else stays. The edit history works the same way: every step
+builds on the step before it.
+
+You will learn how to:
+
+- read the edit history of a cake
+- follow a history row to its edit
+- go back to an earlier edit and forward again
+- edit after going back
+
+## 1. Make four edits
+
+Start with the project of [Import Rljson Data](/guides/db/import/) and
+create `history.ts`. Make the edits of [Mass Edit view
+data](/guides/db/mass-edit/): select the columns, keep the cars above
+50,000 EUR, set the discount to 10 %. Then set it to 15 %: a later
+`setValue` on the same cell replaces the earlier one:
+
+<Snippet
+  file="history.spec.ts"
+  region="setup"
+  title="history.ts"
+/>
+
+<Snippet
+  file="head.md"
+  title="Output"
+/>
+
+## 2. Read the history
+
+`getEditHistories` returns the history rows of a cake. Start at the head
+of the manager and follow `previous` back to the first edit. A history row
+names a multi edit, and the multi edit names its edit:
+
+<Snippet
+  file="history.spec.ts"
+  region="read"
+  title="history.ts"
+/>
+
+<Snippet
+  file="steps.txt"
+  title="Output"
+/>
+
+## 3. Undo
+
+`editHistoryRef` makes a history row the head of a manager and builds the
+view of that step. Open a new manager on the stored history and go back to
+the filter:
+
+<Snippet
+  file="history.spec.ts"
+  region="undo"
+  title="history.ts"
+/>
+
+<Snippet
+  file="undo.md"
+  title="Output"
+/>
+
+## 4. Redo and undo again
+
+Go forward to 10 %, then to 15 %, and back to the selection. A manager can
+move to any step, in any order:
+
+<Snippet
+  file="history.spec.ts"
+  region="redo"
+  title="history.ts"
+/>
+
+<Snippet
+  file="redo.md"
+  title="Output"
+/>
+
+## 5. Edit after going back
+
+Go back to the filter and make a new edit. It builds on the filter. The
+two discount edits stay in the history, as a branch you can go back to:
+
+<Snippet
+  file="history.spec.ts"
+  region="branch"
+  title="history.ts"
+/>
+
+<Snippet
+  file="branch.md"
+  title="Output"
+/>
+
+<Aside type="note">
+  Db has no dedicated undo or redo function. Undo and redo are a walk along the
+  edit history with `editHistoryRef`.
+</Aside>
+
+## 6. Run the application
+
+<Snippet
+  file="history.spec.ts"
+  region="app"
+  title="history.ts"
+/>
+
+## What you have learned
+
+- Every edit adds a row to the edit history of its cake.
+- A history row points to its multi edit and to the row before it.
+- `editHistoryRef` moves the head of a manager to any step.
+- Undo and redo are a walk back and forth along the history.
+- An edit after going back starts a branch; the later edits stay.
+- A later `setValue` on the same cell replaces the earlier one.

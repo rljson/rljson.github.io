@@ -1,0 +1,106 @@
+---
+title: Edit single items
+description: Read one price with a route, change it with isolate and inject, and insert it into a new catalog.
+---
+
+import UsecaseCar from '../../../../assets/usecase/usecase-car.svg';
+import Snippet from '../../../../components/Snippet.astro';
+
+The Velora Amita costs 18,600 EUR. Lower its price to 17,990 EUR. Rljson
+data never changes in place: a new price needs a new prices layer, and the
+new layer a new catalog. The old catalog stays as it is.
+
+<UsecaseCar />
+
+This page changes the price box in the figure, and only that.
+
+You will learn how to:
+
+- read a value with a route
+- isolate a row from a tree and inject a new one
+- insert a changed value on a route
+- read the insert history
+
+## 1. Read the price
+
+Start with the project of [Import Rljson Data](/guides/db/import/) and
+create `single-edit.ts`. `db.get` returns one cell per car. A cell holds the
+row and the path of the row in the returned tree:
+
+<Snippet
+  file="single-edit.spec.ts"
+  region="get"
+  title="single-edit.ts"
+/>
+
+<Snippet
+  file="price.txt"
+  title="Output"
+/>
+
+## 2. Insert a new price
+
+Get the prices of the catalog with the same route. `isolate` copies the
+tree along the path of the Amita, `inject` puts the changed price at its
+end. `db.insert` on the route of the catalog does the rest: it writes a
+new price, a new prices layer that builds on the old one, and a new catalog
+that keeps all other layers. It returns a row of the insert history with
+the hash of the new catalog:
+
+<Snippet
+  file="single-edit.spec.ts"
+  region="component"
+  title="single-edit.ts"
+/>
+
+<Snippet
+  file="new-catalog.txt"
+  title="Output"
+/>
+
+## 3. Compare the catalogs
+
+<Snippet
+  file="single-edit.spec.ts"
+  region="read"
+  title="single-edit.ts"
+/>
+
+<Snippet
+  file="compare.txt"
+  title="Output"
+/>
+
+## 4. Read the insert history
+
+Every insert writes a row into the insert history of its table: the route,
+the hash of the new row and a time id:
+
+<Snippet
+  file="single-edit.spec.ts"
+  region="history"
+  title="single-edit.ts"
+/>
+
+<Snippet
+  file="insert-history.txt"
+  title="Output"
+/>
+
+## 5. Run the application
+
+<Snippet
+  file="single-edit.spec.ts"
+  region="app"
+  title="single-edit.ts"
+/>
+
+## What you have learned
+
+- `db.get` returns cells with the row and its path in a tree.
+- `isolate` and `inject` build the tree an insert needs.
+- An insert on a route creates a new component, a new layer and a new cake.
+- Every insert is recorded in the insert history of its table.
+
+Next, [History, Undo & Redo](/guides/db/history/) walks through the edits
+of a view.

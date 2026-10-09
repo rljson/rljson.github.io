@@ -1,0 +1,17 @@
+addresses     components 3
+brands        components 5
+cadScenes     trees      35
+carBrands     layers     1
+carCad        layers     1
+carIds        sliceIds   1
+carParts      layers     1
+carPrices     layers     1
+carWorkshops  layers     1
+catalogs      cakes      1
+manufacturers components 1
+parts         components 35
+persons       components 2
+prices        components 5
+revisions     revisions  0
+tableCfgs     tableCfgs  35
+workshops     components 2

@@ -1,0 +1,117 @@
+---
+title: Joins & Views
+description: Join the layers of a catalog into a denormalized view with brand, model, price, workshop and parts.
+---
+
+import UsecaseCar from '../../../../assets/usecase/usecase-car.svg';
+import Snippet from '../../../../components/Snippet.astro';
+
+Rljson stores a catalog normalized: every aspect of a car lives in a layer
+of its own, every value once. A view puts the aspects back side by side: one
+row per car, one column per value. Db builds it with a join.
+
+<UsecaseCar />
+
+The Velora Amita above is one row of such a view: its price comes from the
+prices layer, brand and model from the brands layer, the workshop from the
+workshops layer, and the owner from the workshop.
+
+You will learn how to:
+
+- describe the columns of a view with a `ColumnSelection`
+- join a catalog into a view
+- follow references from a component to other components
+- join the bill of materials of every car
+
+## 1. Describe the columns
+
+Start with the project of [Import Rljson Data](/guides/db/import/) and
+create `joins-views.ts`. A view is described by a `ColumnSelection`: each
+column has an alias and a route from the catalog to a value.
+`car-world-db.ts` has a small helper for that. To print a view,
+`join.markdown()` returns its rows as a markdown table:
+
+<Snippet
+  file="car-world-db.ts"
+  region="columns"
+  title="car-world-db.ts"
+/>
+
+The catalog view shows brand, model, price and currency:
+
+<Snippet
+  file="joins-views.spec.ts"
+  region="select"
+  title="joins-views.ts"
+/>
+
+## 2. Join the catalog
+
+`db.join` takes the selection, the cake table and the catalog. It resolves
+the cars of the catalog, follows every route for every car and returns a
+`Join`:
+
+<Snippet
+  file="joins-views.spec.ts"
+  region="join"
+  title="joins-views.ts"
+/>
+
+<Snippet
+  file="catalog.md"
+  title="Output"
+/>
+
+## 3. Follow references
+
+A route does not stop at a layer's component. A workshop refers to its
+address in `addressRef` and to its owner in `ownerRef`. The route continues
+from the workshops layer into `workshops`, and from there into `addresses`
+and `persons`, two tables beyond the layer:
+
+<Snippet
+  file="joins-views.spec.ts"
+  region="references"
+  title="joins-views.ts"
+/>
+
+<Snippet
+  file="service.md"
+  title="Output"
+/>
+
+## 4. Join the parts
+
+The parts layer assigns a bill of materials to every car. Its name and
+weight join like any other component:
+
+<Snippet
+  file="joins-views.spec.ts"
+  region="parts"
+  title="joins-views.ts"
+/>
+
+<Snippet
+  file="parts.md"
+  title="Output"
+/>
+
+## 5. Run the application
+
+<Snippet
+  file="joins-views.spec.ts"
+  region="app"
+  title="joins-views.ts"
+/>
+
+Three cars share the workshop Lindqvist Motors and its owner Mira
+Lindqvist. The view repeats them; the database stores them once.
+
+## What you have learned
+
+- A `ColumnSelection` describes a view: an alias and a route per column.
+- `db.join` turns a catalog into one row per car.
+- Routes continue through reference columns into other tables.
+
+Next, [Filter view data](/guides/db/filter/) narrows a view to the rows you
+need.

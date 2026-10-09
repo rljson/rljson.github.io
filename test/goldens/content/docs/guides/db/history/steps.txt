@@ -1,0 +1,4 @@
+Give 15 % discount
+Give 10 % discount
+Price above 50000
+Show model, price and discount

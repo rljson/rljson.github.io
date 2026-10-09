@@ -106,6 +106,17 @@ export default defineConfig({
           ],
         },
         {
+          label: 'Db',
+          items: [
+            { label: 'Import Rljson Data', slug: 'guides/db/import' },
+            { label: 'Joins & Views', slug: 'guides/db/joins-views' },
+            { label: 'Filter view data', slug: 'guides/db/filter' },
+            { label: 'Mass Edit view data', slug: 'guides/db/mass-edit' },
+            { label: 'Edit single items', slug: 'guides/db/single-edit' },
+            { label: 'History, Undo & Redo', slug: 'guides/db/history' },
+          ],
+        },
+        {
           label: 'Data Types',
           items: [
             { label: 'Components', slug: 'guides/data_types/components' },

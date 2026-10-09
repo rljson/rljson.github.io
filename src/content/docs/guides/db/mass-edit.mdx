@@ -1,0 +1,140 @@
+---
+title: Mass Edit view data
+description: Select, filter and set values with the MultiEditManager, then publish the edits into new data.
+---
+
+import CarCake from '../../../../assets/figures/car-cake.svg';
+import Snippet from '../../../../components/Snippet.astro';
+
+Give every car above 50,000 EUR a discount of ten percent: that is one edit,
+but it changes many rows. Db records such edits without touching the data.
+You see their result in a view, and you write them into the data when you
+publish.
+
+<CarCake />
+
+In the figure, every column of the catalog is a layer. A mass edit changes
+one column for the rows of a view: here the discount in the prices layer.
+
+You will learn how to:
+
+- create the tables that store edits
+- select, filter and set values with a `MultiEditManager`
+- see the edited view before anything is written
+- publish the edits into a new catalog
+
+## 1. Create the edit tables
+
+Start with the project of [Import Rljson Data](/guides/db/import/) and
+create `mass-edit.ts`. Edits are Rljson data too. Three tables per cake
+store them: the edits, the multi edits that chain them, and the edit
+history:
+
+<Snippet
+  file="mass-edit.spec.ts"
+  region="tables"
+  title="mass-edit.ts"
+/>
+
+## 2. Create the manager
+
+A `MultiEditManager` keeps the edits of one cake. `init` lets it follow the
+edit history:
+
+<Snippet
+  file="mass-edit.spec.ts"
+  region="manager"
+  title="mass-edit.ts"
+/>
+
+## 3. Select the columns
+
+Every edit has a name and an action. The first action is a selection, the
+columns of the view. The first edit also names the catalog it starts from:
+
+<Snippet
+  file="mass-edit.spec.ts"
+  region="select"
+  title="mass-edit.ts"
+/>
+
+<Snippet
+  file="before.md"
+  title="Output"
+/>
+
+## 4. Filter the rows
+
+A filter action holds a row filter, like the one in [Filter view
+data](/guides/db/filter/):
+
+<Snippet
+  file="mass-edit.spec.ts"
+  region="filter"
+  title="mass-edit.ts"
+/>
+
+## 5. Set the value
+
+A `setValue` action sets a value in one column, for every row of the view:
+
+<Snippet
+  file="mass-edit.spec.ts"
+  region="setValue"
+  title="mass-edit.ts"
+/>
+
+<Snippet
+  file="after.md"
+  title="Output"
+/>
+
+## 6. The data is untouched
+
+The edits live in their own tables. The catalog still has its old prices:
+
+<Snippet
+  file="mass-edit.spec.ts"
+  region="untouched"
+  title="mass-edit.ts"
+/>
+
+<Snippet
+  file="stored.txt"
+  title="Output"
+/>
+
+## 7. Publish
+
+`publish` writes the edited rows into new prices, a new prices layer and a
+new catalog. The new catalog is complete: it has all five cars, also the
+two the filter has hidden. The old catalog stays as it is:
+
+<Snippet
+  file="mass-edit.spec.ts"
+  region="publish"
+  title="mass-edit.ts"
+/>
+
+<Snippet
+  file="published.md"
+  title="Output"
+/>
+
+## 8. Run the application
+
+<Snippet
+  file="mass-edit.spec.ts"
+  region="app"
+  title="mass-edit.ts"
+/>
+
+## What you have learned
+
+- Edits are stored in three tables per cake.
+- A `MultiEditManager` chains edits: select, filter, set value.
+- `manager.join` shows the edited view before anything is written.
+- `publish` writes the edits into a new catalog.
+
+Next, [Edit single items](/guides/db/single-edit/) changes one value with a
+route.

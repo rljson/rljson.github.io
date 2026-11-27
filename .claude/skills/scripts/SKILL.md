@@ -5,7 +5,7 @@ description: Checks that every script in dna/scripts is syntactically valid, imp
 
 <!--
 @license
-Copyright (c) ggsuite
+Copyright (c) rljson
 
 Use of this source code is governed by terms that can be
 found in the LICENSE file in the root of this package.
@@ -13,7 +13,7 @@ found in the LICENSE file in the root of this package.
 
 # Scripts
 
-Read `doc/guides/scripts-guide.md` and follow it.
+Read `doc/en/guides/scripts-guide.md` and follow it.
 
 ## 1. Check every script parses
 

@@ -5,7 +5,7 @@
       "name": "base",
       "package": "helix",
       "ecosystem": null,
-      "resolvedVersion": "1.7.1",
+      "resolvedVersion": "1.18.0",
       "via": null,
       "hash": "0x6883da335b415f9d"
     },
@@ -13,17 +13,17 @@
       "name": "dna-vscode",
       "package": "@ggdna/dna-vscode",
       "ecosystem": "node",
-      "resolvedVersion": "0.2.0",
+      "resolvedVersion": "0.6.0",
       "via": null,
-      "hash": "0xa88376a88c6618fa"
+      "hash": "0x46884c4501b1446f"
     },
     {
       "name": "dna-scripts",
       "package": "@ggdna/dna-scripts",
       "ecosystem": "node",
-      "resolvedVersion": "0.2.1",
+      "resolvedVersion": "0.5.0",
       "via": null,
-      "hash": "0xe3092339b83504a1"
+      "hash": "0x9463bfb42bfd4adf"
     },
     {
       "name": "self",
@@ -31,91 +31,114 @@
       "ecosystem": null,
       "resolvedVersion": null,
       "via": null,
-      "hash": "0xa003fa6fb842d850"
+      "hash": "0x14116e01e9a448f6"
     }
   ],
   "claude": {
     "claudeMdInclude": null,
-    "claudeMdFromDna": false
+    "claudeMdFromDna": false,
+    "blockHash": null
   },
-  "baseVersion": "1.7.1",
+  "baseVersion": "1.18.0",
   "baseHash": "0x6883da335b415f9d",
+  "configHash": "0xa6145b0d57893fbc",
+  "gitignoreHash": "0x1629304c89959ee4",
   "instances": [
     {
       "path": ".claude/skills/scripts/SKILL.md",
-      "hash": "0xa12593aa0af31ed2"
+      "hash": "0x605002a0460ed8c2"
     },
     {
       "path": ".claude/skills/vscode/SKILL.md",
-      "hash": "0xa331cf3abdbd1c7b"
+      "hash": "0xf76a4336420653af"
     },
     {
       "path": ".prettierignore",
-      "hash": "0x5214536973c2c681"
+      "hash": "0x2467804cabf5f63b"
     },
     {
       "path": ".prettierrc",
       "hash": "0xfa45e43326f76a9c"
     },
     {
+      "path": ".pubignore",
+      "hash": "0xe908cc2cbb23de17"
+    },
+    {
       "path": ".vscode/extensions.json",
-      "hash": "0xd959a5a139ab53b1"
+      "hash": "0xc3f81cf714c3c663"
     },
     {
       "path": ".vscode/settings.json",
-      "hash": "0x841985bfc7dd76ca"
+      "hash": "0x1399cda5ea38c3f4"
     },
     {
-      "path": "doc/guides/scripts-guide.md",
-      "hash": "0x426857c389049083"
+      "path": "doc/de/guides/scripts-guide.md",
+      "hash": "0xfef842da227067b5"
     },
     {
-      "path": "doc/guides/vscode-guide.md",
-      "hash": "0x6776b27c7cbedb98"
+      "path": "doc/de/guides/vscode-guide.md",
+      "hash": "0x001f190c632bcc8c"
+    },
+    {
+      "path": "doc/en/guides/scripts-guide.md",
+      "hash": "0xe3e5e5d32435a424"
+    },
+    {
+      "path": "doc/en/guides/vscode-guide.md",
+      "hash": "0x21e68a1f7a122ac5"
+    },
+    {
+      "path": "doc/fa/guides/scripts-guide.md",
+      "hash": "0x4cf7045ccda7e792"
+    },
+    {
+      "path": "doc/fa/guides/vscode-guide.md",
+      "hash": "0x7b0278c67a85a299"
     },
     {
       "path": "scripts/delete-feature-branch.js",
-      "hash": "0x219ac0a3635ee644"
+      "hash": "0x0baefa6a16022682"
     },
     {
       "path": "scripts/functions/colors.js",
-      "hash": "0xdfd97f3804665811"
+      "hash": "0x71ce810fb1336067"
     },
     {
       "path": "scripts/functions/current-branch.js",
-      "hash": "0xb9ebbadf45893278"
+      "hash": "0x878aa9627a05ec84"
     },
     {
       "path": "scripts/functions/directories.js",
-      "hash": "0x148d4ebb8aa75523"
+      "hash": "0x4b861da5d43e083f"
     },
     {
       "path": "scripts/functions/get-repo-urls.js",
-      "hash": "0xd101f8b49454b888"
+      "hash": "0x9af71065f8332bfd"
     },
     {
       "path": "scripts/functions/get-version.js",
-      "hash": "0xfe46316558755cf2"
+      "hash": "0xfdefd4e7f8a53d07"
     },
     {
       "path": "scripts/functions/is-clean-repo.js",
-      "hash": "0x8aa95ca51d9d6517"
+      "hash": "0xa6716137adbae39b"
     },
     {
       "path": "scripts/functions/is-main-up-to-date.js",
-      "hash": "0xe1ab1826d0ddd039"
+      "hash": "0x1bd3ccf74783473e"
     },
     {
       "path": "scripts/functions/pull-request-url.js",
-      "hash": "0x5398755a61a59928"
+      "hash": "0x5afd498994c957f4"
     },
     {
       "path": "scripts/functions/run-command.js",
-      "hash": "0x085b390fcb9256ab"
+      "hash": "0x1fe113fc2a4e8e34"
     },
     {
       "path": "scripts/functions/sync-folders.js",
-      "hash": "0x4f83165fd92ec49d"
+      "hash": "0x5aaf4eff6f7e9d31"
     },
     {
       "path": "scripts/rename-class.js",
@@ -123,11 +146,11 @@
     },
     {
       "path": "scripts/setup-github-repo.js",
-      "hash": "0x5907588070a580ca"
+      "hash": "0xaa1cf26a84d02501"
     },
     {
       "path": "scripts/wait-for-pr.js",
-      "hash": "0x1360c661984b78a8"
+      "hash": "0xd0e48e0e76e1bf74"
     }
   ]
 }

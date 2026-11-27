@@ -5,7 +5,7 @@ description: Checks that installed VS Code extensions match the recommended list
 
 <!--
 @license
-Copyright (c) ggsuite
+Copyright (c) rljson
 
 Use of this source code is governed by terms that can be
 found in the LICENSE file in the root of this package.
@@ -13,7 +13,7 @@ found in the LICENSE file in the root of this package.
 
 # Vscode
 
-Read `doc/guides/vscode-guide.md` and follow it.
+Read `doc/en/guides/vscode-guide.md` and follow it.
 
 ## 1. Check the extensions
 

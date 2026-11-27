@@ -39,9 +39,16 @@ export const targetPage = join(
  */
 export const findEdgeDoc = () => {
   const pkg = join(root, 'node_modules', '@rljson', 'edge');
-  const candidates = [join(pkg, 'dist', 'doc'), join(root, '..', 'edge', 'doc')];
+  const candidates = [
+    join(pkg, 'dist', 'doc'),
+    join(root, '..', 'edge', 'doc', 'en'),
+  ];
   if (existsSync(join(pkg, 'src'))) {
-    candidates.splice(1, 0, join(realpathSync(join(pkg, 'src')), '..', 'doc'));
+    candidates.splice(
+      1,
+      0,
+      join(realpathSync(join(pkg, 'src')), '..', 'doc', 'en'),
+    );
   }
   return candidates.find((dir) => existsSync(join(dir, 'architecture.md')));
 };

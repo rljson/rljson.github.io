@@ -22,11 +22,11 @@ importers:
         specifier: ^0.9.10
         version: 0.9.10(@emnapi/runtime@1.11.3)(prettier-plugin-astro@1.1.0(@emnapi/core@1.11.3)(@emnapi/runtime@1.11.3)(prettier@3.9.9))(prettier@3.9.9)(typescript@6.0.3)
       '@ggdna/dna-scripts':
-        specifier: ^0.2.3
-        version: 0.2.3
+        specifier: ^0.5.0
+        version: 0.5.0
       '@ggdna/dna-vscode':
-        specifier: ^0.2.4
-        version: 0.2.4
+        specifier: ^0.6.0
+        version: 0.6.0
       '@rljson/db':
         specifier: 0.1.0
         version: 0.1.0
@@ -46,8 +46,8 @@ importers:
         specifier: ^1.0.1
         version: 1.0.1(@rljson/json@0.0.21)(@tssuite/project-root@0.0.17)
       '@tssuite/helix-js':
-        specifier: ^0.3.0
-        version: 0.3.0
+        specifier: ^0.8.0
+        version: 0.8.0
       '@types/node':
         specifier: ^26.6.4
         version: 26.6.4
@@ -569,12 +569,12 @@ packages:
   '@expressive-code/plugin-text-markers@0.44.2':
     resolution: {integrity: sha512-SNI7EgUSiADqbqUzzMbj1ZeC/r2pa5eg3KyFOGAd3a7EsIA4qzjXQLp+ODWQtHVDKFCdGs4J3ovSJUqvKIK96g==}
 
-  '@ggdna/dna-scripts@0.2.3':
-    resolution: {integrity: sha512-gztjlc9QvX/1yb2sGE7q8NeSEyBE+y0oI+Nx4j3GKsuqNW8m/usJTHDe244PEtasaEdep9gzaCyK8+VSXdwS/g==}
+  '@ggdna/dna-scripts@0.5.0':
+    resolution: {integrity: sha512-+gnHCeePlBQOAjAQ3El4bJx+RXAJZd0bySY3+zbh3S3Pvp/jAAiy0O8XotJ+6tZfGEuN2ohTr2WHipL824zOGg==}
     engines: {node: '>=22'}
 
-  '@ggdna/dna-vscode@0.2.4':
-    resolution: {integrity: sha512-lor9+YWnZwoJvXr5Ru53k/QQm3zvyOeTE2/agpUclyXPWkpZvyRQb7wSknIXswWXmE4hvdstVub7NWtNlQqA/g==}
+  '@ggdna/dna-vscode@0.6.0':
+    resolution: {integrity: sha512-LdP0ZcaXTUycmrRxC7DlJtv/kahIOkDqZDxqzgSKTGDus9o0US9Y1fGKqoeJxITS0rulv6TuEcaZsCFjKLcl5g==}
     engines: {node: '>=22'}
 
   '@img/colour@1.1.0':
@@ -987,8 +987,8 @@ packages:
       '@rljson/json': ^0.0.21
       '@tssuite/project-root': 0.0.17
 
-  '@tssuite/helix-js@0.3.0':
-    resolution: {integrity: sha512-CMMgTKYzgrAUStGsxXOE4seDs6XR+I/eMzQ+O4/95H/WeFk6Tf7/EOQlT6Zb/Z50sk9QJpXRU/Zj4Zy0QoiSaA==}
+  '@tssuite/helix-js@0.8.0':
+    resolution: {integrity: sha512-5TltI0pkX41R5Xa9ejX4ypVICP0hGu+1f+bWX9gKRgoMs/NYi4yIl0hDfvXGk725Da2l0XBmobmC2ggjh0lQiA==}
     engines: {node: '>=22'}
 
   '@tssuite/project-root@0.0.17':
@@ -2869,9 +2869,9 @@ snapshots:
     dependencies:
       '@expressive-code/core': 0.44.2
 
-  '@ggdna/dna-scripts@0.2.3': {}
+  '@ggdna/dna-scripts@0.5.0': {}
 
-  '@ggdna/dna-vscode@0.2.4': {}
+  '@ggdna/dna-vscode@0.6.0': {}
 
   '@img/colour@1.1.0': {}
 
@@ -3181,7 +3181,7 @@ snapshots:
       '@rljson/json': 0.0.21
       '@tssuite/project-root': 0.0.17
 
-  '@tssuite/helix-js@0.3.0': {}
+  '@tssuite/helix-js@0.8.0': {}
 
   '@tssuite/project-root@0.0.17': {}
 

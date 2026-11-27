@@ -13,17 +13,17 @@
       "name": "dna-vscode",
       "package": "@ggdna/dna-vscode",
       "ecosystem": "node",
-      "resolvedVersion": "0.5.1",
+      "resolvedVersion": "0.6.0",
       "via": null,
-      "hash": "0x29b7af8b13ad4da5"
+      "hash": "0x46884c4501b1446f"
     },
     {
       "name": "dna-scripts",
       "package": "@ggdna/dna-scripts",
       "ecosystem": "node",
-      "resolvedVersion": "0.4.1",
+      "resolvedVersion": "0.5.0",
       "via": null,
-      "hash": "0x1f2540a9e6a05c6e"
+      "hash": "0x9463bfb42bfd4adf"
     },
     {
       "name": "self",
@@ -46,15 +46,15 @@
   "instances": [
     {
       "path": ".claude/skills/scripts/SKILL.md",
-      "hash": "0x8766164be45964d2"
+      "hash": "0x605002a0460ed8c2"
     },
     {
       "path": ".claude/skills/vscode/SKILL.md",
-      "hash": "0x65233948faf9c40a"
+      "hash": "0xf76a4336420653af"
     },
     {
       "path": ".prettierignore",
-      "hash": "0x136ffa9367c9a902"
+      "hash": "0x2467804cabf5f63b"
     },
     {
       "path": ".prettierrc",
@@ -62,7 +62,7 @@
     },
     {
       "path": ".pubignore",
-      "hash": "0x9b5444f443c41cc5"
+      "hash": "0xe908cc2cbb23de17"
     },
     {
       "path": ".vscode/extensions.json",
@@ -73,12 +73,28 @@
       "hash": "0x1399cda5ea38c3f4"
     },
     {
-      "path": "doc/guides/scripts-guide.md",
+      "path": "doc/de/guides/scripts-guide.md",
+      "hash": "0xfef842da227067b5"
+    },
+    {
+      "path": "doc/de/guides/vscode-guide.md",
+      "hash": "0x001f190c632bcc8c"
+    },
+    {
+      "path": "doc/en/guides/scripts-guide.md",
       "hash": "0xe3e5e5d32435a424"
     },
     {
-      "path": "doc/guides/vscode-guide.md",
+      "path": "doc/en/guides/vscode-guide.md",
       "hash": "0x21e68a1f7a122ac5"
+    },
+    {
+      "path": "doc/fa/guides/scripts-guide.md",
+      "hash": "0x4cf7045ccda7e792"
+    },
+    {
+      "path": "doc/fa/guides/vscode-guide.md",
+      "hash": "0x7b0278c67a85a299"
     },
     {
       "path": "scripts/delete-feature-branch.js",

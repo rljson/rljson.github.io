@@ -30,7 +30,7 @@ pnpm-debug.log*
 !.gg/gg.json
 
 # dna-vscode
-/doc/guides/
+/doc/*/guides/
 
 # dna-scripts
 /scripts/

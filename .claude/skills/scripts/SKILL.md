@@ -5,7 +5,7 @@ description: Checks that every script in dna/scripts is syntactically valid, imp
 
 <!--
 @license
-Copyright (c) ggsuite
+Copyright (c) rljson
 
 Use of this source code is governed by terms that can be
 found in the LICENSE file in the root of this package.

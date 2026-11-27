@@ -1,10 +1,12 @@
 /**
  * @license
- * Copyright (c) ggsuite
+ * Copyright (c) rljson
  *
  * Use of this source code is governed by terms that can be
  * found in the LICENSE file in the root of this package.
  */
+
+import { execSync } from 'child_process';
 
 export function pullRequestUrl() {
   const json = execSync('gh pr view --json url', {

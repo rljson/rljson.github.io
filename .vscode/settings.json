@@ -122,7 +122,7 @@
   "psi-header.variables": [
     [
       "author",
-      "ggsuite"
+      "rljson"
     ]
   ],
   "psi-header.templates": [
@@ -134,7 +134,7 @@
       "language": "xml",
       "template": [
         "@license",
-        "Copyright (c) ggsuite",
+        "Copyright (c) rljson",
         "",
         "Use of this source code is governed by terms that can be",
         "found in the LICENSE file in the root of this package."
@@ -144,7 +144,7 @@
       "language": "html",
       "template": [
         "@license",
-        "Copyright (c) ggsuite",
+        "Copyright (c) rljson",
         "",
         "Use of this source code is governed by terms that can be",
         "found in the LICENSE file in the root of this package."
@@ -154,7 +154,7 @@
       "language": "typescript",
       "template": [
         "@license",
-        "Copyright (c) ggsuite",
+        "Copyright (c) rljson",
         "",
         "Use of this source code is governed by terms that can be",
         "found in the LICENSE file in the root of this package."
@@ -164,7 +164,7 @@
       "language": "javascript",
       "template": [
         "@license",
-        "Copyright (c) ggsuite",
+        "Copyright (c) rljson",
         "",
         "Use of this source code is governed by terms that can be",
         "found in the LICENSE file in the root of this package."
@@ -174,7 +174,7 @@
       "language": "scss",
       "template": [
         "@license",
-        "Copyright (c) ggsuite",
+        "Copyright (c) rljson",
         "",
         "Use of this source code is governed by terms that can be",
         "found in the LICENSE file in the root of this package."
@@ -184,7 +184,27 @@
       "language": "dart",
       "template": [
         "@license",
-        "Copyright (c) ggsuite",
+        "Copyright (c) rljson",
+        "",
+        "Use of this source code is governed by terms that can be",
+        "found in the LICENSE file in the root of this package."
+      ]
+    },
+    {
+      "language": "markdown",
+      "template": [
+        "@license",
+        "Copyright (c) rljson",
+        "",
+        "Use of this source code is governed by terms that can be",
+        "found in the LICENSE file in the root of this package."
+      ]
+    },
+    {
+      "language": "md",
+      "template": [
+        "@license",
+        "Copyright (c) rljson",
         "",
         "Use of this source code is governed by terms that can be",
         "found in the LICENSE file in the root of this package."
